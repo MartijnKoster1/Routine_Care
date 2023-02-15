@@ -1,0 +1,53 @@
+---
+title: "Assignment"
+author:  
+- Ibrahm Ayhan, student nr
+- Valerie Habbel, student nr
+- Martijn Koster, 6234119
+- Jurrian van de Kraats, student nr
+- Tim Poorthuis, student nr
+
+date: "2023-02-15"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+
+Write here a short motivation with a RQ 
+
+- well articulated RQ
+
+- Selection of confounders? or in methods
+
+# Methods
+
+
+- Selection of confounders? or in intro? 
+
+- Methods to control for (observed/unobserved confounding)
+
+- Checking assumptions of method to control for confounding
+
+- Implementation of methods to control for (observed/unobserved) confounding
+
+- Make a DAG? 
+
+# Results
+
+- Reporting characteristics of study population 
+
+- Reporting crude/adjusted effect measures 
+
+# Conclusion / Discussion
+
+- Conclusions supported by data
+
+- Other issues (both postive and negative) 
+
+
+
+
