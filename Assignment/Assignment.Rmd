@@ -8,18 +8,62 @@ author:
 - Tim Poorthuis, student nr
 
 date: "2023-02-15"
-output: pdf_document
+output:
+  bookdown::pdf_document2:
+    extra_dependencies: "subfig" 
+    toc: false 
+    number_sections: false
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, comment = NA, warning = FALSE,
+                      error=FALSE, results='hide',fig.keep='all')
 ```
 
 # Introduction
 
+```{r, include=FALSE}
+library(tidyverse)
+library(kableExtra)
+library(psych)
+```
+
+
+```{r, include = FALSE}
+data <- read.table("data.txt", sep="\t")
+attach(data)
+```
+
+```{r}
+des <- describe(data)
+tab1 <- data.frame(
+  variables = colnames(data), 
+  min.var = des$min, 
+  max.var = des$max,
+  mean.var = des$mean, 
+  n.var = des$n
+)
+```
+
+
+```{r des, echo = FALSE, results='hold'}
+tab1 %>%
+  kbl(caption = 'Descriptive statistics in the dataset',
+      col.names = c('Variables', 'Min', 'Max', 'Mean', 'N'),
+      booktabs = T) %>%
+  kable_classic(full_width = F, html_font = 'Cambria') %>% 
+  kable_styling(latex_options = "hold_position")
+
+```
+
+
+
+
 Write here a short motivation with a RQ 
 
 - well articulated RQ
+
+__The aim of the study is to assess whether annual influenza vaccination reduces the risk of hospitalization among elderly (i.e., people aged >=65 years).__ 
 
 - Selection of confounders? or in methods
 
