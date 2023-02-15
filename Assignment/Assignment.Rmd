@@ -23,6 +23,7 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE, comment = NA, warning = FAL
 # Introduction
 
 ```{r, include=FALSE}
+library(rms)
 library(tidyverse)
 library(kableExtra)
 library(psych)
@@ -56,6 +57,17 @@ tab1 %>%
 
 ```
 
+```{r}
+#Distribution of the people who ot hopsitalized
+table(data$hosp==1)
+```
+
+```{r}
+#Distribution of the exposure
+table(data$vacc==1)
+```
+
+
 
 
 
@@ -69,10 +81,31 @@ __The aim of the study is to assess whether annual influenza vaccination reduces
 
 # Methods
 
-
 - Selection of confounders? or in intro? 
 
+I'd say we use `age`, `cvd`, `DM` `contact`, based on a DAG? 
+
 - Methods to control for (observed/unobserved confounding)
+
+
+We will develop a propensity score model and calculate Inverse probability weighting
+
+```{r}
+mean(age[vacc==0]); mean(age[vacc==1]) #mean age per exposure status
+mean(contact[vacc==0]); mean(contact[vacc==1]) #mean contact with GP in 12 months per exposure status
+table(vacc, pulm)
+table(vacc, cvd)
+```
+
+
+```{r}
+ps.formula <- vacc ~ rcs(age) + cvd + DM * rcs(contact)
+
+ps.fit <- lrm(ps.formula, data=data)
+ps.fit$stats['C']
+```
+
+
 
 - Checking assumptions of method to control for confounding
 
