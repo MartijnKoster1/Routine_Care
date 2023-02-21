@@ -2,7 +2,6 @@
 title: "Assignment"
 author:  
 - Ibrahm Ayhan, student nr
-- Valerie Habbel, student nr
 - Martijn Koster, 6234119
 - Jurrian van de Kraats, student nr
 - Tim Poorthuis, student nr
@@ -105,6 +104,85 @@ ps.fit <- lrm(ps.formula, data=data)
 ps.fit$stats['C']
 ```
 
+The confounders are moderately related with the exposure of interest (C=0.65)
+--> Add some interpretation here.
+
+```{r}
+#extract_eq(glm(ps.formula, family='binomial', data=data), wrap=TRUE)
+```
+$$
+\begin{aligned}
+\log\left[ \frac { P( \operatorname{vacc} = \operatorname{1} ) }{ 1 - P( \operatorname{vacc} = \operatorname{1} ) } \right] &= \alpha + \beta_{1}(\operatorname{rcs(age)}_{\operatorname{age}}) + \beta_{2}(\operatorname{rcs(age)}_{\operatorname{age'}}) + \beta_{3}(\operatorname{rcs(age)}_{\operatorname{age''}})\ + \\
+&\quad \beta_{4}(\operatorname{rcs(age)}_{\operatorname{age'''}}) + \beta_{5}(\operatorname{cvd}) + \beta_{6}(\operatorname{DM}) + \beta_{7}(\operatorname{rcs(contact)}_{\operatorname{contact}})\ + \\
+&\quad \beta_{8}(\operatorname{rcs(contact)}_{\operatorname{contact'}}) + \beta_{9}(\operatorname{rcs(contact)}_{\operatorname{contact''}}) + \beta_{10}(\operatorname{rcs(contact)}_{\operatorname{contact'''}}) + \beta_{11}(\operatorname{DM} \times \operatorname{rcs(contact)}_{\operatorname{contact}})\ + \\
+&\quad \beta_{12}(\operatorname{DM} \times \operatorname{rcs(contact)}_{\operatorname{contact'}}) + \beta_{13}(\operatorname{DM} \times \operatorname{rcs(contact)}_{\operatorname{contact''}}) + \beta_{14}(\operatorname{DM} \times \operatorname{rcs(contact)}_{\operatorname{contact'''}})
+\end{aligned}
+$$
+
+```{r}
+data$ps.score <- predict(ps.fit,type='fitted')
+hist(data$ps.score)
+```
+```{r}
+mean(data$ps.score[vacc==0]) ; mean(data$ps.score[vacc==1])
+```
+We see that the mean propensity score for the ones who are vaccinated is higher (As expected)
+
+
+```{r}
+data$ipw <- with(data, 1 / (ifelse(data$vacc == 1, ps.score, 1-ps.score)))
+```
+Assignment
+These are the unstabilised weights of the inverse probability score. 
+
+
+We can use stabilised weights as well
+
+```{r}
+num <- glm(vacc ~ 1, family='binomial', data=data)$fitted.values
+data$ipw.stab <- data$ipw * num  
+```
+
+WE need to check for positivity: 
+
+The positivity assumption means that both exposed and unexposed individuals need to be present in all sub-populations defined by the combinations of covariate values --> Westreich, D., & Cole, S. R. (2010). Invited commentary: positivity in practice. American journal of epidemiology, 171(6), 674-677. 
+
+Deze barplot kunnen we waarschijnlijk wel mooier maken 
+
+```{r}
+r <- 0.1 # midpoints of probability ranges to evaluate (the smaller the smaller the grouping)
+b <- c(0,seq(r/2,1-r/2,r),1) # breaks to be used on the PS
+t <- with(data,table(vacc,cut(ps.score,breaks=b  ))) # make table for barplotting
+barplot(t,beside=T,names.arg=c(0,seq(r,1-r,r),1),col=c("blue","red"),legend=T)
+
+```
+
+
+```{r}
+t_df <- as.data.frame.matrix(t) %>% 
+  rownames_to_column(var = "vacc") %>% 
+  gather(key = "ps.range", value = "count", -vacc)
+```
+
+```{r}
+library(ggplot2)
+
+ggplot(t_df, aes(x = ps.range, y = count, fill = vacc)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  scale_x_discrete(labels = c(0,seq(r,1-r,r),1)) +
+  scale_fill_manual(values = c("blue", "red")) +
+  labs(x = "PS Score Range", y = "Count", fill = "Vaccination Status") +
+  theme_minimal()
+```
+
+
+There is non-positivity
+
+
+
+```{r}
+#t(aggregate(cbind(age,meal.cal,wt.loss,sex=sex==2) ~ ph.ecog.bin,data=df,mean))  
+```
 
 
 - Checking assumptions of method to control for confounding
@@ -119,11 +197,29 @@ ps.fit$stats['C']
 
 - Reporting crude/adjusted effect measures 
 
+Crude measures:
+
+```{r}
+crude.fit <- lrm(hosp ~ vacc, data=data)
+log.or <- crude.fit$coef[2]
+se.log.or <- sqrt(diag(vcov(crude.fit))[2])
+exp(c(log.or, log.or - 1.96*se.log.or, log.or + 1.96*se.log.or))
+
+
+crude.fit$stats['C']
+```
+The crude association between vaccination status and hospitalization was examined using logistic regression, and the odds ratio was found to be 0.92 (95% CI: 0.70, 1.21), indicating a non-significant association. The C statistic,  a measure of discrimination, was 0.508, suggesting poor predictive performance of the model. 
+
+
+__Adjusted measures__ 
+
+
 # Conclusion / Discussion
 
 - Conclusions supported by data
 
-- Other issues (both postive and negative) 
+- Other issues (both positive and negative) 
+
 
 
 
