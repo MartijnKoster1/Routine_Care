@@ -76,7 +76,7 @@ ggdag_status(dag1) + theme_dag()
 
 
 _Popensity score Model_ 
-|   In order to control for confounding (observed and unobserved), a propensity score model is developed with the 
+In order to control for confounding (observed and unobserved), a propensity score model is developed with the 
 We will develop a propensity score model and calculate Inverse probability weighting
 
 
@@ -94,10 +94,19 @@ The confounders are moderately related with the exposure of interest (C=0.66)
 
 
 
-```{r}
+```{r, fig.show='hide'}
 data$ps.score <- predict(ps.fit,type='fitted')
 hist(data$ps.score)
 ```
+
+```{r ps_score, fig.cap = 'Distribution of the Propensity score for participants who received a vaccination compared with those who did not receive a vaccination' }
+data %>% 
+  ggplot() + 
+  aes(x=ps.score, color=as.factor(vacc), fill=as.factor(vacc)) + 
+  geom_histogram(position='identity', alpha=0.5 ) + 
+  theme_minimal()
+```
+
 ```{r}
 mean(data$ps.score[vacc==0]) ; mean(data$ps.score[vacc==1])
 ```
