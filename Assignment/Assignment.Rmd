@@ -68,16 +68,14 @@ ggdag_status(dag1) + theme_dag()
 
 ## Selection of confounders
 
-*Write here something about the confounders and the DAG* Based on the DAG model in Figure \@ref{fig:dag} we have selected the confounders
+Based on the Directed Acyclical Graph (DAG) model in Figure @ref(fig:dag) confounders were selected to adjust the statistical model. 
 
 ## Statistical Methods
 
 ### Baseline Characteristics 
-
-Baseline characteristics are important, because they provide essential information on the participant and help to ensure that the study is conducted in a fair and unbiased manner. The baseline characteristics of the study were summarised. The categorical variables were summarised as frequencies and means, whereas the continuous variables as means SD. 
+Baseline characteristics are important, because they provide essential information on the participant and help to ensure that the study is conducted in a fair and unbiased manner. The baseline characteristics of the study were summarised. The categorical variables were summarised as frequencies and means, whereas the continuous variables as means SD. The baseline characteristics will be stratified by both the exposure as the outcome variable. 
 
 ### Propensity Score Model
-
 In order to control for confounding (observed and unobserved), a propensity score score was estimated by fitting a logistic regression. The 
 We will develop a propensity score model and calculate Inverse probability weighting
 
@@ -150,22 +148,6 @@ nrow(data)
 WE need to check for positivity: 
 
 The positivity assumption means that both exposed and unexposed individuals need to be present in all sub-populations defined by the combinations of covariate values --> Westreich, D., & Cole, S. R. (2010). Invited commentary: positivity in practice. American journal of epidemiology, 171(6), 674-677. 
-
-
-```{r}
-r <- 0.1 # midpoints of probability ranges to evaluate (the smaller the smaller the grouping)
-b <- c(0,seq(r/2,1-r/2,r),1) # breaks to be used on the PS
-t <- with(data,table(vacc,cut(ps.score,breaks=b  ))) # make table for barplotting
-```
-
-```{r}
-t_df <- as.data.frame.matrix(t) %>% 
-  rownames_to_column(var = "vacc") %>% 
-  gather(key = "ps.range", value = "count", -vacc)
-```
-
-
-
 
 
 
@@ -393,8 +375,8 @@ tab1 <- data.frame(
 # )
 ```
 
-| Table \@ref(tab:des) presents the baseline characteristics of 40,000 individuals who were included in the study. The mean age `r age_mean`  and the majority of the study population `r sex_mean`% were female. Approximately half of the respondent have Cardiovascular disease, whereas `r pulm_mean` percent have Pulmonary disease and `r dm_mean`% have Diabetes Mellitus.
-|   A total of `r sum(vacc)` (`r round(100*mean(vacc),2)`%) respondents were vaccinated, whereas `r sum(vacc==0)` (`r round(100*mean(vacc==0),2)`%) were not vaccinated. People who received a vaccination had on average more often pulmonary disease (`r pulm_vacc_mean`% vs `r pulm_novacc_mean`%), cardiovascular disease (`r cvd_vacc_mean`% vs `r cvd_novacc_mean`%) and diabetes (`r dm_vacc_mean`% vs `r dm_novacc_mean`%).
+|Table \@ref(tab:des) presents the baseline characteristics of 40,000 individuals who were included in the study. The mean age `r age_mean`  and the majority of the study population `r sex_mean`% were female. Approximately half of the respondent have Cardiovascular disease, whereas `r pulm_mean` percent have Pulmonary disease and `r dm_mean`% have Diabetes Mellitus.
+|   A total of `r sum(vacc)` (`r round(100*mean(vacc),2)`%) respondents were vaccinated, whreas `r sum(vacc==0)` (`r round(100*mean(vacc==0),2)`%) were not vaccinated. People who received a vaccination had on average more often pulmonary disease (`r pulm_vacc_mean`% vs `r pulm_novacc_mean`%), cardiovascular disease (`r cvd_vacc_mean`% vs `r cvd_novacc_mean`%) and diabetes (`r dm_vacc_mean`% vs `r dm_novacc_mean`%).
 |   Baseline characteristics stratified by the study outcome indicate that `r sum(hosp)` of the respondents were hospitalized as opposed to `r sum(hosp==0)` who were not. Respondents who were hospitalized were older (`r age_hosp_mean` vs `r age_nohosp_mean`), had more often contact with the GP (`r contact_hosp_mean` vs `r contact_nohosp_mean`), were on average less often a female (`r sex_hosp_mean`% vs `r sex_nohosp_mean`%), had on average more often cardiovascular disease (`r cvd_hosp_mean`% vs `r cvd_nohosp_mean`%) and on average more often Diabetes (`r dm_hosp_mean`% vs `r dm_nohosp_mean`%). 
 
 
@@ -424,6 +406,7 @@ res_crude <- round(exp(c(log.or, log.or - 1.96*se.log.or, log.or + 1.96*se.log.o
 
 
 res_crude_c <- round(crude.fit$stats['C'], 3) 
+res_crude_p <- round(crude.fit$stats['P'], 3)
 ```
 
 ```{r}
@@ -434,6 +417,7 @@ se.log.or <- sqrt(diag(vcov(adj1.fit))[2])
 res_ps <- round(exp(c(log.or, log.or - 1.96*se.log.or, log.or + 1.96*se.log.or)), 3)
 
 res_ps_c <- round(adj1.fit$stats['C'], 3)
+res_ps_p <- round(adj1.fit$stats['P'], 3) 
 ```
 
 ```{r}
@@ -444,9 +428,65 @@ res_ipw <- round(exp(c(log.or, log.or - 1.96*se.log.or, log.or + 1.96*se.log.or)
 
 
 res_ipw_c <- round(adj2.fit$stats['C'], 3)
+res_ipw_p <- round(adj2.fit$stats['P'], 3)
 ```
 
-The crude association between vaccination status and hospitalization was examined using logistic regression, and the odds ratio was found to be `r res_crude[1]` (95% CI: `r res_crude[2]`, `r res_crude[3]`), indicating a non-significant association. The C statistic,  a measure of discrimination, was `r res_crude_c`, suggesting poor predictive performance of the model. 
+```{r}
+adj3.fit <- lrm(hosp ~ vacc, weights = ipw, data=data)
+log.or <- adj2.fit$coef[2]
+se.log.or <- sqrt(diag(vcov(adj2.fit))[2])
+res_unipw <- round(exp(c(log.or, log.or - 1.96*se.log.or, log.or + 1.96*se.log.or)), 3) 
+
+
+res_unipw_c <- round(adj2.fit$stats['C'], 3)
+res_unipw_p <- round(adj2.fit$stats['P'], 3)
+```
+
+
+```{r}
+print_p_value <- function(p_value) {
+  if (p_value < 0.001) {
+    print('<.001')
+  } else {
+    print(p_value)
+  }
+}
+```
+
+
+The crude association between vaccination status and hospitalization was examined using logistic regression, and the odds ratio was found to be `r res_crude[1]` (95% CI: `r res_crude[2]`, `r res_crude[3]`), indicating a non-significant association (p = `r print_p_value(res_ipw_p)`. The C statistic,  a measure of discrimination, was `r res_crude_c`, suggesting poor predictive performance of the model. 
+
+```{r}
+make_or <- function(OR) {
+  paste0(OR[1], ' (', OR[2], ' to ', OR[3],')')
+}
+```
+
+
+```{r}
+models <- c('Unadjusted', 'PS score as covariate', 'Unstabilised IPW', 'Stabilised IPW')
+
+OR_95 <- c(make_or(res_crude), make_or(res_ps), make_or(res_unipw), make_or(res_ipw))
+
+OR_P <- c(res_crude_p, res_ps_p, res_unipw_p, res_ipw_p)
+
+OR_C <- c(res_crude_c, res_ps_c, res_unipw_c, res_ipw_c)
+
+tab2 <- data.frame(models,
+                      OR_95, 
+                      OR_P, 
+                      OR_C) 
+```
+
+```{r res, echo = FALSE, results='hold'}
+tab2 %>% 
+   kbl(caption = 'Different regression results bla bla bla',
+      col.names = c('Model Specification', 'OR (95% CI)', 'P-Value', 'C-Statistic'),
+      booktabs = T) %>%
+  kable_classic(full_width = F, html_font = 'Cambria') %>%
+  kable_styling(latex_options = "hold_position")
+```
+
 
 
 
