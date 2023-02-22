@@ -46,9 +46,7 @@ __The aim of the study is to assess whether annual influenza vaccination reduces
 
 # Methods
 
- 
-
-```{r dag, fig.cap='DAG model with Vaccine as exposure and hospitalization as outcome'}
+```{r dag, fig.cap = 'DAG model with Vaccine as exposure and hospitalization as outcome'}
 library(ggdag)
 library(dagitty) 
 library(tidyverse)
@@ -68,15 +66,19 @@ dag1 <- dagify(
 ggdag_status(dag1) + theme_dag()
 ```
 
+## Selection of confounders
 
+*Write here something about the confounders and the DAG* Based on the DAG model in Figure \@ref{fig:dag} we have selected the confounders
 
-- Selection of confounders? or in intro? 
+## Statistical Methods
 
-*Write here something about the confounders and the DAG* Based on the DAG model in Figure @fig{fig:dag}
+### Baseline Characteristics 
 
+Baseline characteristics are important, because they provide essential information on the participant and help to ensure that the study is conducted in a fair and unbiased manner. The baseline characteristics of the study were summarised. The categorical variables were summarised as frequencies and means, whereas the continuous variables as means SD. 
 
-_Popensity score Model_ 
-In order to control for confounding (observed and unobserved), a propensity score model is developed with the 
+### Propensity Score Model
+
+In order to control for confounding (observed and unobserved), a propensity score score was estimated by fitting a logistic regression. The 
 We will develop a propensity score model and calculate Inverse probability weighting
 
 
@@ -102,9 +104,15 @@ hist(data$ps.score)
 ```{r ps_score, fig.cap = 'Distribution of the Propensity score for participants who received a vaccination compared with those who did not receive a vaccination' }
 data %>% 
   ggplot() + 
-  aes(x=ps.score, color=as.factor(vacc), fill=as.factor(vacc)) + 
-  geom_histogram(position='identity', alpha=0.5 ) + 
-  theme_minimal()
+  aes(x=ps.score, fill=as.factor(vacc)) + 
+  geom_histogram(aes(y=..density..), position='identity', alpha=0.3) + 
+  geom_density(aes(color=as.factor(vacc)),alpha=0.1, position='identity') +
+  theme_minimal() +
+  xlab("PS Score") +
+  ylab("Density") +
+  labs(fill = "Vaccination") + 
+  scale_fill_discrete(labels = c("Unvaccinated", "Vaccinated")) +
+  guides(color=FALSE) + xlim(0,1)
 ```
 
 ```{r}
@@ -156,21 +164,8 @@ t_df <- as.data.frame.matrix(t) %>%
   gather(key = "ps.range", value = "count", -vacc)
 ```
 
-```{r figure1, fig.show='hold', fig.cap='Checking for non-positivity'}
-library(ggplot2)
-
-ggplot(t_df, aes(x = ps.range, y = count, fill = vacc)) +
-  geom_bar(stat = "identity", position='dodge') +
-  scale_x_discrete(labels = c(0,seq(r,1-r,r),1)) +
-  scale_fill_manual(values = c("blue", "red")) +
-  labs(x = "PS Score Range", y = "Count", fill = "Vaccination Status") +
-  theme_minimal()
-```
 
 
-```{r}
-
-```
 
 
 
@@ -181,18 +176,6 @@ There is non-positivity
 
 - Implementation of methods to control for (observed/unobserved) confounding
 
-```{r}
-t(aggregate(cbind(age, cvd, pulm, DM, contact) ~ vacc, data=data, mean))
-#t(aggregate(cbind(age,meal.cal,wt.loss,sex=sex==2) ~ ph.ecog.bin,data=df,mean))  
-# note: this works for sex as this is a binary variable (mean of such variable=proportion),
-# sex==2 is Female
-# if you have a categorical variable with more levels, you can use individual level indicators,
-# eg cbind(..., "Never smoking"=smok==1,"Past smoking"=smok==2,"Current smoking"=smok==3,...) 
-
-# PS via IPW adjusted baseline table:
-#t(aggregate(cbind(age, cvd, pulm, DM, contact)*ipw ~ vacc,data=data,sum) 
-
-```
 
 
 
