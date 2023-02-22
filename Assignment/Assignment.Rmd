@@ -1,7 +1,6 @@
 ---
 title: "Assignment"
 author:  
-- Ibrahm Ayhan, student nr
 - Martijn Koster, 6234119
 - Jurrian van de Kraats, student nr
 - Tim Poorthuis, student nr
@@ -34,39 +33,6 @@ data <- read.table("data.txt", sep="\t")
 attach(data)
 ```
 
-```{r}
-des <- describe(data)
-tab1 <- data.frame(
-  variables = colnames(data), 
-  min.var = des$min, 
-  max.var = des$max,
-  mean.var = des$mean, 
-  n.var = des$n
-)
-```
-
-
-```{r des, echo = FALSE, results='hold'}
-tab1 %>%
-  kbl(caption = 'Descriptive statistics in the dataset',
-      col.names = c('Variables', 'Min', 'Max', 'Mean', 'N'),
-      booktabs = T) %>%
-  kable_classic(full_width = F, html_font = 'Cambria') %>% 
-  kable_styling(latex_options = "hold_position")
-
-```
-
-```{r}
-#Distribution of the people who ot hopsitalized
-table(data$hosp==1)
-```
-
-```{r}
-#Distribution of the exposure
-table(data$vacc==1)
-```
-
-
 
 
 
@@ -76,48 +42,57 @@ Write here a short motivation with a RQ
 
 __The aim of the study is to assess whether annual influenza vaccination reduces the risk of hospitalization among elderly (i.e., people aged >=65 years).__ 
 
-- Selection of confounders? or in methods
+
 
 # Methods
 
-- Selection of confounders? or in intro? 
+ 
 
-I'd say we use `age`, `cvd`, `DM` `contact`, based on a DAG? 
+```{r dag, fig.cap='DAG model with Vaccine as exposure and hospitalization as outcome'}
+library(ggdag)
+library(dagitty) 
+library(tidyverse)
 
-- Methods to control for (observed/unobserved confounding)
-
-
-We will develop a propensity score model and calculate Inverse probability weighting
-
-```{r}
-mean(age[vacc==0]); mean(age[vacc==1]) #mean age per exposure status
-mean(contact[vacc==0]); mean(contact[vacc==1]) #mean contact with GP in 12 months per exposure status
-table(vacc, pulm)
-table(vacc, cvd)
+dag1 <- dagify(
+  hlsU ~ sex + age + oU, # + other unobseverd variables that accumulate in this one (like smoking)
+  cntct ~ hlsU, #healthy life style is unobserved, contact is a proxy
+  vacc ~ cntct + age, # if you have not seen your GP in the last 12 months, you are not vaccinated
+  pulm ~ hlsU, # rokerslong door niet gezonde levenstijl
+  DM ~ age + cntct + hlsU, # diabetes door niet gezonden levenstijl, geen contact met de docter, en leeftijd
+  cvd ~ age + cntct + pulm + DM + hlsU, # hart en vaatziektes door leeftijd, geen contact met docter, rokerslong, diabetes en niet gezonde levenstijl
+  hosp ~ cvd + pulm + DM + cntct + vacc + sex, # hosp door alle enge ziektes en geen griepvaccine. 
+  exposure = "vacc", # The treatment
+  outcome = "hosp" # The effect of treatment
+  # optional: give co-ordinates of the variables in the plot
+) 
+ggdag_status(dag1) + theme_dag()
 ```
 
 
+
+- Selection of confounders? or in intro? 
+
+*Write here something about the confounders and the DAG* Based on the DAG model in Figure @fig{fig:dag}
+
+
+_Popensity score Model_ 
+|   In order to control for confounding (observed and unobserved), a propensity score model is developed with the 
+We will develop a propensity score model and calculate Inverse probability weighting
+
+
+
+
 ```{r}
-ps.formula <- vacc ~ rcs(age) + cvd + DM * rcs(contact)
+ps.formula <- vacc ~ rcs(age) + cvd + DM + rcs(contact) + pulm + sex
 
 ps.fit <- lrm(ps.formula, data=data)
 ps.fit$stats['C']
 ```
 
-The confounders are moderately related with the exposure of interest (C=0.65)
+The confounders are moderately related with the exposure of interest (C=0.66)
 --> Add some interpretation here.
 
-```{r}
-#extract_eq(glm(ps.formula, family='binomial', data=data), wrap=TRUE)
-```
-$$
-\begin{aligned}
-\log\left[ \frac { P( \operatorname{vacc} = \operatorname{1} ) }{ 1 - P( \operatorname{vacc} = \operatorname{1} ) } \right] &= \alpha + \beta_{1}(\operatorname{rcs(age)}_{\operatorname{age}}) + \beta_{2}(\operatorname{rcs(age)}_{\operatorname{age'}}) + \beta_{3}(\operatorname{rcs(age)}_{\operatorname{age''}})\ + \\
-&\quad \beta_{4}(\operatorname{rcs(age)}_{\operatorname{age'''}}) + \beta_{5}(\operatorname{cvd}) + \beta_{6}(\operatorname{DM}) + \beta_{7}(\operatorname{rcs(contact)}_{\operatorname{contact}})\ + \\
-&\quad \beta_{8}(\operatorname{rcs(contact)}_{\operatorname{contact'}}) + \beta_{9}(\operatorname{rcs(contact)}_{\operatorname{contact''}}) + \beta_{10}(\operatorname{rcs(contact)}_{\operatorname{contact'''}}) + \beta_{11}(\operatorname{DM} \times \operatorname{rcs(contact)}_{\operatorname{contact}})\ + \\
-&\quad \beta_{12}(\operatorname{DM} \times \operatorname{rcs(contact)}_{\operatorname{contact'}}) + \beta_{13}(\operatorname{DM} \times \operatorname{rcs(contact)}_{\operatorname{contact''}}) + \beta_{14}(\operatorname{DM} \times \operatorname{rcs(contact)}_{\operatorname{contact'''}})
-\end{aligned}
-$$
+
 
 ```{r}
 data$ps.score <- predict(ps.fit,type='fitted')
@@ -138,25 +113,33 @@ These are the unstabilised weights of the inverse probability score.
 
 We can use stabilised weights as well
 
+What's the difference compared to unstabilized weights?
+_The difference is in the numerator of the weights. Here, the results are equal, because the numerator is just a constant. However, the numerator model can include confounders too, in which case the stabilized weight yield more stable estimates._
+
+
 ```{r}
 num <- glm(vacc ~ 1, family='binomial', data=data)$fitted.values
 data$ipw.stab <- data$ipw * num  
+```
+
+
+```{r}
+sum(data$ipw.stab)
+sum(data$ipw)
+nrow(data)
+
 ```
 
 WE need to check for positivity: 
 
 The positivity assumption means that both exposed and unexposed individuals need to be present in all sub-populations defined by the combinations of covariate values --> Westreich, D., & Cole, S. R. (2010). Invited commentary: positivity in practice. American journal of epidemiology, 171(6), 674-677. 
 
-Deze barplot kunnen we waarschijnlijk wel mooier maken 
 
 ```{r}
 r <- 0.1 # midpoints of probability ranges to evaluate (the smaller the smaller the grouping)
 b <- c(0,seq(r/2,1-r/2,r),1) # breaks to be used on the PS
 t <- with(data,table(vacc,cut(ps.score,breaks=b  ))) # make table for barplotting
-barplot(t,beside=T,names.arg=c(0,seq(r,1-r,r),1),col=c("blue","red"),legend=T)
-
 ```
-
 
 ```{r}
 t_df <- as.data.frame.matrix(t) %>% 
@@ -164,11 +147,11 @@ t_df <- as.data.frame.matrix(t) %>%
   gather(key = "ps.range", value = "count", -vacc)
 ```
 
-```{r}
+```{r figure1, fig.show='hold', fig.cap='Checking for non-positivity'}
 library(ggplot2)
 
 ggplot(t_df, aes(x = ps.range, y = count, fill = vacc)) +
-  geom_bar(stat = "identity", position = "dodge") +
+  geom_bar(stat = "identity", position='dodge') +
   scale_x_discrete(labels = c(0,seq(r,1-r,r),1)) +
   scale_fill_manual(values = c("blue", "red")) +
   labs(x = "PS Score Range", y = "Count", fill = "Vaccination Status") +
@@ -176,22 +159,264 @@ ggplot(t_df, aes(x = ps.range, y = count, fill = vacc)) +
 ```
 
 
-There is non-positivity
-
-
-
 ```{r}
-#t(aggregate(cbind(age,meal.cal,wt.loss,sex=sex==2) ~ ph.ecog.bin,data=df,mean))  
+
 ```
+
+
+
+There is non-positivity
 
 
 - Checking assumptions of method to control for confounding
 
 - Implementation of methods to control for (observed/unobserved) confounding
 
-- Make a DAG? 
+```{r}
+t(aggregate(cbind(age, cvd, pulm, DM, contact) ~ vacc, data=data, mean))
+#t(aggregate(cbind(age,meal.cal,wt.loss,sex=sex==2) ~ ph.ecog.bin,data=df,mean))  
+# note: this works for sex as this is a binary variable (mean of such variable=proportion),
+# sex==2 is Female
+# if you have a categorical variable with more levels, you can use individual level indicators,
+# eg cbind(..., "Never smoking"=smok==1,"Past smoking"=smok==2,"Current smoking"=smok==3,...) 
+
+# PS via IPW adjusted baseline table:
+#t(aggregate(cbind(age, cvd, pulm, DM, contact)*ipw ~ vacc,data=data,sum) 
+
+```
+
+
 
 # Results
+
+## Baseline Characteristics 
+
+
+
+
+```{r}
+tot_vacc <- sum(vacc)
+tot_novacc <- sum(vacc==0)
+
+age_mean <- round(mean(age),2)
+age_sd <- round(sd(age),2)
+
+
+age_vacc_mean <- round(mean(age[vacc==1]),2)
+age_novacc_mean <- round(mean(age[vacc==0]),2)
+age_vacc_sd <- round(sd(age[vacc==1]),2)
+age_novacc_sd <- round(sd(age[vacc==0]),2)
+
+contact_mean <- round(mean(contact),2)
+contact_vacc_mean <- round(mean(contact[vacc==1]),2)
+contact_novacc_mean <- round(mean(contact[vacc==0]),2)
+contact_sd <- round(sd(contact),2)
+contact_vacc_sd <- round(sd(contact[vacc==1]),2)
+contact_novacc_sd <- round(sd(contact[vacc==0]),2)
+
+pulm_sum <- sum(pulm)
+pulm_mean <- round(100*mean(pulm), 2)
+
+pulm_vacc_sum <- sum(pulm[vacc==1])
+pulm_vacc_mean <- round(100*mean(pulm[vacc==1]),2)
+pulm_novacc_sum <- sum(pulm[vacc==0])
+pulm_novacc_mean <- round(100*mean(pulm[vacc==0]),2)
+
+sex_sum <- sum(sex) #1=female
+sex_mean <- round(100*mean(sex), 2)
+
+sex_vacc_sum <- sum(sex[vacc==1])
+sex_vacc_mean <- round(100*mean(sex[vacc==1]),2)
+
+sex_novacc_sum <- sum(sex[vacc==0])
+sex_novacc_mean <- round(100*mean(sex[vacc==0]),2)
+
+cvd_sum <- sum(cvd) #1=female
+cvd_mean <- round(100*mean(cvd),2)
+
+cvd_vacc_sum <- sum(cvd[vacc==1])
+cvd_vacc_mean <- round(100*mean(cvd[vacc==1]),2)
+
+cvd_novacc_sum <- sum(cvd[vacc==0])
+cvd_novacc_mean <- round(100*mean(cvd[vacc==0]),2)
+
+dm_sum <- sum(DM) #1=female
+dm_mean <- round(100*mean(DM),2)
+
+dm_vacc_sum <- sum(DM[vacc==1])
+dm_vacc_mean <- round(100*mean(DM[vacc==1]),2)
+
+dm_novacc_sum <- sum(DM[vacc==0])
+dm_novacc_mean <- round(100*mean(DM[vacc==0]),2)
+```
+
+
+```{r}
+
+age_hosp_mean <- round(mean(age[hosp==1]),2)
+age_nohosp_mean <- round(mean(age[hosp==0]),2)
+age_hosp_sd <- round(sd(age[hosp==1]),2)
+age_nohosp_sd <- round(sd(age[hosp==0]),2)
+
+
+contact_hosp_mean <- round(mean(contact[hosp==1]),2)
+contact_nohosp_mean <- round(mean(contact[hosp==0]),2)
+
+contact_hosp_sd <- round(sd(contact[hosp==1]),2)
+contact_nohosp_sd <- round(sd(contact[hosp==0]),2)
+
+
+pulm_hosp_sum <- sum(pulm[hosp==1])
+pulm_hosp_mean <- round(100*mean(pulm[vacc==1]),2)
+pulm_nohosp_sum <- sum(pulm[hosp==0])
+pulm_nohosp_mean <- round(100*mean(pulm[hosp==0]),2)
+
+
+sex_hosp_sum <- sum(sex[hosp==1])
+sex_hosp_mean <- round(100*mean(sex[hosp==1]),2)
+
+sex_nohosp_sum <- sum(sex[hosp==0])
+sex_nohosp_mean <- round(100*mean(sex[hosp==0]),2)
+
+
+cvd_hosp_sum <- sum(cvd[hosp==1])
+cvd_hosp_mean <- round(100*mean(cvd[hosp==1]),2)
+
+cvd_nohosp_sum <- sum(cvd[hosp==0])
+cvd_nohosp_mean <- round(100*mean(cvd[hosp==0]),2)
+
+
+dm_hosp_sum <- sum(DM[hosp==1])
+dm_hosp_mean <- round(100*mean(DM[hosp==1]),2)
+
+dm_nohosp_sum <- sum(DM[hosp==0])
+dm_nohosp_mean <- round(100*mean(DM[hosp==0]),2)
+
+vacc_hosp_sum <- sum(vacc[hosp==1])
+vacc_hosp_mean <- round(100*mean(vacc[hosp==1]),2)
+
+vacc_nohosp_sum <- sum(vacc[hosp==0])
+vacc_nohosp_mean <- round(100*mean(vacc[hosp==0]),2)
+```
+
+
+```{r}
+
+
+characteristics <- c('N', 'Age, mean (SD)', 'Contact, mean (SD)', 'Female, n (%)', 'Pulmonary disease, n (%)', 'Cardiovascular disease, n (%)', 'Diabetes mellitus, n(%)', 'Received Influenza Vaccination, n (%)')
+total <- c(nrow(data), paste0(age_mean, ' (', age_sd, ')'),
+           paste0(contact_mean, ' (', contact_sd, ')'),
+           paste0(sex_sum, ' (', sex_mean, ')'),
+           paste0(pulm_sum, ' (', pulm_mean, ')'),
+           paste0(cvd_sum, ' (', cvd_mean, ')'),
+           paste0(dm_sum, ' (', dm_mean, ')'),
+           ""
+           )
+
+vaccinated <- c(tot_vacc, paste0(age_vacc_mean, ' (', age_vacc_sd, ')'),
+           paste0(contact_vacc_mean, ' (', contact_vacc_sd, ')'),
+           paste0(sex_vacc_sum, ' (', sex_vacc_mean, ')'),
+           paste0(pulm_vacc_sum, ' (', pulm_vacc_mean, ')'),
+           paste0(cvd_vacc_sum, ' (', cvd_vacc_mean, ')'),
+           paste0(dm_vacc_sum, ' (', dm_vacc_mean, ')'), 
+           ""
+           )
+
+not_vaccinated <-  c(tot_novacc, paste0(age_novacc_mean, ' (', age_novacc_sd, ')'),
+           paste0(contact_novacc_mean, ' (', contact_novacc_sd, ')'),
+           paste0(sex_novacc_sum, ' (', sex_novacc_mean, ')'),
+           paste0(pulm_novacc_sum, ' (', pulm_novacc_mean, ')'),
+           paste0(cvd_novacc_sum, ' (', cvd_novacc_mean, ')'),
+           paste0(dm_novacc_sum, ' (', dm_novacc_mean, ')'),
+           ""
+           )
+
+
+hospitalized <- c(sum(hosp), paste0(age_hosp_mean, ' (', age_hosp_sd, ')'),
+           paste0(contact_hosp_mean, ' (', contact_hosp_sd, ')'),
+           paste0(sex_hosp_sum, ' (', sex_hosp_mean, ')'),
+           paste0(pulm_hosp_sum, ' (', pulm_hosp_mean, ')'),
+           paste0(cvd_hosp_sum, ' (', cvd_hosp_mean, ')'),
+           paste0(dm_hosp_sum, ' (', dm_hosp_mean, ')'), 
+           paste0(vacc_hosp_sum, ' (', vacc_hosp_mean, ')')
+           )
+
+not_hospitalized <-  c(sum(hosp==0), paste0(age_nohosp_mean, ' (', age_nohosp_sd, ')'),
+           paste0(contact_nohosp_mean, ' (', contact_nohosp_sd, ')'),
+           paste0(sex_nohosp_sum, ' (', sex_nohosp_mean, ')'),
+           paste0(pulm_nohosp_sum, ' (', pulm_nohosp_mean, ')'),
+           paste0(cvd_nohosp_sum, ' (', cvd_nohosp_mean, ')'),
+           paste0(dm_nohosp_sum, ' (', dm_nohosp_mean, ')'),
+           paste0(vacc_nohosp_sum, ' (', vacc_nohosp_mean, ')')
+           )
+
+
+
+tab1 <- data.frame(
+  variables = characteristics, 
+  total = total, 
+  vaccinated = vaccinated,
+  not_vaccinated = not_vaccinated,
+  hospitalized,
+  not_hospitalized
+  
+)
+```
+
+
+```{r}
+
+# 
+# characteristics <- c('N', 'Age, mean (SD)', 'Contact, mean (SD)', 'Female, n (%)', 'Pulmonary disease, n (%)', 'Cardiovascular disease, n (%)', 'Diabetes mellitus, n(%)', 'Vaccinated, n(%)')
+# total <- c(nrow(data), paste0(age_mean, ' (', age_sd, ')'),
+#            paste0(contact_mean, ' (', contact_sd, ')'),
+#            paste0(sex_sum, ' (', sex_mean, ')'),
+#            paste0(pulm_sum, ' (', pulm_mean, ')'),
+#            paste0(cvd_sum, ' (', cvd_mean, ')'),
+#            paste0(dm_sum, ' (', dm_mean, ')')
+#            )
+# 
+# vaccinated <- c(tot_vacc, paste0(age_vacc_mean, ' (', age_vacc_sd, ')'),
+#            paste0(contact_vacc_mean, ' (', contact_vacc_sd, ')'),
+#            paste0(sex_vacc_sum, ' (', sex_vacc_mean, ')'),
+#            paste0(pulm_vacc_sum, ' (', pulm_vacc_mean, ')'),
+#            paste0(cvd_vacc_sum, ' (', cvd_vacc_mean, ')'),
+#            paste0(dm_vacc_sum, ' (', dm_vacc_mean, ')')
+#            )
+# 
+# not_vaccinated <-  c(tot_novacc, paste0(age_novacc_mean, ' (', age_novacc_sd, ')'),
+#            paste0(contact_novacc_mean, ' (', contact_novacc_sd, ')'),
+#            paste0(sex_novacc_sum, ' (', sex_novacc_mean, ')'),
+#            paste0(pulm_novacc_sum, ' (', pulm_novacc_mean, ')'),
+#            paste0(cvd_novacc_sum, ' (', cvd_novacc_mean, ')'),
+#            paste0(dm_novacc_sum, ' (', dm_novacc_mean, ')')
+#            )
+# 
+# 
+# tab1 <- data.frame(
+#   variables = characteristics, 
+#   total = total, 
+#   vaccinated = vaccinated,
+#   not_vaccinated = not_vaccinated
+# )
+```
+
+| Table \@ref(tab:des) presents the baseline characteristics of 40,000 individuals who were included in the study. The mean age `r age_mean`  and the majority of the study population `r sex_mean`% were female. Approximately half of the respondent have Cardiovascular disease, whereas `r pulm_mean` percent have Pulmonary disease and `r dm_mean`% have Diabetes Mellitus.
+|   A total of `r sum(vacc)` (`r round(100*mean(vacc),2)`%) respondents were vaccinated, whereas `r sum(vacc==0)` (`r round(100*mean(vacc==0),2)`%) were not vaccinated. People who received a vaccination had on average more often pulmonary disease (`r pulm_vacc_mean`% vs `r pulm_novacc_mean`%), cardiovascular disease (`r cvd_vacc_mean`% vs `r cvd_novacc_mean`%) and diabetes (`r dm_vacc_mean`% vs `r dm_novacc_mean`%).
+|   Baseline characteristics stratified by the study outcome indicate that `r sum(hosp)` of the respondents were hospitalized as opposed to `r sum(hosp==0)` who were not. Respondents who were hospitalized were older (`r age_hosp_mean` vs `r age_nohosp_mean`), had more often contact with the GP (`r contact_hosp_mean` vs `r contact_nohosp_mean`), were on average less often a female (`r sex_hosp_mean`% vs `r sex_nohosp_mean`%), had on average more often cardiovascular disease (`r cvd_hosp_mean`% vs `r cvd_nohosp_mean`%) and on average more often Diabetes (`r dm_hosp_mean`% vs `r dm_nohosp_mean`%). 
+
+
+```{r des, echo = FALSE, results='hold'}
+tab1 %>%
+  kbl(caption = 'Baseline Characteristics stratified by Influenza vaccination received and Hospitalisation',
+      col.names = c('Characteristics', 'Total', 'Yes', 'No', 'Yes', 'No'),
+      booktabs = T) %>%
+  kable_classic(full_width = F, html_font = 'Cambria') %>% 
+  add_header_above(c(" ", " ", "Influenza vaccination received" = 2, 'Hospitalized'=2)) %>% 
+  kable_styling(latex_options = "hold_position")
+
+```
+
 
 - Reporting characteristics of study population 
 
@@ -203,12 +428,34 @@ Crude measures:
 crude.fit <- lrm(hosp ~ vacc, data=data)
 log.or <- crude.fit$coef[2]
 se.log.or <- sqrt(diag(vcov(crude.fit))[2])
-exp(c(log.or, log.or - 1.96*se.log.or, log.or + 1.96*se.log.or))
+res_crude <- round(exp(c(log.or, log.or - 1.96*se.log.or, log.or + 1.96*se.log.or)), 3)
 
 
-crude.fit$stats['C']
+res_crude_c <- round(crude.fit$stats['C'], 3) 
 ```
-The crude association between vaccination status and hospitalization was examined using logistic regression, and the odds ratio was found to be 0.92 (95% CI: 0.70, 1.21), indicating a non-significant association. The C statistic,  a measure of discrimination, was 0.508, suggesting poor predictive performance of the model. 
+
+```{r}
+adj1.fit <- lrm(hosp ~ vacc + ps.score, data=data)
+log.or <- adj1.fit$coef[2]
+se.log.or <- sqrt(diag(vcov(adj1.fit))[2])
+
+res_ps <- round(exp(c(log.or, log.or - 1.96*se.log.or, log.or + 1.96*se.log.or)), 3)
+
+res_ps_c <- round(adj1.fit$stats['C'], 3)
+```
+
+```{r}
+adj2.fit <- lrm(hosp ~ vacc, weights = ipw.stab, data=data)
+log.or <- adj2.fit$coef[2]
+se.log.or <- sqrt(diag(vcov(adj2.fit))[2])
+res_ipw <- round(exp(c(log.or, log.or - 1.96*se.log.or, log.or + 1.96*se.log.or)), 3) 
+
+
+res_ipw_c <- round(adj2.fit$stats['C'], 3)
+```
+
+The crude association between vaccination status and hospitalization was examined using logistic regression, and the odds ratio was found to be `r res_crude[1]` (95% CI: `r res_crude[2]`, `r res_crude[3]`), indicating a non-significant association. The C statistic,  a measure of discrimination, was `r res_crude_c`, suggesting poor predictive performance of the model. 
+
 
 
 __Adjusted measures__ 
