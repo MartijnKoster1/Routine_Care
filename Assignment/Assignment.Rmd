@@ -6,11 +6,13 @@ author:
 - Tim Poorthuis, student nr
 
 date: "2023-02-15"
+
 output:
-  bookdown::pdf_document2:
-    extra_dependencies: "subfig" 
+  bookdown::pdf_book:
+    extra_dependencies: "subfig"
     toc: false 
     number_sections: false
+  
 ---
 
 ```{r setup, include=FALSE}
@@ -32,6 +34,7 @@ library(psych)
 data <- read.table("data.txt", sep="\t")
 attach(data)
 ```
+
 
 
 
@@ -76,8 +79,10 @@ Based on the Directed Acyclical Graph (DAG) model in Figure @ref(fig:dag) confou
 Baseline characteristics are important, because they provide essential information on the participant and help to ensure that the study is conducted in a fair and unbiased manner. The baseline characteristics of the study were summarised. The categorical variables were summarised as frequencies and means, whereas the continuous variables as means SD. The baseline characteristics will be stratified by both the exposure as the outcome variable. 
 
 ### Propensity Score Model
-In order to control for confounding (observed and unobserved), a propensity score score was estimated by fitting a logistic regression. The 
+| In order to control for confounding (observed and unobserved), a propensity score score was estimated by fitting a logistic regression. The variables used to calculate the propensity score are derived from the aforementioned DAG, namely: age, sex, cardiovascular disease, pulmonary disease, diabetis mellitus, and GP contact in 12 months prior to start of study. For the variables age and contact a spline is used, because it has shown favorable performance compared to other propensity score methods (Tian, Baro & Zhang, 2019). 
+| 
 We will develop a propensity score model and calculate Inverse probability weighting
+
 
 
 
@@ -375,7 +380,7 @@ tab1 <- data.frame(
 # )
 ```
 
-|Table \@ref(tab:des) presents the baseline characteristics of 40,000 individuals who were included in the study. The mean age `r age_mean`  and the majority of the study population `r sex_mean`% were female. Approximately half of the respondent have Cardiovascular disease, whereas `r pulm_mean` percent have Pulmonary disease and `r dm_mean`% have Diabetes Mellitus.
+| Table \@ref(tab:des) presents the baseline characteristics of 40,000 individuals who were included in the study. The mean age `r age_mean`  and the majority of the study population `r sex_mean`% were female. Approximately half of the respondent have Cardiovascular disease, whereas `r pulm_mean` percent have Pulmonary disease and `r dm_mean`% have Diabetes Mellitus.
 |   A total of `r sum(vacc)` (`r round(100*mean(vacc),2)`%) respondents were vaccinated, whreas `r sum(vacc==0)` (`r round(100*mean(vacc==0),2)`%) were not vaccinated. People who received a vaccination had on average more often pulmonary disease (`r pulm_vacc_mean`% vs `r pulm_novacc_mean`%), cardiovascular disease (`r cvd_vacc_mean`% vs `r cvd_novacc_mean`%) and diabetes (`r dm_vacc_mean`% vs `r dm_novacc_mean`%).
 |   Baseline characteristics stratified by the study outcome indicate that `r sum(hosp)` of the respondents were hospitalized as opposed to `r sum(hosp==0)` who were not. Respondents who were hospitalized were older (`r age_hosp_mean` vs `r age_nohosp_mean`), had more often contact with the GP (`r contact_hosp_mean` vs `r contact_nohosp_mean`), were on average less often a female (`r sex_hosp_mean`% vs `r sex_nohosp_mean`%), had on average more often cardiovascular disease (`r cvd_hosp_mean`% vs `r cvd_nohosp_mean`%) and on average more often Diabetes (`r dm_hosp_mean`% vs `r dm_nohosp_mean`%). 
 
@@ -433,8 +438,8 @@ res_ipw_p <- round(adj2.fit$stats['P'], 3)
 
 ```{r}
 adj3.fit <- lrm(hosp ~ vacc, weights = ipw, data=data)
-log.or <- adj2.fit$coef[2]
-se.log.or <- sqrt(diag(vcov(adj2.fit))[2])
+log.or <- adj3.fit$coef[2]
+se.log.or <- sqrt(diag(vcov(adj3.fit))[2])
 res_unipw <- round(exp(c(log.or, log.or - 1.96*se.log.or, log.or + 1.96*se.log.or)), 3) 
 
 
@@ -500,6 +505,7 @@ __Adjusted measures__
 - Other issues (both positive and negative) 
 
 
+# References
 
 
-
+Yuxi Tian, Elande Baro & Rongmei Zhang (2019) Performance evaluation of regression splines for propensity score adjustment in post-market safety analysis with multiple treatments, Journal of Biopharmaceutical Statistics, 29:5, 810-821, DOI: 10.1080/10543406.2019.1657138
