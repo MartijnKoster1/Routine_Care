@@ -53,7 +53,7 @@ __The aim of the study is to assess whether annual influenza vaccination reduces
 
 # Methods
 
-```{r dag, fig.cap = 'DAG model with Vaccine as exposure and hospitalization as outcome', fig.height='50%'}
+```{r dag, fig.cap = 'DAG model with Vaccine as exposure and hospitalization as outcome'}
 dag1 <- dagify(
   hlsU ~ sex + age + oU, # + other unobseverd variables that accumulate in this one (like smoking)
   cntct ~ hlsU, #healthy life style is unobserved, contact is a proxy
