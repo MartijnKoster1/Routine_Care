@@ -264,12 +264,12 @@ tab1 <- data.frame(
 |   Baseline characteristics stratified by the study outcome indicate that `r sum(hosp)` of the respondents were hospitalized as opposed to `r sum(hosp==0)` who were not. Respondents who were hospitalized were older (`r age_hosp_mean` vs `r age_nohosp_mean`), had more often contact with the GP (`r contact_hosp_mean` vs `r contact_nohosp_mean`), were on average less often a female (`r sex_hosp_mean`% vs `r sex_nohosp_mean`%), had on average more often cardiovascular disease (`r cvd_hosp_mean`% vs `r cvd_nohosp_mean`%) and on average more often Diabetes (`r dm_hosp_mean`% vs `r dm_nohosp_mean`%).
 
 ### DAG
-| Domain knowledge was used to create a DAG (Figure @ref(fig:dag)) that explains the causal structure present in the data. The variable 'contact with chiropractor' was given as a proxy for the unobserved variable healthy lifestyle. A flu vaccination is season, hence does the time from last contact with the chiropractor form a causal path to vaccination status. Having obtained a influenza vaccination was associated with a lower risk for adverse cardiovascular events with hospitalisation as a result (Behrouzi et al., 2022). Severe cardiovascular disease, pulmonary disease and diabetes could all be a cause for hospitalisation. 
+| Domain knowledge was used to create a DAG (Figure @ref(fig:dag)) that explains the causal structure present in the data. The variable 'contact with chiropractor' was given as a proxy for the unobserved variable healthy lifestyle. An influenza vaccination is season, hence does the time from last contact with the chiropractor form a causal path to vaccination status. Furthermore is the national distribution of an influenza vaccination determined age, hence does age form a causal path towards vaccination status. Having obtained a influenza vaccination was associated with a lower risk for adverse cardiovascular events with hospitalization as a result (Behrouzi et al., 2022). Having pulmonary disease and diabetes increases ones chances to get severe cardiovascular disease (Nederlands Huisartsen Genootschap, date not given). The healthiness of ones lifestyle forms a major cause in getting (severe) cardiovascular disease, pulmonary disease and diabetes. In return is once sex an important confounder in the healthiness of ones lifestyle (Loef & Walach, 2012). The previously mentioned diseases could all be a cause for hospitalization. 
 
 ```{r dag, fig.cap = 'DAG model with Vaccine as exposure and hospitalization as outcome'}
 dag1 <- dagify(
-  hlsU ~ sex + age + oU, # + other unobseverd variables that accumulate in this one (like smoking)
-  cntct ~ hlsU, #healthy life style is unobserved, contact is a proxy
+  hlsU ~ sex + oU, # + other unobserved variables that accumulate in this one (like smoking)
+  cntct ~ hlsU + age, #healthy life style is unobserved, contact is a proxy
   vacc ~ cntct + age, # if you have not seen your GP in the last 12 months, you are not vaccinated
   pulm ~ hlsU, # rokerslong door niet gezonde levenstijl
   DM ~ age + cntct + hlsU, # diabetes door niet gezonden levenstijl, geen contact met de docter, en leeftijd
@@ -491,8 +491,12 @@ Austin, P. C. (2011). An introduction to propensity score methods for reducing t
 
 Behrouzi, B., Bhatt, D. L., Cannon, C. P., Vardeny, O., Lee, D. S., Solomon, S. D., &amp; Udell, J. A. (2022). Association of influenza vaccination with cardiovascular risk. JAMA Network Open, 5(4). https://doi.org/10.1001/jamanetworkopen.2022.8873.
 
+Loef, M., &amp; Walach, H. (2012). The combined effects of healthy lifestyle behaviors on all cause mortality: A systematic review and meta-analysis. Preventive Medicine, 55(3), 163–170. https://doi.org/10.1016/j.ypmed.2012.06.017
+
 Shiba K, Kawahara T. Using Propensity Scores for Causal Inference: Pitfalls and Tips. J Epidemiol. 2021 Aug 5;31(8):457-463. doi: 10.2188/jea.JE20210145. Epub 2021 Jun 12. PMID: 34121051; PMCID: PMC8275441.
 
 Yuxi Tian, Elande Baro & Rongmei Zhang (2019) Performance evaluation of regression splines for propensity score adjustment in post-market safety analysis with multiple treatments, Journal of Biopharmaceutical Statistics, 29:5, 810-821, DOI: 10.1080/10543406.2019.1657138
+
+Nederlands Huisartsen Genootschap, _Risico hart- en vaatziekten verlagen_, https://www.thuisarts.nl/risico-hart-en-vaatziekten-verlagen, accesed: 23-2-2023
 
 Westreich, D., & Cole, S. R. (2010). Invited commentary: positivity in practice. American journal of epidemiology, 171(6), 674-677.
