@@ -264,7 +264,7 @@ tab1 <- data.frame(
 |   Baseline characteristics stratified by the study outcome indicate that `r sum(hosp)` of the respondents were hospitalized as opposed to `r sum(hosp==0)` who were not. Respondents who were hospitalized were older (`r age_hosp_mean` vs `r age_nohosp_mean`), had more often contact with the GP (`r contact_hosp_mean` vs `r contact_nohosp_mean`), were on average less often a female (`r sex_hosp_mean`% vs `r sex_nohosp_mean`%), had on average more often cardiovascular disease (`r cvd_hosp_mean`% vs `r cvd_nohosp_mean`%) and on average more often Diabetes (`r dm_hosp_mean`% vs `r dm_nohosp_mean`%).
 
 ### DAG
-| Domain knowledge was used to create a DAG that explains the causal structure present in the data. The variable 'contact with chiropractor' was given as a proxy for the unobserved variable healthy lifestyle. A flue vaccination is season, hence does the time from last contact with the chiropractor form a causal path to vaccination status. 
+| Domain knowledge was used to create a DAG that explains the causal structure present in the data. The variable 'contact with chiropractor' was given as a proxy for the unobserved variable healthy lifestyle. A flu vaccination is season, hence does the time from last contact with the chiropractor form a causal path to vaccination status. 
 
 ```{r dag, fig.cap = 'DAG model with Vaccine as exposure and hospitalization as outcome'}
 dag1 <- dagify(
@@ -273,7 +273,7 @@ dag1 <- dagify(
   vacc ~ cntct + age, # if you have not seen your GP in the last 12 months, you are not vaccinated
   pulm ~ hlsU, # rokerslong door niet gezonde levenstijl
   DM ~ age + cntct + hlsU, # diabetes door niet gezonden levenstijl, geen contact met de docter, en leeftijd
-  cvd ~ age + cntct + pulm + DM + hlsU, # hart en vaatziektes door leeftijd, geen contact met docter, rokerslong, diabetes en niet gezonde levenstijl
+  cvd ~ age + cntct + pulm + DM + hlsU+ vacc, # hart en vaatziektes door leeftijd, geen contact met docter, rokerslong, diabetes en niet gezonde levenstijl
   hosp ~ cvd + pulm + DM + cntct + vacc + sex, # hosp door alle enge ziektes en geen griepvaccine. 
   exposure = "vacc", # The treatment
   outcome = "hosp" # The effect of treatment
