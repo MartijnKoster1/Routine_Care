@@ -27,6 +27,8 @@ library(rms)
 library(tidyverse)
 library(kableExtra)
 library(psych)
+library(ggdag)
+library(dagitty) 
 ```
 
 
@@ -50,10 +52,6 @@ __The aim of the study is to assess whether annual influenza vaccination reduces
 # Methods
 
 ```{r dag, fig.cap = 'DAG model with Vaccine as exposure and hospitalization as outcome'}
-library(ggdag)
-library(dagitty) 
-library(tidyverse)
-
 dag1 <- dagify(
   hlsU ~ sex + age + oU, # + other unobseverd variables that accumulate in this one (like smoking)
   cntct ~ hlsU, #healthy life style is unobserved, contact is a proxy
@@ -89,7 +87,6 @@ We will develop a propensity score model and calculate Inverse probability weigh
 
 ```{r}
 ps.formula <- vacc ~ rcs(age) + cvd + DM + rcs(contact) + pulm + sex
-
 ps.fit <- lrm(ps.formula, data=data)
 ps.fit$stats['C']
 ```
@@ -451,21 +448,23 @@ res_unipw_p <- round(adj2.fit$stats['P'], 3)
 ```{r}
 print_p_value <- function(p_value) {
   if (p_value < 0.001) {
-    print('<.001')
+    paste0('<.001')
   } else {
-    print(p_value)
+    paste0(p_value)
   }
 }
 ```
-
-
-The crude association between vaccination status and hospitalization was examined using logistic regression, and the odds ratio was found to be `r res_crude[1]` (95% CI: `r res_crude[2]`, `r res_crude[3]`), indicating a non-significant association (p = `r print_p_value(res_ipw_p)`. The C statistic,  a measure of discrimination, was `r res_crude_c`, suggesting poor predictive performance of the model. 
 
 ```{r}
 make_or <- function(OR) {
   paste0(OR[1], ' (', OR[2], ' to ', OR[3],')')
 }
 ```
+
+| As shown in Table \@ref(tab:res), the crude association between vaccination status and hospitalization was examined using logistic regression, and the odds ratio was found to be `r res_crude[1]` (95% CI: `r res_crude[2]`, `r res_crude[3]`), indicating a non-significant association (p = `r print_p_value(res_crude_p)`). The C-statistic,  a measure of discrimination, was `r res_crude_c`, suggesting poor predictive performance of the model. 
+|     Considering the second model in Table \@ref(tab:res), which presents the PS score as covariate, the Odds Ratio suggests a  significant negative association (adjusted OR: `r res_ps[1]`. 95% CI `r res_ps[2]` to `r res_ps[3]`; p `r print_p_value(res_ps_p)`). The C-Statistic of `r res_ps_c` suggests that the model has moderate discriminatory power. 
+|     The IPW model with unstabilised weights yields significant negative association between the exposure and outcome variable (adjusted OR: `r res_unipw[1]`, 95%CI `r res_unipw[2]` to `r res_unipw[3]`; p `r print_p_value(res_unipw_p)`). 
+
 
 
 ```{r}
@@ -485,7 +484,7 @@ tab2 <- data.frame(models,
 
 ```{r res, echo = FALSE, results='hold'}
 tab2 %>% 
-   kbl(caption = 'Different regression results bla bla bla',
+   kbl(caption = 'Association between influenza vaccination and hospitalization (n=40000)',
       col.names = c('Model Specification', 'OR (95% CI)', 'P-Value', 'C-Statistic'),
       booktabs = T) %>%
   kable_classic(full_width = F, html_font = 'Cambria') %>%
@@ -507,5 +506,6 @@ __Adjusted measures__
 
 # References
 
+Shiba K, Kawahara T. Using Propensity Scores for Causal Inference: Pitfalls and Tips. J Epidemiol. 2021 Aug 5;31(8):457-463. doi: 10.2188/jea.JE20210145. Epub 2021 Jun 12. PMID: 34121051; PMCID: PMC8275441.
 
 Yuxi Tian, Elande Baro & Rongmei Zhang (2019) Performance evaluation of regression splines for propensity score adjustment in post-market safety analysis with multiple treatments, Journal of Biopharmaceutical Statistics, 29:5, 810-821, DOI: 10.1080/10543406.2019.1657138
