@@ -64,7 +64,6 @@ dag1 <- dagify(
   hosp ~ cvd + pulm + DM + cntct + vacc + sex, # hosp door alle enge ziektes en geen griepvaccine. 
   exposure = "vacc", # The treatment
   outcome = "hosp" # The effect of treatment
-  # optional: give co-ordinates of the variables in the plot
 ) 
 ggdag_status(dag1) + theme_dag()
 ```
@@ -534,4 +533,4 @@ Shiba K, Kawahara T. Using Propensity Scores for Causal Inference: Pitfalls and 
 
 Yuxi Tian, Elande Baro & Rongmei Zhang (2019) Performance evaluation of regression splines for propensity score adjustment in post-market safety analysis with multiple treatments, Journal of Biopharmaceutical Statistics, 29:5, 810-821, DOI: 10.1080/10543406.2019.1657138
 
-Westreich, D., & Cole, S. R. (2010). Invited commentary: positivity in practice. American journal of epidemiology, 171(6), 674-677. 
+Westreich, D., & Cole, S. R. (2010). Invited commentary: positivity in practice. American journal of epidemiology, 171(6), 674-677.  
