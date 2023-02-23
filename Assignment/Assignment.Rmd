@@ -220,42 +220,7 @@ tab1 <- data.frame(
 )
 ```
 
-```{r}
 
-# 
-# characteristics <- c('N', 'Age, mean (SD)', 'Contact, mean (SD)', 'Female, n (%)', 'Pulmonary disease, n (%)', 'Cardiovascular disease, n (%)', 'Diabetes mellitus, n(%)', 'Vaccinated, n(%)')
-# total <- c(nrow(data), paste0(age_mean, ' (', age_sd, ')'),
-#            paste0(contact_mean, ' (', contact_sd, ')'),
-#            paste0(sex_sum, ' (', sex_mean, ')'),
-#            paste0(pulm_sum, ' (', pulm_mean, ')'),
-#            paste0(cvd_sum, ' (', cvd_mean, ')'),
-#            paste0(dm_sum, ' (', dm_mean, ')')
-#            )
-# 
-# vaccinated <- c(tot_vacc, paste0(age_vacc_mean, ' (', age_vacc_sd, ')'),
-#            paste0(contact_vacc_mean, ' (', contact_vacc_sd, ')'),
-#            paste0(sex_vacc_sum, ' (', sex_vacc_mean, ')'),
-#            paste0(pulm_vacc_sum, ' (', pulm_vacc_mean, ')'),
-#            paste0(cvd_vacc_sum, ' (', cvd_vacc_mean, ')'),
-#            paste0(dm_vacc_sum, ' (', dm_vacc_mean, ')')
-#            )
-# 
-# not_vaccinated <-  c(tot_novacc, paste0(age_novacc_mean, ' (', age_novacc_sd, ')'),
-#            paste0(contact_novacc_mean, ' (', contact_novacc_sd, ')'),
-#            paste0(sex_novacc_sum, ' (', sex_novacc_mean, ')'),
-#            paste0(pulm_novacc_sum, ' (', pulm_novacc_mean, ')'),
-#            paste0(cvd_novacc_sum, ' (', cvd_novacc_mean, ')'),
-#            paste0(dm_novacc_sum, ' (', dm_novacc_mean, ')')
-#            )
-# 
-# 
-# tab1 <- data.frame(
-#   variables = characteristics, 
-#   total = total, 
-#   vaccinated = vaccinated,
-#   not_vaccinated = not_vaccinated
-# )
-```
 
 ### Baseline Characteristics
 
@@ -444,7 +409,9 @@ make_or <- function(OR) {
 | As shown in Table \@ref(tab:res), the crude association between vaccination status and hospitalization was examined using logistic regression, and the odds ratio was found to be `r res_crude[1]` (95% CI: `r res_crude[2]`, `r res_crude[3]`), indicating a non-significant association (p = `r print_p_value(res_crude_p)`). The C-statistic, a measure of discrimination, was `r res_crude_c`, suggesting poor predictive performance of the model.
 |     Considering the second model in Table \@ref(tab:res), which presents the PS score as covariate, the Odds Ratio suggests a significant negative association (adjusted OR: `r res_ps[1]`. 95% CI `r res_ps[2]` to `r res_ps[3]`; p `r print_p_value(res_ps_p)`). The C-Statistic of `r res_ps_c` suggests that the model has moderate discriminatory power.
 |     The IPW model with unstabilised weights yields significant negative association between the exposure and outcome variable (adjusted OR: `r res_unipw[1]`, 95%CI `r res_unipw[2]` to `r res_unipw[3]`; p `r print_p_value(res_unipw_p)`). The model presents moderate discriminatory power, where C = `r res_unipw_c`.
-|     The last model in Table \@ref(tab:res) is an IPW model with stabilised weights. This model also presents a negative association between vaccination and hospitalisation (Adjusted OR: `r res_ipw[1]`, 95% CI `r res_ipw[2]` to `r res_ipw[3]`; p `r print_p_value(res_ipw_p)`). The C-statistic is
+|     The last model in Table \@ref(tab:res) is an IPW model with stabilised weights. This model also presents a negative association between vaccination and hospitalisation (Adjusted OR: `r res_ipw[1]`, 95% CI `r res_ipw[2]` to `r res_ipw[3]`; p `r print_p_value(res_ipw_p)`). The C-statistic is presenting moderate discriminatory power (C = `r res_ipw_c`). 
+
+
 
 ```{r}
 models <- c('Unadjusted', 'PS score as covariate', 'Unstabilised IPW', 'Stabilised IPW')
@@ -497,6 +464,6 @@ Shiba K, Kawahara T. Using Propensity Scores for Causal Inference: Pitfalls and 
 
 Yuxi Tian, Elande Baro & Rongmei Zhang (2019) Performance evaluation of regression splines for propensity score adjustment in post-market safety analysis with multiple treatments, Journal of Biopharmaceutical Statistics, 29:5, 810-821, DOI: 10.1080/10543406.2019.1657138
 
-Nederlands Huisartsen Genootschap, _Risico hart- en vaatziekten verlagen_, https://www.thuisarts.nl/risico-hart-en-vaatziekten-verlagen, accesed: 23-2-2023
+Nederlands Huisartsen Genootschap, _Risico hart- en vaatziekten verlagen_, https://www.thuisarts.nl/risico-hart-en-vaatziekten-verlagen, accessed: 23-2-2023
 
 Westreich, D., & Cole, S. R. (2010). Invited commentary: positivity in practice. American journal of epidemiology, 171(6), 674-677.
