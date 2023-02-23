@@ -298,9 +298,7 @@ ps.fit <- lrm(ps.formula, data=data)
 ps.fit$stats['C']
 ```
 
-<!-- The confounders are moderately related with the exposure of interest (C=0.66) -->
 
-<!-- Add some interpretation here. -->
 
 ```{r, fig.show='hide'}
 data$ps.score <- predict(ps.fit,type='fitted')
