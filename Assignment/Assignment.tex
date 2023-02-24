@@ -103,7 +103,7 @@
 \hypertarget{introduction}{%
 \section{Introduction}\label{introduction}}
 
-In this paper we will examine whether there is a causal effect from elderly people who have received an influenza vaccine and the likelihood of hospitalization. This will be examined by using the patient records dataset and different modeling methods using propensity scores, to account for confounders.
+In this paper we will examine whether there is a causal effect from elderly people who have received an influenza vaccine and the likelihood of hospitalization. This will be examined by using the patient records dataset and different modeling methods using PS, to account for confounders.
 
 \hypertarget{methods}{%
 \section{Methods}\label{methods}}
@@ -111,8 +111,8 @@ In this paper we will examine whether there is a causal effect from elderly peop
 \hypertarget{examening-the-causal-structure}{%
 \subsection{Examening the causal structure}\label{examening-the-causal-structure}}
 
-Domain knowledge was used to create a DAG (Figure \ref{fig:dag} ) that explains the causal structure present in the data. The variable `contact with chiropractor (GP)' forms a proxy for the unobserved variable healthy lifestyle. Getting the influenza vaccine is connected to age and contact with GP. Having obtained a influenza vaccination was associated with a lower risk for adverse cardiovascular events \citep{behrouzi}. Having pulmonary disease and diabetes increases the chance for cardiovascular disease \citep{nhg}. Sex forms a confounder between hospitalization and healthy lifestyle \citep{loef} which in turn causes the afore mentioned diseases.\\
-\hspace*{0.333em}\hspace*{0.333em}The causal paths of the DAG should be examined to asses whether unbiased causal inference is possible. There is a flow of statistical information through open backdoor paths due to observed and unobserved confounders. The eventual model would need to adjust for these confounders in order to perform an unbiased causal inference.
+Domain knowledge was used to create a DAG (Figure \ref{fig:dag}) that explains the causal structure present in the data. The variable `contact with chiropractor (GP)' forms a proxy for the unobserved variable healthy lifestyle. Getting the influenza vaccine is connected to age and contact with GP. Having obtained influenza vaccination was associated with lower risk for adverse cardiovascular events \citep{behrouzi}. Having pulmonary disease and diabetes increases the chance for cardiovascular disease (cvd) \citep{nhg}. Sex forms a confounder between hospitalization and healthy lifestyle \citep{loef} which in turn causes the aforementioned diseases.\\
+\hspace*{0.333em}\hspace*{0.333em}The causal paths of the DAG are examined to assess whether unbiased causal inference is possible. There is a flow of statistical information through open backdoor paths due to observed and unobserved confounders. The model would need to adjust for these confounders in order to perform unbiased causal inference.
 
 \begin{figure}
 \includegraphics[width=0.5\linewidth]{Assignment_files/figure-latex/dag-1} \caption{DAG model with Vaccine as exposure and hospitalization as outcome}\label{fig:dag}
@@ -124,12 +124,12 @@ Domain knowledge was used to create a DAG (Figure \ref{fig:dag} ) that explains 
 \hypertarget{baseline-characteristics}{%
 \subsubsection{Baseline Characteristics}\label{baseline-characteristics}}
 
-~~The electronic patient records dataset consist of eight variables. The variables age and contact with a chiropractor were continues, the variables vaccination status, sex, cardiovascular disease, pulmonary disease, diabetes and hospitalization were binominal. Table \ref{tab:des} presents the baseline characteristics of 40000 individuals who were included in the study.\\
-\hspace*{0.333em}\hspace*{0.333em}Baseline characteristics stratified by the study outcome indicate that 254 of the respondents were hospitalized. Respondents who were hospitalized were older (79.68 vs 75.63), had more contact with the GP (21.08 vs 14.71), were less often female (48.43\%), had more often cardiovascular disease (72.05\% vs 49.25\%) and more often Diabetes (11.42\% vs 6.51\%).
+~~The electronic patient records dataset consist of eight variables. The variables age and contact with a chiropractor were continuous, the variables vaccination status, sex, cvd, pulmonary disease, diabetes and hospitalization were binominal. Table \ref{tab:des} presents the baseline characteristics of 40000 individuals who were included in the study.\\
+\hspace*{0.333em}\hspace*{0.333em}Baseline characteristics stratified by the study outcome indicate that 254 of the respondents were hospitalized. Respondents who were hospitalized were older (79.68 vs 75.63), had more contact with the GP (21.08 vs 14.71), were less often female (48.43\%), had more often cvd (72.05\% vs 49.25\%) and more often Diabetes (11.42\% vs 6.51\%).
 
 \begin{table}[!h]
 
-\caption{\label{tab:des}Baseline Characteristics stratified by Influenza vaccination received and Hospitalisation}
+\caption{\label{tab:des}Baseline Characteristics stratified by Influenza vaccination received and hospitalization}
 \centering
 \begin{tabular}[t]{llllll}
 \toprule
@@ -143,7 +143,7 @@ Contact, mean (SD) & 14.75 (11.54) & 15.85 (11.73) & 11.64 (10.38) & 21.08 (15.5
 Female, n (\%) & 24763 (61.91) & 18022 (60.85) & 6741 (64.92) & 123 (48.43) & 24640 (61.99)\\
 Pulmonary disease, n (\%) & 4937 (12.34) & 4244 (14.33) & 693 (6.67) & 60 (14.33) & 4877 (12.27)\\
 \addlinespace
-Cardiovascular disease, n (\%) & 19757 (49.39) & 15702 (53.02) & 4055 (39.05) & 183 (72.05) & 19574 (49.25)\\
+cvd, n (\%) & 19757 (49.39) & 15702 (53.02) & 4055 (39.05) & 183 (72.05) & 19574 (49.25)\\
 Diabetes mellitus, n(\%) & 2618 (6.54) & 2223 (7.51) & 395 (3.8) & 29 (11.42) & 2589 (6.51)\\
 Received Influenza Vaccination, n (\%) &  &  &  & 184 (72.44) & 29432 (74.05)\\
 \bottomrule
@@ -153,20 +153,20 @@ Received Influenza Vaccination, n (\%) &  &  &  & 184 (72.44) & 29432 (74.05)\\
 \hypertarget{propensity-scores-ps}{%
 \subsubsection{Propensity Scores (PS)}\label{propensity-scores-ps}}
 
-~~In order to control for confounding, a PS was estimated by fitting a logistic regression. A PS gives the probability being vaccinated for the respondents. Based on the DAG (Figure \ref{fig:dag} ) the variables: age, sex, cardiovascular disease, pulmonary disease, diabetis mellitus, and GP contact were used in the PS model. For the variables age and contact a spline is used \citep{Tian}.\\
-\hspace*{0.333em}\hspace*{0.333em}\hspace*{0.333em}\hspace*{0.333em}In Figure \ref{fig:psscore}, the PS for vaccinated and unvaccinated individuals appear to be well-balanced, supporting the positivity assumption, which means that both treatement groups have a chance to get the treatment given the covariates \citep{westreich}.
+A logistic regression was used to estimate the PS. A PS gives the probability being vaccinated for the respondents. Based on the DAG (Figure \ref{fig:dag}) the variables: age, sex, cvd, pulmonary disease, diabetes, and GP contact were used in the PS model. For the variables age and contact a spline is used \citep{Tian}.\\
+\hspace*{0.333em}\hspace*{0.333em}\hspace*{0.333em}\hspace*{0.333em}In Figure \ref{fig:psscore}, the PS for vaccinated and unvaccinated individuals appear to be well-balanced, supporting the positivity assumption, which means that both treatment groups have a chance to get the treatment given the covariates \citep{westreich}.
 
 \hypertarget{ps-as-covariate}{%
 \subsubsection{PS as Covariate}\label{ps-as-covariate}}
 
-~~The first adjusted model is to use the PS as a covariate. In a observational study the treated and untreated group have an equal distribution given that these are divided in groups of a constant propensity. The propensity score can be used as a baseline variable to account for the dimensional difference between groups since it is assumed that the treatment is unconfounded given this propensity score \citep{schafer}.
+~~The first adjusted model is to use the PS as a covariate. In a observational study the treated and untreated group have an equal distribution given that these are divided in groups of a constant propensity. The PS can be used as a baseline variable to account for the dimensional difference between groups since it is assumed that the treatment is unconfounded given this PS \citep{schafer}.
 
 \hypertarget{inverse-probability-weighting-ipw}{%
 \subsubsection{Inverse Probability Weighting (IPW)}\label{inverse-probability-weighting-ipw}}
 
-~~With the aforementioned propensity scores, IPW is calculated by \(\frac{1}{PS}\) for the vaccinated group and \(\frac{1}{1-PS}\) for the unvaccinated. IPW creates a pseudo-population by equaling the effect of the confounders mimicking a random control trial. \citep{shiba}.
+With the aforementioned PS, IPW is calculated by \(\frac{1}{PS}\) for the vaccinated group and \(\frac{1}{1-PS}\) for the unvaccinated. IPW creates a pseudo-population by equaling the effect of the confounders mimicking a random control trial \citep{shiba}.
 
-~~Two models were created, one with stabilized- and one with unstabilized weights. When using stabilized weights the numerator model also includes confounders, giving more stable estimates compared to the unstabilized weights \citep{ipw}. In both models bootstrapping was used to account for the inflated sample size of the pseudo population.
+~~Two logistic regression models, with stabalized- and unstabilized weights were fitted. When using stabilized weights the numerator model also includes confounders, giving more stable estimates compared to the unstabilized weights \citep{ipw}. In both models bootstrapping was used to account for the inflated sample size of the pseudo population.
 
 \begin{figure}
 \includegraphics[width=0.7\linewidth]{Assignment_files/figure-latex/psscore-1} \caption{Distribution of the Propensity score for participants who received a vaccination compared with those who did not receive a vaccination}\label{fig:psscore}
@@ -175,10 +175,10 @@ Received Influenza Vaccination, n (\%) &  &  &  & 184 (72.44) & 29432 (74.05)\\
 \hypertarget{results}{%
 \section{Results}\label{results}}
 
-Table \ref{tab:res} shows the crude association between vaccination status and hospitalization was examined using logistic regression, and the odds ratio was found to be 0.921 (95\% CI: 0.699, 1.214), indicating a non-significant association (p = 0.562). The C-statistic, a measure of discrimination, was 0.508, suggesting poor predictive performance of the model.\\
-\hspace*{0.333em}\hspace*{0.333em}\hspace*{0.333em}\hspace*{0.333em}Considering the second model in Table \ref{tab:res}, which presents the PS as covariate, the odds ratio suggests a significant negative association (adjusted OR: 0.635. 95\% CI 0.478 to 0.843; p \textless.001). The C-Statistic of 0.679 suggests that the model has moderate discriminatory power.\\
-\hspace*{0.333em}\hspace*{0.333em}\hspace*{0.333em}\hspace*{0.333em}The IPW model with unstabilised weights yields significant negative association between the exposure and outcome variable (adjusted OR: 0.617, 95\%CI 0.523 to 0.728; p \textless.001). The model presents moderate discriminatory power, where C = 0.573.\\
-\hspace*{0.333em}\hspace*{0.333em}\hspace*{0.333em}\hspace*{0.333em}The last model in Table \ref{tab:res} is an IPW model with stabilised weights. This model also presents a negative association between vaccination and hospitalisation (Adjusted OR: 0.617, 95\% CI 0.509 to 0.748; p \textless.001). The C-statistic suggests moderate discriminatory power (C= 0.573).
+Table \ref{tab:res} shows the crude association between vaccination status and hospitalization. The odds ratio (OR) was found to be 0.921 (95\% CI: 0.699, 1.214), indicating a non-significant association (p = 0.562). The C-statistic, a measure of discrimination, was 0.508, suggesting poor predictive performance of the model.\\
+\hspace*{0.333em}\hspace*{0.333em}\hspace*{0.333em}\hspace*{0.333em}Considering the second model in Table \ref{tab:res}, which presents the PS as covariate, the OR suggests a significant negative association (\(OR_{adjusted}\): 0.635. 95\% CI 0.478 to 0.843; p \textless.001). The C-Statistic of 0.679 suggests that the model has moderate discriminatory power.\\
+\hspace*{0.333em}\hspace*{0.333em}\hspace*{0.333em}\hspace*{0.333em}The IPW model with unstabilized weights yields significant negative association between the exposure and outcome variable (\(OR_{adjusted}\): 0.617, 95\%CI 0.523 to 0.728; p \textless.001). The model presents moderate discriminatory power, where C = 0.573.\\
+\hspace*{0.333em}\hspace*{0.333em}\hspace*{0.333em}\hspace*{0.333em}The IPW model with stabilized weights. This model presents a negative association between vaccination and hospitalization (\(OR_{adjusted}\): 0.617, 95\% CI 0.509 to 0.748; p \textless.001). The C-statistic suggests moderate discriminatory power (C= 0.573).
 
 \begin{table}[!h]
 
@@ -190,8 +190,8 @@ Model Specification & OR (95\% CI) & P-Value & C-Statistic\\
 \midrule
 Unadjusted & 0.921 (0.699 to 1.214) & 0.562 & 0.508\\
 PS as covariate & 0.635 (0.478 to 0.843) & <.001 & 0.679\\
-Unstabilised IPW & 0.617 (0.523 to 0.728) & <.001 & 0.573\\
-Stabilised IPW & 0.617 (0.509 to 0.748) & <.001 & 0.573\\
+Unstabilized IPW & 0.617 (0.523 to 0.728) & <.001 & 0.573\\
+stabilized IPW & 0.617 (0.509 to 0.748) & <.001 & 0.573\\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -199,9 +199,10 @@ Stabilised IPW & 0.617 (0.509 to 0.748) & <.001 & 0.573\\
 \hypertarget{discussion}{%
 \section{Discussion}\label{discussion}}
 
-~~The results indicate that the model with the PS as a covariate gives the most clear results. Both IPW models have narrower confidence interval, however their C-statistic is very poor. This makes the PS as covariate model the most adequate. Accounted for confouders, this would mean that being vaccinated causes a lower odds of being hospitalized compared to people without a vaccination.
+~~The results indicate that the model with the PS as covariate gives the most clear results. Both IPW models have narrower confidence interval, however their C-statistic is very poor. This makes the PS as covariate model the most adequate. Accounted for confounders, this would mean that being vaccinated causes a lower odds of being hospitalized compared to people without a vaccination.\\
+\hspace*{0.333em}\hspace*{0.333em}Other modelling methods could yield even more accurate results. Using machine learning techniques to calculate the PS could create an even better, overfitted, model \citep{schafer}. Using other techniques, like matching or a doubly robust estimation like weighted residual bias correction could also improve the results of the estimation. In this study it was chosen to only use the PS as a covariate and the IPW to compare the most common PS methods \citep{schafer}.
 
-~~Other modelling methods could yield even more accurate results. Using machine learning techniques to calculate the PS could create an even better, overfitted, model \citep{schafer}. Using other techniques, like matching or a doubly robust estimation like weigthed residual bias correction could also improve the results of the estimation. In this study it was chosen to only use the PS as a covariate and the IPW to compare the most common PS methods \citep{schafer}.
+\textbf{Word Count}: 800
 
   \bibliography{references.bib}
 
