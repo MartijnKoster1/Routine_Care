@@ -9,9 +9,23 @@ date: "2023-02-15"
 
 output:
   bookdown::pdf_book:
-    extra_dependencies: "subfig"
+   
     toc: false 
-    number_sections: false
+    number_sections: true
+    citation_package: natbib
+    bibliography: references.bib
+    keep_tex: true
+    fig_caption: true
+    pandoc_args: [
+      "--bibliography", "references.bib",
+      "--csl", "apa.csl"
+    ]
+
+
+
+header-includes:
+  - \usepackage{setspace}
+  - \doublespacing
 ---
 
 ```{r setup, include=FALSE}
@@ -48,7 +62,7 @@ Write here a short motivation with a RQ
 # Methods
 
 ## Examening the causal structure
-| Domain knowledge was used to create a DAG (Figure @ref(fig:dag)) that explains the causal structure present in the data. The variable 'contact with chiropractor' was given as a proxy for the unobserved variable healthy lifestyle. An influenza vaccination is season, hence does the time from last contact with the chiropractor form a causal path to vaccination status. Furthermore is the national distribution of an influenza vaccination determined age, hence does age form a causal path towards vaccination status. Having obtained a influenza vaccination was associated with a lower risk for adverse cardiovascular events with hospitalization as a result (Behrouzi et al., 2022). Having pulmonary disease and diabetes increases ones chances to get severe cardiovascular disease (Nederlands Huisartsen Genootschap, date not given). The healthiness of ones lifestyle forms a major cause in getting (severe) cardiovascular disease, pulmonary disease and diabetes. In return is once sex an important confounder in the healthiness of ones lifestyle (Loef & Walach, 2012). The previously mentioned diseases could all be a cause for hospitalization. 
+| Domain knowledge was used to create a DAG (Figure \@ref(fig:dag) ) that explains the causal structure present in the data. The variable 'contact with chiropractor' was given as a proxy for the unobserved variable healthy lifestyle. An influenza vaccination is season, hence does the time from last contact with the chiropractor form a causal path to vaccination status. Furthermore is the national distribution of an influenza vaccination determined age, hence does age form a causal path towards vaccination status. Having obtained a influenza vaccination was associated with a lower risk for adverse cardiovascular events with hospitalization as a result (Behrouzi et al., 2022). Having pulmonary disease and diabetes increases ones chances to get severe cardiovascular disease (Nederlands Huisartsen Genootschap, date not given). The healthiness of ones lifestyle forms a major cause in getting (severe) cardiovascular disease, pulmonary disease and diabetes. In return is once sex an important confounder in the healthiness of ones lifestyle (Loef & Walach, 2012). The previously mentioned diseases could all be a cause for hospitalization. \cite{Tian}
 
 ```{r dag, fig.cap = 'DAG model with Vaccine as exposure and hospitalization as outcome', out.width='50%'}
 dag1 <- dagify(
@@ -241,7 +255,7 @@ tab1 <- data.frame(
 |   A total of `r sum(vacc)` (`r round(100*mean(vacc),2)`%) respondents were vaccinated. People who received a vaccination had on average more often pulmonary disease (`r pulm_vacc_mean`% vs `r pulm_novacc_mean`%), cardiovascular disease (`r cvd_vacc_mean`% vs `r cvd_novacc_mean`%) and diabetes (`r dm_vacc_mean`% vs `r dm_novacc_mean`%).
 |   Baseline characteristics stratified by the study outcome indicate that `r sum(hosp)` of the respondents were hospitalized as opposed to `r sum(hosp==0)` who were not. Respondents who were hospitalized were older (`r age_hosp_mean` vs `r age_nohosp_mean`), had more often contact with the GP (`r contact_hosp_mean` vs `r contact_nohosp_mean`), were on average less often a female (`r sex_hosp_mean`% vs `r sex_nohosp_mean`%), had on average more often cardiovascular disease (`r cvd_hosp_mean`% vs `r cvd_nohosp_mean`%) and on average more often Diabetes (`r dm_hosp_mean`% vs `r dm_nohosp_mean`%).
 
-```{r des, echo = FALSE, results='hold'}
+```{r des, echo = FALSE, results='hold', label="tab:des"}
 tab1 %>%
   kbl(caption = 'Baseline Characteristics stratified by Influenza vaccination received and Hospitalisation',
       col.names = c('Characteristics', 'Total', 'Yes', 'No', 'Yes', 'No'),
