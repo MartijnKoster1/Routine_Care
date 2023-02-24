@@ -68,8 +68,8 @@ dag1 <- dagify(
   outcome = "hosp", # The effect of treatment
   
 # Give co-ordinates of the variables in the plot
-coords = list(x = c(vacc = 1, Age = 5, sex = 9, cvd = 16, pulm = 17, DM = 9, contact = 6, hosp = 25, hlsU = 9, oU = 15),
-              y = c(vacc = 8.7, Age = 3, sex = 1, cvd = 13, pulm = 5.7, DM = 9.9, contact = 13, hosp = 8, hlsU = 5, oU = 1))
+coords = list(x = c(vacc = 1, age = 3, sex = 9, cvd = 16, pulm = 17, DM = 9, contact = 6, hosp = 25, hlsU = 9, oU = 15),
+              y = c(vacc = 8.7, age = 3, sex = 1, cvd = 13, pulm = 5.7, DM = 9.9, contact = 13, hosp = 8, hlsU = 5, oU = 1))
 ) 
 
 
@@ -503,7 +503,7 @@ tab2 %>%
   kable_styling(latex_options = "hold_position")
 ```
 
-# Conclusion / Discussion
+# Discussion
 
 -   Conclusions supported by data
 
