@@ -57,7 +57,7 @@ In this paper we will examine whether there is a causal effect from elderly peop
 ## Examening the causal structure
 
 | Domain knowledge was used to create a DAG (Figure \@ref(fig:dag) ) that explains the causal structure present in the data. The variable 'contact with chiropractor (GP)' forms a proxy for the unobserved variable healthy lifestyle. Getting the influenza vaccine is connected to age and contact with GP. Having obtained a influenza vaccination was associated with a lower risk for adverse cardiovascular events \citep{behrouzi}. Having pulmonary disease and diabetes increases the chance for cardiovascular disease \citep{nhg}. Sex forms a confounder between hospitalization and healthy lifestyle \citep{loef} which in turn causes the afore mentioned diseases. 
-|   The causal paths of the DAG should be examined to asses whether unbiased causal inference is possible. There is a flow of statistical information through open backdoor paths due to observed and unobserved confounders. The eventual model would need to adjust for these confounders in order to perform an unbiased causal inference.
+|   The causal paths of the DAG should be examined to assess whether unbiased causal inference is possible. There is a flow of statistical information through open backdoor paths due to observed and unobserved confounders. The eventual model would need to adjust for these confounders in order to perform an unbiased causal inference.
 
 ```{r dag, fig.cap = 'DAG model with Vaccine as exposure and hospitalization as outcome', out.width='50%'}
 dag1 <- dagify(
@@ -276,9 +276,9 @@ tab1 %>%
 
 ### Inverse Probability Weighting (IPW)
 
-|   With the aforementioned propensity scores, IPW is calculated by $\frac{1}{PS}$ for the vaccinated group and $\frac{1}{1-PS}$ for the unvaccinated. IPW creates a pseudo-population by equaling the effect of the confounders mimicking a random control trial. \citep{shiba}.
+|   With the aforementioned PS, IPW is calculated by $\frac{1}{PS}$ for the vaccinated group and $\frac{1}{1-PS}$ for the unvaccinated. IPW creates a pseudo-population by equaling the effect of the confounders mimicking a random control trial. \citep{shiba}.
 
-|   Two models were created, one with stabilized- and one with unstabilized weights. When using stabilized weights the numerator model also includes confounders, giving more stable estimates compared to the unstabilized weights \citep{ipw}. In both models bootstrapping was used to account for the inflated sample size of the pseudo population. 
+|   Two logistic regression models, with stabalized- and unstabilized weights. When using stabilized weights the numerator model also includes confounders, giving more stable estimates compared to the unstabilized weights \citep{ipw}. In both models bootstrapping was used to account for the inflated sample size of the pseudo population. 
 
 ```{r}
 ps.formula <- vacc ~ rcs(age) + cvd + DM + rcs(contact) + pulm + sex
@@ -472,8 +472,8 @@ res_ipw_c <- boot.ipw.stab$t0[7]
 ```
 
 
-| Table \@ref(tab:res) shows the crude association between vaccination status and hospitalization was examined using logistic regression, and the odds ratio was found to be `r res_crude[1]` (95% CI: `r res_crude[2]`, `r res_crude[3]`), indicating a non-significant association (p = `r print_p_value(res_crude_p)`). The C-statistic, a measure of discrimination, was `r res_crude_c`, suggesting poor predictive performance of the model.
-|     Considering the second model in Table \@ref(tab:res), which presents the PS as covariate, the odds ratio suggests a significant negative association (adjusted OR: `r res_ps[1]`. 95% CI `r res_ps[2]` to `r res_ps[3]`; p `r print_p_value(res_ps_p)`). The C-Statistic of `r res_ps_c` suggests that the model has moderate discriminatory power.
+| Table \@ref(tab:res) shows the crude association between vaccination status and hospitalization. The odds ratio (OR) was found to be `r res_crude[1]` (95% CI: `r res_crude[2]`, `r res_crude[3]`), indicating a non-significant association (p = `r print_p_value(res_crude_p)`). The C-statistic, a measure of discrimination, was `r res_crude_c`, suggesting poor predictive performance of the model.
+|     Considering the second model in Table \@ref(tab:res), which presents the PS as covariate, the OR suggests a significant negative association (adjusted OR: `r res_ps[1]`. 95% CI `r res_ps[2]` to `r res_ps[3]`; p `r print_p_value(res_ps_p)`). The C-Statistic of `r res_ps_c` suggests that the model has moderate discriminatory power.
 |     The IPW model with unstabilised weights yields significant negative association between the exposure and outcome variable (adjusted OR: `r res_unipw[1]`, 95%CI `r res_unipw[2]` to `r res_unipw[3]`; p `r print_p_value(res_unipw_p)`). The model presents moderate discriminatory power, where C = `r res_unipw_c`.
 |     The last model in Table \@ref(tab:res) is an IPW model with stabilised weights. This model also presents a negative association between vaccination and hospitalisation (Adjusted OR: `r res_ipw[1]`, 95% CI `r res_ipw[2]` to `r res_ipw[3]`; p `r print_p_value(res_ipw_p)`). The C-statistic suggests moderate discriminatory power (C= `r res_ipw_c`).
 
@@ -512,4 +512,3 @@ tab2 %>%
 
 |   The results indicate that the model with the PS as a covariate gives the most clear results. Both IPW models have narrower confidence interval, however their C-statistic is very poor. This makes the PS as covariate model the most adequate. Accounted for confouders, this would mean that being vaccinated causes a lower odds of being hospitalized compared to people without a vaccination. 
 
-|   Other modelling methods could yield even more accurate results. Using machine learning techniques to calculate the PS could create an even better, overfitted, model \citep{schafer}. Using other techniques, like matching or a doubly robust estimation like weigthed residual bias correction could also improve the results of the estimation. In this study it was chosen to only use the PS as a covariate and the IPW to compare the most common PS methods \citep{schafer}.
