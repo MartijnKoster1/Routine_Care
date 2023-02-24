@@ -383,6 +383,90 @@ make_or <- function(OR) {
 }
 ```
 
+
+```{r}
+library(boot)
+# Define a function to calculate the logistic regression coefficient and its standard error,
+# the odds ratio and its confidence interval, p-value, and c-statistic
+logreg_coef <- function(data, indices) {
+  # Subset the data using the bootstrap indices
+  boot_data <- data[indices,]
+  
+  # Fit the logistic regression model and calculate the coefficient and its standard error
+  adj3.fit <- lrm(hosp ~ vacc, weights = ipw, data = boot_data)
+  coef <- adj3.fit$coef[2]
+  se_coef <- sqrt(diag(vcov(adj3.fit))[2])
+  
+  # Calculate the odds ratio and its confidence interval
+  log.or <- coef
+  se.log.or <- se_coef
+  ci.log.or <- round(exp(c(log.or, log.or - 1.96*se.log.or, log.or + 1.96*se.log.or)), 3)
+  
+  # Calculate the p-value
+  p_val <- round(adj2.fit$stats['P'], 3) 
+  c_stat <- round(adj2.fit$stats['C'], 3)
+  # Calculate the c-statistic
+
+  # Return the coefficient, its standard error, the odds ratio and its confidence interval,
+  # p-value, and c-statistic as a vector
+  return(c(coef, se_coef, ci.log.or, p_val, c_stat))
+}
+set.seed(123)
+ 
+ # Perform the bootstrap with 1000 replications
+boot_results_ipw <- boot(data, logreg_coef, R = 1000)
+
+boot.ipw <- boot_results_ipw[1]
+
+res_unipw <- boot.ipw$t0[3:5]
+
+res_unipw_p <- boot.ipw$t0[6]
+res_unipw_c <- boot.ipw$t0[7]
+
+```
+
+
+```{r}
+# Define a function to calculate the logistic regression coefficient and its standard error,
+# the odds ratio and its confidence interval, p-value, and c-statistic
+logreg_coef <- function(data, indices) {
+  # Subset the data using the bootstrap indices
+  boot_data <- data[indices,]
+  
+  # Fit the logistic regression model and calculate the coefficient and its standard error
+  adj3.fit <- lrm(hosp ~ vacc, weights = ipw.stab, data = boot_data)
+  coef <- adj3.fit$coef[2]
+  se_coef <- sqrt(diag(vcov(adj3.fit))[2])
+  
+  # Calculate the odds ratio and its confidence interval
+  log.or <- coef
+  se.log.or <- se_coef
+  ci.log.or <- round(exp(c(log.or, log.or - 1.96*se.log.or, log.or + 1.96*se.log.or)), 3)
+  
+  # Calculate the p-value
+  p_val <- round(adj3.fit$stats['P'], 3) 
+  c_stat <- round(adj3.fit$stats['C'], 3)
+  # Calculate the c-statistic
+
+  # Return the coefficient, its standard error, the odds ratio and its confidence interval,
+  # p-value, and c-statistic as a vector
+  return(c(coef, se_coef, ci.log.or, p_val, c_stat))
+}
+set.seed(123)
+ 
+ # Perform the bootstrap with 1000 replications
+boot_results_ipw.stab <- boot(data, logreg_coef, R = 1000)
+
+boot.ipw.stab <- boot_results_ipw.stab[1]
+
+res_ipw <- boot.ipw.stab$t0[3:5]
+
+res_ipw_p <- boot.ipw.stab$t0[6]
+res_ipw_c <- boot.ipw.stab$t0[7]
+
+```
+
+
 | Table \@ref(tab:res) shows the crude association between vaccination status and hospitalization was examined using logistic regression, and the odds ratio was found to be `r res_crude[1]` (95% CI: `r res_crude[2]`, `r res_crude[3]`), indicating a non-significant association (p = `r print_p_value(res_crude_p)`). The C-statistic, a measure of discrimination, was `r res_crude_c`, suggesting poor predictive performance of the model.
 |     Considering the second model in Table \@ref(tab:res), which presents the PS score as covariate, the odds ratio suggests a significant negative association (adjusted OR: `r res_ps[1]`. 95% CI `r res_ps[2]` to `r res_ps[3]`; p `r print_p_value(res_ps_p)`). The C-Statistic of `r res_ps_c` suggests that the model has moderate discriminatory power.
 |     The IPW model with unstabilised weights yields significant negative association between the exposure and outcome variable (adjusted OR: `r res_unipw[1]`, 95%CI `r res_unipw[2]` to `r res_unipw[3]`; p `r print_p_value(res_unipw_p)`). The model presents moderate discriminatory power, where C = `r res_unipw_c`.
