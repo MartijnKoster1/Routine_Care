@@ -59,7 +59,7 @@ Write here a short motivation with a RQ
 
 ## Examening the causal structure
 
-| Domain knowledge was used to create a DAG (Figure \@ref(fig:dag) ) that explains the causal structure present in the data. The variable 'contact with chiropractor' was given as a proxy for the unobserved variable healthy lifestyle. An influenza vaccination is season, hence does the time from last contact with the chiropractor form a causal path to vaccination status. Furthermore is the national distribution of an influenza vaccination determined age, hence does age form a causal path towards vaccination status. Having obtained a influenza vaccination was associated with a lower risk for adverse cardiovascular events with hospitalization as a result (Behrouzi et al., 2022). Having pulmonary disease and diabetes increases ones chances to get severe cardiovascular disease (Nederlands Huisartsen Genootschap, date not given). The healthiness of ones lifestyle forms a major cause in getting (severe) cardiovascular disease, pulmonary disease and diabetes. In return is once sex an important confounder in the healthiness of ones lifestyle (Loef & Walach, 2012). The previously mentioned diseases could all be a cause for hospitalization.
+| Domain knowledge was used to create a DAG (Figure \@ref(fig:dag) ) that explains the causal structure present in the data. The variable 'contact with chiropractor' was given as a proxy for the unobserved variable healthy lifestyle. An influenza vaccination is season, hence does the time from last contact with the chiropractor form a causal path to vaccination status. Furthermore is the national distribution of an influenza vaccination determined age, hence does age form a causal path towards vaccination status. Having obtained a influenza vaccination was associated with a lower risk for adverse cardiovascular events with hospitalization as a result \citep{behrouzi}. Having pulmonary disease and diabetes increases ones chances to get severe cardiovascular disease \citep{nhg}. The healthiness of ones lifestyle forms a major cause in getting (severe) cardiovascular disease, pulmonary disease and diabetes. In return is once sex an important confounder in the healthiness of ones lifestyle \citep{loef}. The previously mentioned diseases could all be a cause for hospitalization.
 | The causal paths of the DAG should be examined to asses whether unbiased causal inference is possible. The main two causal paths from vaccination status towards hospitalisation are a direct path and a path through the mediator cardiovascular disease. However, there is a flow of statistical information through open backdoor paths as well. This is due to observed and unobserved confounders like age, contact with chiropractor and healthy lifestyle. The eventual model would need to adjust for these confounders in order to perform an unbiased causel inference.
 
 ```{r dag, fig.cap = 'DAG model with Vaccine as exposure and hospitalization as outcome', out.width='50%'}
@@ -272,7 +272,7 @@ tab1 %>%
 ### Propensity Scores (PS)
 
 | In order to control for confounding (observed and unobserved), a PS was estimated by fitting a logistic regression. A PS gives the probability being vaccinated for the respondents. The variables used to calculate the propensity score are derived from the aforementioned DAG (Figure \@ref(fig:dag) ), namely: age, sex, cardiovascular disease, pulmonary disease, diabetis mellitus, and GP contact in 12 months prior to start of study. For the variables age and contact a spline is used, because showed favorable performance compared to other propensity score methods \citep{Tian}.
-|     In Figure \@ref(fig:psscore), the PS for vaccinated and unvaccinated individuals appear to be well-balanced, indicating that the distribution of covariates between the two groups is similar. This plot also supports the positivity assumption, which means that both vaccinated and unvaccinated individuals are represented in all sub-populations defined by different combinations of covariates (Westreich & Cole, 2010).
+|     In Figure \@ref(fig:psscore), the PS for vaccinated and unvaccinated individuals appear to be well-balanced, indicating that the distribution of covariates between the two groups is similar. This plot also supports the positivity assumption, which means that both vaccinated and unvaccinated individuals are represented in all sub-populations defined by different combinations of covariates \citep{westreich}.
 
 ### PS as Covariate
 
@@ -280,7 +280,7 @@ tab1 %>%
 
 ### Inverse Probability Weighting (IPW)
 
-| With the aforementioned propensity scores, IPW is calculated by $\frac{1}{PS}$ for the vaccinated group and $\frac{1}{1-PS}$ for the unvaccinated. IPW creates a pseudo-population by replicating observations of individuals with higher weights, so the probability of exposure isn't affected by covariates. For example, if gender affects both exposure and outcome, IPW assigns greater weights to underrepresented groups, achieving a comparable gender ratio between the exposed and unexposed groups in the pseudo-population. This allows for comparison of the weighted outcome averages between the exposed and unexposed individuals in the pseudo-population, with no confounding from measured covariates (Shiba & Kawahara, 2021).
+| With the aforementioned propensity scores, IPW is calculated by $\frac{1}{PS}$ for the vaccinated group and $\frac{1}{1-PS}$ for the unvaccinated. IPW creates a pseudo-population by replicating observations of individuals with higher weights, so the probability of exposure isn't affected by covariates. For example, if gender affects both exposure and outcome, IPW assigns greater weights to underrepresented groups, achieving a comparable gender ratio between the exposed and unexposed groups in the pseudo-population. This allows for comparison of the weighted outcome averages between the exposed and unexposed individuals in the pseudo-population, with no confounding from measured covariates \citep{shiba}.
 | 
 
 What's the difference compared to unstabilized weights? *The difference is in the numerator of the weights. Here, the results are equal, because the numerator is just a constant. However, the numerator model can include confounders too, in which case the stabilized weight yield more stable estimates.*
@@ -434,17 +434,4 @@ tab2 %>%
 
 -   Other issues (both positive and negative) Maybe write something about matching here?
 
-# References
 
-
-Behrouzi, B., Bhatt, D. L., Cannon, C. P., Vardeny, O., Lee, D. S., Solomon, S. D., & Udell, J. A. (2022). Association of influenza vaccination with cardiovascular risk. JAMA Network Open, 5(4). <https://doi.org/10.1001/jamanetworkopen.2022.8873>.
-
-Loef, M., & Walach, H. (2012). The combined effects of healthy lifestyle behaviors on all cause mortality: A systematic review and meta-analysis. Preventive Medicine, 55(3), 163--170. <https://doi.org/10.1016/j.ypmed.2012.06.017>
-
-Shiba K, Kawahara T. Using Propensity Scores for Causal Inference: Pitfalls and Tips. J Epidemiol. 2021 Aug 5;31(8):457-463. doi: 10.2188/jea.JE20210145. Epub 2021 Jun 12. PMID: 34121051; PMCID: PMC8275441.
-
-Yuxi Tian, Elande Baro & Rongmei Zhang (2019) Performance evaluation of regression splines for propensity score adjustment in post-market safety analysis with multiple treatments, Journal of Biopharmaceutical Statistics, 29:5, 810-821, DOI: 10.1080/10543406.2019.1657138
-
-Nederlands Huisartsen Genootschap, *Risico hart- en vaatziekten verlagen*, <https://www.thuisarts.nl/risico-hart-en-vaatziekten-verlagen>, accesed: 23-2-2023
-
-Westreich, D., & Cole, S. R. (2010). Invited commentary: positivity in practice. American journal of epidemiology, 171(6), 674-677.
