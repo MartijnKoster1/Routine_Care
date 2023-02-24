@@ -473,9 +473,9 @@ res_ipw_c <- boot.ipw.stab$t0[7]
 
 
 | Table \@ref(tab:res) shows the crude association between vaccination status and hospitalization. The odds ratio (OR) was found to be `r res_crude[1]` (95% CI: `r res_crude[2]`, `r res_crude[3]`), indicating a non-significant association (p = `r print_p_value(res_crude_p)`). The C-statistic, a measure of discrimination, was `r res_crude_c`, suggesting poor predictive performance of the model.
-|     Considering the second model in Table \@ref(tab:res), which presents the PS as covariate, the OR suggests a significant negative association (adjusted OR: `r res_ps[1]`. 95% CI `r res_ps[2]` to `r res_ps[3]`; p `r print_p_value(res_ps_p)`). The C-Statistic of `r res_ps_c` suggests that the model has moderate discriminatory power.
-|     The IPW model with unstabilised weights yields significant negative association between the exposure and outcome variable (adjusted OR: `r res_unipw[1]`, 95%CI `r res_unipw[2]` to `r res_unipw[3]`; p `r print_p_value(res_unipw_p)`). The model presents moderate discriminatory power, where C = `r res_unipw_c`.
-|     The last model in Table \@ref(tab:res) is an IPW model with stabilised weights. This model also presents a negative association between vaccination and hospitalisation (Adjusted OR: `r res_ipw[1]`, 95% CI `r res_ipw[2]` to `r res_ipw[3]`; p `r print_p_value(res_ipw_p)`). The C-statistic suggests moderate discriminatory power (C= `r res_ipw_c`).
+|     Considering the second model in Table \@ref(tab:res), which presents the PS as covariate, the OR suggests a significant negative association ($OR_{adjusted}$: `r res_ps[1]`. 95% CI `r res_ps[2]` to `r res_ps[3]`; p `r print_p_value(res_ps_p)`). The C-Statistic of `r res_ps_c` suggests that the model has moderate discriminatory power.
+|     The IPW model with unstabilised weights yields significant negative association between the exposure and outcome variable ($OR_{adjusted}$: `r res_unipw[1]`, 95%CI `r res_unipw[2]` to `r res_unipw[3]`; p `r print_p_value(res_unipw_p)`). The model presents moderate discriminatory power, where C = `r res_unipw_c`.
+|     The last model in Table \@ref(tab:res) is an IPW model with stabilised weights. This model also presents a negative association between vaccination and hospitalization ($OR_{adjusted}$: `r res_ipw[1]`, 95% CI `r res_ipw[2]` to `r res_ipw[3]`; p `r print_p_value(res_ipw_p)`). The C-statistic suggests moderate discriminatory power (C= `r res_ipw_c`).
 
 ```{r}
 models <- c('Unadjusted', 'PS as covariate', 'Unstabilised IPW', 'Stabilised IPW')
