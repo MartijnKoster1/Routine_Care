@@ -50,14 +50,14 @@ attach(data)
 ```
 
 
-In this paper we will examine whether there is a causal effect from elderly people who have received an influenza vaccine and the likelihood of hospitalization. This will be examined by using the patient records dataset and different modeling methods using propensity scores, to account for confounders.
+In this paper we will examine whether there is a causal effect from elderly people who have received an influenza vaccine and the likelihood of hospitalization. This will be examined by using the patient records dataset and different modeling methods using PS, to account for confounders.
 
 # Methods
 
 ## Examening the causal structure
 
-| Domain knowledge was used to create a DAG (Figure \@ref(fig:dag) ) that explains the causal structure present in the data. The variable 'contact with chiropractor (GP)' forms a proxy for the unobserved variable healthy lifestyle. Getting the influenza vaccine is connected to age and contact with GP. Having obtained a influenza vaccination was associated with a lower risk for adverse cardiovascular events \citep{behrouzi}. Having pulmonary disease and diabetes increases the chance for cardiovascular disease (cvd) \citep{nhg}. Sex forms a confounder between hospitalization and healthy lifestyle \citep{loef} which in turn causes the aforementioned diseases. 
-|   The causal paths of the DAG should be examined to assess whether unbiased causal inference is possible. There is a flow of statistical information through open backdoor paths due to observed and unobserved confounders. The eventual model would need to adjust for these confounders in order to perform an unbiased causal inference.
+| Domain knowledge was used to create a DAG (Figure \@ref(fig:dag) ) that explains the causal structure present in the data. The variable 'contact with chiropractor (GP)' forms a proxy for the unobserved variable healthy lifestyle. Getting the influenza vaccine is connected to age and contact with GP. Having obtained influenza vaccination was associated with lower risk for adverse cardiovascular events \citep{behrouzi}. Having pulmonary disease and diabetes increases the chance for cardiovascular disease (cvd) \citep{nhg}. Sex forms a confounder between hospitalization and healthy lifestyle \citep{loef} which in turn causes the aforementioned diseases. 
+|   The causal paths of the DAG are examined to assess whether unbiased causal inference is possible. There is a flow of statistical information through open backdoor paths due to observed and unobserved confounders. The model would need to adjust for these confounders in order to perform unbiased causal inference.
 
 ```{r dag, fig.cap = 'DAG model with Vaccine as exposure and hospitalization as outcome', out.width='50%'}
 dag1 <- dagify(
@@ -267,12 +267,12 @@ tab1 %>%
 
 ### Propensity Scores (PS)
 
-|   In order to control for confounding, a PS was estimated by fitting a logistic regression. A PS gives the probability being vaccinated for the respondents. Based on the DAG (Figure \@ref(fig:dag) ) the variables: age, sex, cvd, pulmonary disease, diabetis mellitus, and GP contact were used in the PS model. For the variables age and contact a spline is used \citep{Tian}.
-|     In Figure \@ref(fig:psscore), the PS for vaccinated and unvaccinated individuals appear to be well-balanced, supporting the positivity assumption, which means that both treatement groups have a chance to get the treatment given the covariates \citep{westreich}.
+| A logistic regression was used to estimate the PS. A PS gives the probability being vaccinated for the respondents. Based on the DAG (Figure \@ref(fig:dag) ) the variables: age, sex, cvd, pulmonary disease, diabetes, and GP contact were used in the PS model. For the variables age and contact a spline is used \citep{Tian}.
+|     In Figure \@ref(fig:psscore), the PS for vaccinated and unvaccinated individuals appear to be well-balanced, supporting the positivity assumption, which means that both treatment groups have a chance to get the treatment given the covariates \citep{westreich}.
 
 ### PS as Covariate
 
-|   The first adjusted model is to use the PS as a covariate. In a observational study the treated and untreated group have an equal distribution given that these are divided in groups of a constant propensity. The propensity score can be used as a baseline variable to account for the dimensional difference between groups since it is assumed that the treatment is unconfounded given this propensity score \citep{schafer}. 
+|   The first adjusted model is to use the PS as a covariate. In a observational study the treated and untreated group have an equal distribution given that these are divided in groups of a constant propensity. The PS can be used as a baseline variable to account for the dimensional difference between groups since it is assumed that the treatment is unconfounded given this PS \citep{schafer}. 
 
 ### Inverse Probability Weighting (IPW)
 
