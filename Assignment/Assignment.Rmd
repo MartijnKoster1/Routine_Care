@@ -3,7 +3,7 @@ title: "Assignment"
 author:  
 - Martijn Koster, 6234119
 - Jurrian van de Kraats, 5961688
-- Tim Poorthuis, student nr
+- Tim Poorthuis, 0651478
 
 date: "2023-02-15"
 
@@ -45,22 +45,15 @@ data <- read.table("data.txt", sep="\t")
 attach(data)
 ```
 
-In this paper the
 
-In this paper we will examine whether there is a causal effect from elderly people (i.e., 65+) who have received an influenza vaccine and the likelihood of hospitalization. This will be examined by using the patient records dataset.
-
-Write here a short motivation with a RQ
-
--   well articulated RQ
-
-**The aim of the study is to assess whether annual influenza vaccination reduces the risk of hospitalization among elderly (i.e., people aged \>=65 years).**
+In this paper we will examine whether there is a causal effect from elderly people who have received an influenza vaccine and the likelihood of hospitalization. This will be examined by using the patient records dataset and different modeling methods using propensity scores, to account for confounders.
 
 # Methods
 
 ## Examening the causal structure
 
-| Domain knowledge was used to create a DAG (Figure \@ref(fig:dag) ) that explains the causal structure present in the data. The variable 'contact with chiropractor (GP)' forms a proxy for the unobserved variable healthy lifestyle. Getting the influenza vaccine is connected to age and contact with GP. Having obtained a influenza vaccination was associated with a lower risk for adverse cardiovascular events \citep{behrouzi}. Having pulmonary disease and diabetes increases the chance for cardiovascular disease \citep{nhg}. The healthiness of ones lifestyle forms a major cause in getting (severe) cardiovascular disease, pulmonary disease and diabetes. In return forms sex a confounder in a healthy lifestyle \citep{loef}. 
-| The causal paths of the DAG should be examined to asses whether unbiased causal inference is possible. There is a flow of statistical information through open backdoor paths. This is due to observed and unobserved confounders like age, contact with chiropractor and healthy lifestyle. The eventual model would need to adjust for these confounders in order to perform an unbiased causal inference.
+| Domain knowledge was used to create a DAG (Figure \@ref(fig:dag) ) that explains the causal structure present in the data. The variable 'contact with chiropractor (GP)' forms a proxy for the unobserved variable healthy lifestyle. Getting the influenza vaccine is connected to age and contact with GP. Having obtained a influenza vaccination was associated with a lower risk for adverse cardiovascular events \citep{behrouzi}. Having pulmonary disease and diabetes increases the chance for cardiovascular disease \citep{nhg}. Sex forms a confounder in a healthy lifestyle \citep{loef} which in turn causes the afore mentioned diseases. 
+| The causal paths of the DAG should be examined to asses whether unbiased causal inference is possible. There is a flow of statistical information through open backdoor paths due to observed and unobserved confounders. The eventual model would need to adjust for these confounders in order to perform an unbiased causal inference.
 
 ```{r dag, fig.cap = 'DAG model with Vaccine as exposure and hospitalization as outcome', out.width='50%'}
 dag1 <- dagify(
@@ -254,9 +247,8 @@ tab1 <- data.frame(
 
 ### Baseline Characteristics
 
-| The electronic patient records dataset consist of eight variables. The variables age and contact with a chiropractor were continues, the variables vaccination status, sex, cardiovascular disease, pulmonary disease, diabetes and hospitalization were binominal. Table \@ref(tab:des) presents the baseline characteristics of `r nrow(data)` individuals who were included in the study. The mean age was `r age_mean` (sd = `r age_sd`). The majority of the study were woman (`r sex_mean`%). Half of the respondents had Cardiovascular disease, whereas `r pulm_mean` percent had Pulmonary disease. Of the participants, `r dm_mean`% had Diabetes Mellitus.
-|   A total of `r sum(vacc)` (`r round(100*mean(vacc),2)`%) respondents were vaccinated. People who received a vaccination had on average more often pulmonary disease (`r pulm_vacc_mean`% vs `r pulm_novacc_mean`%), cardiovascular disease (`r cvd_vacc_mean`% vs `r cvd_novacc_mean`%) and diabetes (`r dm_vacc_mean`% vs `r dm_novacc_mean`%).
-|   Baseline characteristics stratified by the study outcome indicate that `r sum(hosp)` of the respondents were hospitalized. Respondents who were hospitalized were older (`r age_hosp_mean` vs `r age_nohosp_mean`), had more contact with the GP (`r contact_hosp_mean` vs `r contact_nohosp_mean`), were less often female (`r sex_hosp_mean`% vs `r sex_nohosp_mean`%), had more often cardiovascular disease (`r cvd_hosp_mean`% vs `r cvd_nohosp_mean`%) and more often Diabetes (`r dm_hosp_mean`% vs `r dm_nohosp_mean`%).
+| The electronic patient records dataset consist of eight variables. The variables age and contact with a chiropractor were continues, the variables vaccination status, sex, cardiovascular disease, pulmonary disease, diabetes and hospitalization were binominal. Table \@ref(tab:des) presents the baseline characteristics of `r nrow(data)` individuals who were included in the study.
+|   Baseline characteristics stratified by the study outcome indicate that `r sum(hosp)` of the respondents were hospitalized. Respondents who were hospitalized were older (`r age_hosp_mean` vs `r age_nohosp_mean`), had more contact with the GP (`r contact_hosp_mean` vs `r contact_nohosp_mean`), were less often female (`r sex_hosp_mean`%), had more often cardiovascular disease (`r cvd_hosp_mean`% vs `r cvd_nohosp_mean`%) and more often Diabetes (`r dm_hosp_mean`% vs `r dm_nohosp_mean`%).
 
 ```{r des, echo = FALSE, results='hold'}
 tab1 %>%
@@ -276,11 +268,11 @@ tab1 %>%
 
 ### PS as Covariate
 
-| The first adjusted model is to use the PS as a covariate. In a observational study the treated and untreated group have an equal distribution given that these are divided in groups of a constant propensity. The propensity score can be used as a baseline variable to account for the dimensional difference between groups since it is assumed that the treatment is unconfounded given this propensity score \citep{schafer}. This method also provides more statistical power and precision than matching, particularly when the sample size is large \citep{austin}. 
+| The first adjusted model is to use the PS as a covariate. In a observational study the treated and untreated group have an equal distribution given that these are divided in groups of a constant propensity. The propensity score can be used as a baseline variable to account for the dimensional difference between groups since it is assumed that the treatment is unconfounded given this propensity score \citep{schafer}. 
 
 ### Inverse Probability Weighting (IPW)
 
-| With the aforementioned propensity scores, IPW is calculated by $\frac{1}{PS}$ for the vaccinated group and $\frac{1}{1-PS}$ for the unvaccinated. IPW creates a pseudo-population by equaling the effect of the confounders. This allows for comparison of the weighted outcome averages between the exposed and unexposed individuals in the pseudo-population, with no confounding from measured covariates \citep{shiba}.
+| With the aforementioned propensity scores, IPW is calculated by $\frac{1}{PS}$ for the vaccinated group and $\frac{1}{1-PS}$ for the unvaccinated. IPW creates a pseudo-population by equaling the effect of the confounders mimicking a random control trial. \citep{shiba}.
 
 | Two models were created, one with stabilized- and one with unstabilized weights. When using stabilized weights the numerator model also includes confounders, giving more stable estimates compared to the unstabilized weights \citep{ipw}. In both models bootstrapping was used to account for the inflated sample size of the pseudo population. 
 
