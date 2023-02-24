@@ -60,7 +60,7 @@ Write here a short motivation with a RQ
 ## Examening the causal structure
 
 | Domain knowledge was used to create a DAG (Figure \@ref(fig:dag) ) that explains the causal structure present in the data. The variable 'contact with chiropractor' was given as a proxy for the unobserved variable healthy lifestyle. An influenza vaccination is season, hence does the time from last contact with the chiropractor form a causal path to vaccination status. Furthermore is the national distribution of an influenza vaccination determined age, hence does age form a causal path towards vaccination status. Having obtained a influenza vaccination was associated with a lower risk for adverse cardiovascular events with hospitalization as a result \citep{behrouzi}. Having pulmonary disease and diabetes increases ones chances to get severe cardiovascular disease \citep{nhg}. The healthiness of ones lifestyle forms a major cause in getting (severe) cardiovascular disease, pulmonary disease and diabetes. In return is once sex an important confounder in the healthiness of ones lifestyle \citep{loef}. The previously mentioned diseases could all be a cause for hospitalization.
-| The causal paths of the DAG should be examined to asses whether unbiased causal inference is possible. The main two causal paths from vaccination status towards hospitalisation are a direct path and a path through the mediator cardiovascular disease. However, there is a flow of statistical information through open backdoor paths as well. This is due to observed and unobserved confounders like age, contact with chiropractor and healthy lifestyle. The eventual model would need to adjust for these confounders in order to perform an unbiased causel inference.
+| The causal paths of the DAG should be examined to asses whether unbiased causal inference is possible. The main two causal paths from vaccination status towards hospitalisation are a direct path and a path through the mediator cardiovascular disease. However, there is a flow of statistical information through open backdoor paths as well. This is due to observed and unobserved confounders like age, contact with chiropractor and healthy lifestyle. The eventual model would need to adjust for these confounders in order to perform an unbiased causal inference.
 
 ```{r dag, fig.cap = 'DAG model with Vaccine as exposure and hospitalization as outcome', out.width='50%'}
 dag1 <- dagify(
@@ -276,7 +276,7 @@ tab1 %>%
 
 ### PS as Covariate
 
-| The first adjusted model is to use the PS as a covariate. In theory   This method can also provide more statistical power and precision than matching, particularly when the sample size is large \citep{austin}. 
+| The first adjusted model is to use the PS as a covariate. In a observational study the treated and untreated group have an equal distribution given that these are divided in groups of a constant propensity.  This method can also provide more statistical power and precision than matching, particularly when the sample size is large \citep{austin}. 
 
 ### Inverse Probability Weighting (IPW)
 
