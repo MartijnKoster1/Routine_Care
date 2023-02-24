@@ -15,7 +15,7 @@ output:
     citation_package: natbib
     bibliography: references.bib
     keep_tex: true
-    fig_caption: true
+    fig_caption: true 
     pandoc_args: [
       "--bibliography", "references.bib",
       "--csl", "apa.csl"
