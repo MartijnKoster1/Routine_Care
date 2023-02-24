@@ -2,7 +2,7 @@
 title: "Assignment"
 author:  
 - Martijn Koster, 6234119
-- Jurrian van de Kraats, student nr
+- Jurrian van de Kraats, 5961688
 - Tim Poorthuis, student nr
 
 date: "2023-02-15"
@@ -276,7 +276,7 @@ tab1 %>%
 
 ### PS as Covariate
 
-| The first adjusted model is to use the PS as a covariate. In a observational study the treated and untreated group have an equal distribution given that these are divided in groups of a constant propensity. Since it assumed that the treatment is unconfounded given this propensity score, can the propensity score be used as a baseline variable to account for the dimensional difference between groups \citep{schafer}. This method also provides more statistical power and precision than matching, particularly when the sample size is large \citep{austin}. 
+| The first adjusted model is to use the PS as a covariate. In a observational study the treated and untreated group have an equal distribution given that these are divided in groups of a constant propensity. The propensity score can be used as a baseline variable to account for the dimensional difference between groups since it is assumed that the treatment is unconfounded given this propensity score. \citep{schafer}. This method also provides more statistical power and precision than matching, particularly when the sample size is large \citep{austin}. 
 
 ### Inverse Probability Weighting (IPW)
 
