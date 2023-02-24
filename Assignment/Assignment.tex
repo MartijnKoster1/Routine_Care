@@ -85,12 +85,12 @@
 \urlstyle{same} % disable monospaced font for URLs
 \hypersetup{
   pdftitle={Assignment},
-  pdfauthor={Martijn Koster, 6234119; Jurrian van de Kraats, student nr; Tim Poorthuis, student nr},
+  pdfauthor={Martijn Koster, 6234119; Jurrian van de Kraats, 5961688; Tim Poorthuis, student nr},
   hidelinks,
   pdfcreator={LaTeX via pandoc}}
 
 \title{Assignment}
-\author{Martijn Koster, 6234119 \and Jurrian van de Kraats, student nr \and Tim Poorthuis, student nr}
+\author{Martijn Koster, 6234119 \and Jurrian van de Kraats, 5961688 \and Tim Poorthuis, student nr}
 \date{2023-02-15}
 
 \begin{document}
@@ -170,14 +170,13 @@ In order to control for confounding (observed and unobserved), a PS was estimate
 \hypertarget{ps-as-covariate}{%
 \subsubsection{PS as Covariate}\label{ps-as-covariate}}
 
-The first adjusted model is to use the PS as a covariate. In a observational study the treated and untreated group have an equal distribution given that these are divided in groups of a constant propensity. Since it assumed that the treatment is unconfounded given this propensity score, can the propensity score be used as a baseline variable to account for the dimensional difference between groups \citep{schafer}. This method also provides more statistical power and precision than matching, particularly when the sample size is large \citep{austin}.
+The first adjusted model is to use the PS as a covariate. In a observational study the treated and untreated group have an equal distribution given that these are divided in groups of a constant propensity. The propensity score can be used as a baseline variable to account for the dimensional difference between groups since it is assumed that the treatment is unconfounded given this propensity score. \citep{schafer}. This method also provides more statistical power and precision than matching, particularly when the sample size is large \citep{austin}.
 
 \hypertarget{inverse-probability-weighting-ipw}{%
 \subsubsection{Inverse Probability Weighting (IPW)}\label{inverse-probability-weighting-ipw}}
 
 With the aforementioned propensity scores, IPW is calculated by \(\frac{1}{PS}\) for the vaccinated group and \(\frac{1}{1-PS}\) for the unvaccinated. IPW creates a pseudo-population by replicating observations of individuals with higher weights, so the probability of exposure isn't affected by covariates. For example, if gender affects both exposure and outcome, IPW assigns greater weights to underrepresented groups, achieving a comparable gender ratio between the exposed and unexposed groups in the pseudo-population. This allows for comparison of the weighted outcome averages between the exposed and unexposed individuals in the pseudo-population, with no confounding from measured covariates \citep{shiba}.\\
-
-What's the difference compared to unstabilized weights? \emph{The difference is in the numerator of the weights. Here, the results are equal, because the numerator is just a constant. However, the numerator model can include confounders too, in which case the stabilized weight yield more stable estimates.}
+Two model were created, one with stabilized- and one with unstabilized weights. When using stabilized weights the numerator model also includes confounders, giving more stable estimates compared to the unstabilized weights \citep{ipw}. In both models bootstrapping was used to account for the inflated sample size of the pseudo population.
 
 \begin{figure}
 \includegraphics[width=0.7\linewidth]{Assignment_files/figure-latex/psscore-1} \caption{Distribution of the Propensity score for participants who received a vaccination compared with those who did not receive a vaccination}\label{fig:psscore}
