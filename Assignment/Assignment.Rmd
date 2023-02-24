@@ -343,6 +343,7 @@ res_ps <- round(exp(c(log.or, log.or - 1.96*se.log.or, log.or + 1.96*se.log.or))
 
 res_ps_c <- round(adj1.fit$stats['C'], 3)
 res_ps_p <- round(adj1.fit$stats['P'], 3) 
+res_ps_vacc <-adj1.fit[["coefficients"]][["vacc"]]
 ```
 
 ```{r}
@@ -505,8 +506,6 @@ tab2 %>%
 
 # Discussion
 
--   Conclusions supported by data
+| The results of table @ref(tab:res) indicate that the model with the PS score as a covariate gives the most clear results. Both IPW models have narrower confidence interval, however their C-statistic is very poor. Accounted for confouders, this would mean that being vaccinated causes a lower odds of being hospitalized compared to people without a vaccination. 
 
--   Other issues (both positive and negative) Maybe write something about matching here?
-
-
+| Other modelling methods could yield even more accurate results. Using machine learning techniques to calculate the PS could 
