@@ -61,6 +61,8 @@
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 \setcounter{secnumdepth}{5}
+\usepackage{setspace}
+\doublespacing
 \usepackage{booktabs}
 \usepackage{longtable}
 \usepackage{array}
@@ -84,13 +86,13 @@
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \urlstyle{same} % disable monospaced font for URLs
 \hypersetup{
-  pdftitle={Assignment},
-  pdfauthor={Martijn Koster, 6234119; Jurrian van de Kraats, 5961688; Tim Poorthuis, student nr},
+  pdftitle={Assignment 1 Routine Care},
+  pdfauthor={Martijn Koster, 6234119; Jurrian van de Kraats, 5961688; Tim Poorthuis, 0651478},
   hidelinks,
   pdfcreator={LaTeX via pandoc}}
 
-\title{Assignment}
-\author{Martijn Koster, 6234119 \and Jurrian van de Kraats, 5961688 \and Tim Poorthuis, student nr}
+\title{Assignment 1 Routine Care}
+\author{Martijn Koster, 6234119 \and Jurrian van de Kraats, 5961688 \and Tim Poorthuis, 0651478}
 \date{2023-02-15}
 
 \begin{document}
@@ -109,7 +111,7 @@ In this paper we will examine whether there is a causal effect from elderly peop
 \hypertarget{examening-the-causal-structure}{%
 \subsection{Examening the causal structure}\label{examening-the-causal-structure}}
 
-Domain knowledge was used to create a DAG (Figure \ref{fig:dag} ) that explains the causal structure present in the data. The variable `contact with chiropractor (GP)' forms a proxy for the unobserved variable healthy lifestyle. Getting the influenza vaccine is connected to age and contact with GP. Having obtained a influenza vaccination was associated with a lower risk for adverse cardiovascular events \citep{behrouzi}. Having pulmonary disease and diabetes increases the chance for cardiovascular disease \citep{nhg}. Sex forms a confounder in a healthy lifestyle \citep{loef} which in turn causes the afore mentioned diseases.\\
+Domain knowledge was used to create a DAG (Figure \ref{fig:dag} ) that explains the causal structure present in the data. The variable `contact with chiropractor (GP)' forms a proxy for the unobserved variable healthy lifestyle. Getting the influenza vaccine is connected to age and contact with GP. Having obtained a influenza vaccination was associated with a lower risk for adverse cardiovascular events \citep{behrouzi}. Having pulmonary disease and diabetes increases the chance for cardiovascular disease \citep{nhg}. Sex forms a confounder between hospitalization and healthy lifestyle \citep{loef} which in turn causes the afore mentioned diseases.\\
 The causal paths of the DAG should be examined to asses whether unbiased causal inference is possible. There is a flow of statistical information through open backdoor paths due to observed and unobserved confounders. The eventual model would need to adjust for these confounders in order to perform an unbiased causal inference.
 
 \begin{figure}
@@ -123,7 +125,7 @@ The causal paths of the DAG should be examined to asses whether unbiased causal 
 \subsubsection{Baseline Characteristics}\label{baseline-characteristics}}
 
 The electronic patient records dataset consist of eight variables. The variables age and contact with a chiropractor were continues, the variables vaccination status, sex, cardiovascular disease, pulmonary disease, diabetes and hospitalization were binominal. Table \ref{tab:des} presents the baseline characteristics of 40000 individuals who were included in the study.\\
-\hspace*{0.333em}\hspace*{0.333em}Baseline characteristics stratified by the study outcome indicate that 254 of the respondents were hospitalized. Respondents who were hospitalized were older (79.68 vs 75.63), had more contact with the GP (21.08 vs 14.71), were less often female (48.43\% vs 61.99\%), had more often cardiovascular disease (72.05\% vs 49.25\%) and more often Diabetes (11.42\% vs 6.51\%).
+\hspace*{0.333em}\hspace*{0.333em}Baseline characteristics stratified by the study outcome indicate that 254 of the respondents were hospitalized. Respondents who were hospitalized were older (79.68 vs 75.63), had more contact with the GP (21.08 vs 14.71), were less often female (48.43\%), had more often cardiovascular disease (72.05\% vs 49.25\%) and more often Diabetes (11.42\% vs 6.51\%).
 
 \begin{table}[!h]
 
@@ -174,7 +176,7 @@ Two models were created, one with stabilized- and one with unstabilized weights.
 \section{Results}\label{results}}
 
 Table \ref{tab:res} shows the crude association between vaccination status and hospitalization was examined using logistic regression, and the odds ratio was found to be 0.921 (95\% CI: 0.699, 1.214), indicating a non-significant association (p = 0.562). The C-statistic, a measure of discrimination, was 0.508, suggesting poor predictive performance of the model.\\
-\hspace*{0.333em}\hspace*{0.333em}\hspace*{0.333em}\hspace*{0.333em}Considering the second model in Table \ref{tab:res}, which presents the PS score as covariate, the Odds Ratio suggests a significant negative association (adjusted OR: 0.635. 95\% CI 0.478 to 0.843; p \textless.001). The C-Statistic of 0.679 suggests that the model has moderate discriminatory power.\\
+\hspace*{0.333em}\hspace*{0.333em}\hspace*{0.333em}\hspace*{0.333em}Considering the second model in Table \ref{tab:res}, which presents the PS as covariate, the odds ratio suggests a significant negative association (adjusted OR: 0.635. 95\% CI 0.478 to 0.843; p \textless.001). The C-Statistic of 0.679 suggests that the model has moderate discriminatory power.\\
 \hspace*{0.333em}\hspace*{0.333em}\hspace*{0.333em}\hspace*{0.333em}The IPW model with unstabilised weights yields significant negative association between the exposure and outcome variable (adjusted OR: 0.617, 95\%CI 0.523 to 0.728; p \textless.001). The model presents moderate discriminatory power, where C = 0.573.\\
 \hspace*{0.333em}\hspace*{0.333em}\hspace*{0.333em}\hspace*{0.333em}The last model in Table \ref{tab:res} is an IPW model with stabilised weights. This model also presents a negative association between vaccination and hospitalisation (Adjusted OR: 0.617, 95\% CI 0.509 to 0.748; p \textless.001). The C-statistic suggests moderate discriminatory power (C= 0.573).
 
@@ -187,22 +189,19 @@ Table \ref{tab:res} shows the crude association between vaccination status and h
 Model Specification & OR (95\% CI) & P-Value & C-Statistic\\
 \midrule
 Unadjusted & 0.921 (0.699 to 1.214) & 0.562 & 0.508\\
-PS score as covariate & 0.635 (0.478 to 0.843) & <.001 & 0.679\\
+PS as covariate & 0.635 (0.478 to 0.843) & <.001 & 0.679\\
 Unstabilised IPW & 0.617 (0.523 to 0.728) & <.001 & 0.573\\
 Stabilised IPW & 0.617 (0.509 to 0.748) & <.001 & 0.573\\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\hypertarget{conclusion-discussion}{%
-\section{Conclusion / Discussion}\label{conclusion-discussion}}
+\hypertarget{discussion}{%
+\section{Discussion}\label{discussion}}
 
-\begin{itemize}
-\item
-  Conclusions supported by data
-\item
-  Other issues (both positive and negative) Maybe write something about matching here?
-\end{itemize}
+The results indicate that the model with the PS as a covariate gives the most clear results. Both IPW models have narrower confidence interval, however their C-statistic is very poor. This makes the PS as covariate model the most addquate. Accounted for confouders, this would mean that being vaccinated causes a lower odds of being hospitalized compared to people without a vaccination.
+
+Other modelling methods could yield even more accurate results. Using machine learning techniques to calculate the PS could create an even better, overfitted, model \ref[schafer]. Using other techniques, like matching or a doubly robust estimation like weigthed residual bias correction could also improve the results of the estimation. In this study it was chosen to only use the PS as a covariate and the IPW to compare the most common PS methods \ref[schafer].
 
   \bibliography{references.bib}
 

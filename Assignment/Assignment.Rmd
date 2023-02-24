@@ -16,10 +16,14 @@ output:
     bibliography: references.bib
     keep_tex: true
     fig_caption: true 
+
     pandoc_args: [
       "--bibliography", "references.bib",
       "--csl", "apa.csl"
     ]
+header-includes:
+  - \usepackage{setspace}
+  - \doublespacing
 ---
 
 ```{r setup, include=FALSE}
@@ -294,7 +298,7 @@ data %>%
   geom_histogram(aes(y=..density..), position='identity', alpha=0.3) + 
   geom_density(aes(color=as.factor(vacc)),alpha=0.1, position='identity') +
   theme_minimal() +
-  xlab("PS Score") +
+  xlab("PS") +
   ylab("Density") +
   labs(fill = "Vaccination") + 
   scale_fill_discrete(labels = c("Unvaccinated", "Vaccinated")) +
@@ -469,12 +473,12 @@ res_ipw_c <- boot.ipw.stab$t0[7]
 
 
 | Table \@ref(tab:res) shows the crude association between vaccination status and hospitalization was examined using logistic regression, and the odds ratio was found to be `r res_crude[1]` (95% CI: `r res_crude[2]`, `r res_crude[3]`), indicating a non-significant association (p = `r print_p_value(res_crude_p)`). The C-statistic, a measure of discrimination, was `r res_crude_c`, suggesting poor predictive performance of the model.
-|     Considering the second model in Table \@ref(tab:res), which presents the PS score as covariate, the odds ratio suggests a significant negative association (adjusted OR: `r res_ps[1]`. 95% CI `r res_ps[2]` to `r res_ps[3]`; p `r print_p_value(res_ps_p)`). The C-Statistic of `r res_ps_c` suggests that the model has moderate discriminatory power.
+|     Considering the second model in Table \@ref(tab:res), which presents the PS as covariate, the odds ratio suggests a significant negative association (adjusted OR: `r res_ps[1]`. 95% CI `r res_ps[2]` to `r res_ps[3]`; p `r print_p_value(res_ps_p)`). The C-Statistic of `r res_ps_c` suggests that the model has moderate discriminatory power.
 |     The IPW model with unstabilised weights yields significant negative association between the exposure and outcome variable (adjusted OR: `r res_unipw[1]`, 95%CI `r res_unipw[2]` to `r res_unipw[3]`; p `r print_p_value(res_unipw_p)`). The model presents moderate discriminatory power, where C = `r res_unipw_c`.
 |     The last model in Table \@ref(tab:res) is an IPW model with stabilised weights. This model also presents a negative association between vaccination and hospitalisation (Adjusted OR: `r res_ipw[1]`, 95% CI `r res_ipw[2]` to `r res_ipw[3]`; p `r print_p_value(res_ipw_p)`). The C-statistic suggests moderate discriminatory power (C= `r res_ipw_c`).
 
 ```{r}
-models <- c('Unadjusted', 'PS score as covariate', 'Unstabilised IPW', 'Stabilised IPW')
+models <- c('Unadjusted', 'PS as covariate', 'Unstabilised IPW', 'Stabilised IPW')
 
 OR_95 <- c(make_or(res_crude), make_or(res_ps), make_or(res_unipw), make_or(res_ipw))
 
@@ -506,6 +510,6 @@ tab2 %>%
 
 # Discussion
 
-| The results of table @ref(tab:res) indicate that the model with the PS score as a covariate gives the most clear results. Both IPW models have narrower confidence interval, however their C-statistic is very poor. Accounted for confouders, this would mean that being vaccinated causes a lower odds of being hospitalized compared to people without a vaccination. 
+| The results indicate that the model with the PS as a covariate gives the most clear results. Both IPW models have narrower confidence interval, however their C-statistic is very poor. This makes the PS as covariate model the most addquate. Accounted for confouders, this would mean that being vaccinated causes a lower odds of being hospitalized compared to people without a vaccination. 
 
-| Other modelling methods could yield even more accurate results. Using machine learning techniques to calculate the PS could 
+| Other modelling methods could yield even more accurate results. Using machine learning techniques to calculate the PS could create an even better, overfitted, model \ref[schafer]. Using other techniques, like matching or a doubly robust estimation like weigthed residual bias correction could also improve the results of the estimation. In this study it was chosen to only use the PS as a covariate and the IPW to compare the most common PS methods \ref[schafer].
