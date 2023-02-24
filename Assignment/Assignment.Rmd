@@ -266,7 +266,11 @@ tab1 %>%
 
 ### Inverse Probability Weighting (IPW)
 
-| With the aforementioned propensity scores, IPW is calculated by $\frac{1}{PS}$ for the vaccinated group and $\frac{1}{1-PS}$ for the unvaccinated. IPW essentially duplicates observations from individuals with large weights to create a pseudo-population in which probabilities of receiving the exposure do not depend on covariates, including the PS estimation. 
+| With the aforementioned propensity scores, IPW is calculated by $\frac{1}{PS}$ for the vaccinated group and $\frac{1}{1-PS}$ for the unvaccinated. IPW creates a pseudo-population by replicating observations of individuals with higher weights, so the probability of exposure isn't affected by covariates. For example, if gender affects both exposure and outcome, IPW assigns greater weights to underrepresented groups, achieving a comparable gender ratio between the exposed and unexposed groups in the pseudo-population. This allows for comparison of the weighted outcome averages between the exposed and unexposed individuals in the pseudo-population, with no confounding from measured covariates (Shiba & Kawahara, 2021).
+|   
+
+
+
 
 What's the difference compared to unstabilized weights? *The difference is in the numerator of the weights. Here, the results are equal, because the numerator is just a constant. However, the numerator model can include confounders too, in which case the stabilized weight yield more stable estimates.*
 
@@ -303,7 +307,6 @@ data %>%
 mean(data$ps.score[vacc==0]) ; mean(data$ps.score[vacc==1])
 ```
 
-We see that the mean propensity score for the ones who are vaccinated is higher (As expected)
 
 ```{r}
 data$ipw <- with(data, 1 / (ifelse(data$vacc == 1, ps.score, 1-ps.score)))
