@@ -432,9 +432,9 @@ tab2 %>%
 
 # Conclusion / Discussion
 
--   Conclusions supported by data
+- Conclusions supported by data
 
--   Other issues (both positive and negative) Maybe write something about matching here?
+- Other issues (both positive and negative) Maybe write something about matching here?
 
 # References
 
