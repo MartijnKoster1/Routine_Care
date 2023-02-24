@@ -56,7 +56,7 @@ In this paper we will examine whether there is a causal effect from elderly peop
 
 ## Examening the causal structure
 
-| Domain knowledge was used to create a DAG (Figure \@ref(fig:dag) ) that explains the causal structure present in the data. The variable 'contact with chiropractor (GP)' forms a proxy for the unobserved variable healthy lifestyle. Getting the influenza vaccine is connected to age and contact with GP. Having obtained a influenza vaccination was associated with a lower risk for adverse cardiovascular events \citep{behrouzi}. Having pulmonary disease and diabetes increases the chance for cardiovascular disease \citep{nhg}. Sex forms a confounder between hospitalization and healthy lifestyle \citep{loef} which in turn causes the afore mentioned diseases. 
+| Domain knowledge was used to create a DAG (Figure \@ref(fig:dag) ) that explains the causal structure present in the data. The variable 'contact with chiropractor (GP)' forms a proxy for the unobserved variable healthy lifestyle. Getting the influenza vaccine is connected to age and contact with GP. Having obtained a influenza vaccination was associated with a lower risk for adverse cardiovascular events \citep{behrouzi}. Having pulmonary disease and diabetes increases the chance for cardiovascular disease (cvd) \citep{nhg}. Sex forms a confounder between hospitalization and healthy lifestyle \citep{loef} which in turn causes the aforementioned diseases. 
 |   The causal paths of the DAG should be examined to assess whether unbiased causal inference is possible. There is a flow of statistical information through open backdoor paths due to observed and unobserved confounders. The eventual model would need to adjust for these confounders in order to perform an unbiased causal inference.
 
 ```{r dag, fig.cap = 'DAG model with Vaccine as exposure and hospitalization as outcome', out.width='50%'}
@@ -189,7 +189,7 @@ vacc_nohosp_mean <- round(100*mean(vacc[hosp==0]),2)
 ```{r}
 
 
-characteristics <- c('N', 'Age, mean (SD)', 'Contact, mean (SD)', 'Female, n (%)', 'Pulmonary disease, n (%)', 'Cardiovascular disease, n (%)', 'Diabetes mellitus, n(%)', 'Received Influenza Vaccination, n (%)')
+characteristics <- c('N', 'Age, mean (SD)', 'Contact, mean (SD)', 'Female, n (%)', 'Pulmonary disease, n (%)', 'cvd, n (%)', 'Diabetes mellitus, n(%)', 'Received Influenza Vaccination, n (%)')
 total <- c(nrow(data), paste0(age_mean, ' (', age_sd, ')'),
            paste0(contact_mean, ' (', contact_sd, ')'),
            paste0(sex_sum, ' (', sex_mean, ')'),
@@ -251,12 +251,12 @@ tab1 <- data.frame(
 
 ### Baseline Characteristics
 
-|   The electronic patient records dataset consist of eight variables. The variables age and contact with a chiropractor were continues, the variables vaccination status, sex, cardiovascular disease, pulmonary disease, diabetes and hospitalization were binominal. Table \@ref(tab:des) presents the baseline characteristics of `r nrow(data)` individuals who were included in the study.
-|   Baseline characteristics stratified by the study outcome indicate that `r sum(hosp)` of the respondents were hospitalized. Respondents who were hospitalized were older (`r age_hosp_mean` vs `r age_nohosp_mean`), had more contact with the GP (`r contact_hosp_mean` vs `r contact_nohosp_mean`), were less often female (`r sex_hosp_mean`%), had more often cardiovascular disease (`r cvd_hosp_mean`% vs `r cvd_nohosp_mean`%) and more often Diabetes (`r dm_hosp_mean`% vs `r dm_nohosp_mean`%).
+|   The electronic patient records dataset consist of eight variables. The variables age and contact with a chiropractor were continuous, the variables vaccination status, sex, cvd, pulmonary disease, diabetes and hospitalization were binominal. Table \@ref(tab:des) presents the baseline characteristics of `r nrow(data)` individuals who were included in the study.
+|   Baseline characteristics stratified by the study outcome indicate that `r sum(hosp)` of the respondents were hospitalized. Respondents who were hospitalized were older (`r age_hosp_mean` vs `r age_nohosp_mean`), had more contact with the GP (`r contact_hosp_mean` vs `r contact_nohosp_mean`), were less often female (`r sex_hosp_mean`%), had more often cvd (`r cvd_hosp_mean`% vs `r cvd_nohosp_mean`%) and more often Diabetes (`r dm_hosp_mean`% vs `r dm_nohosp_mean`%).
 
 ```{r des, echo = FALSE, results='hold'}
 tab1 %>%
-  kbl(caption = 'Baseline Characteristics stratified by Influenza vaccination received and Hospitalisation',
+  kbl(caption = 'Baseline Characteristics stratified by Influenza vaccination received and hospitalization',
       col.names = c('Characteristics', 'Total', 'Yes', 'No', 'Yes', 'No'),
       booktabs = T) %>%
   kable_classic(full_width = F, html_font = 'Cambria') %>% 
@@ -267,7 +267,7 @@ tab1 %>%
 
 ### Propensity Scores (PS)
 
-|   In order to control for confounding, a PS was estimated by fitting a logistic regression. A PS gives the probability being vaccinated for the respondents. Based on the DAG (Figure \@ref(fig:dag) ) the variables: age, sex, cardiovascular disease, pulmonary disease, diabetis mellitus, and GP contact were used in the PS model. For the variables age and contact a spline is used \citep{Tian}.
+|   In order to control for confounding, a PS was estimated by fitting a logistic regression. A PS gives the probability being vaccinated for the respondents. Based on the DAG (Figure \@ref(fig:dag) ) the variables: age, sex, cvd, pulmonary disease, diabetis mellitus, and GP contact were used in the PS model. For the variables age and contact a spline is used \citep{Tian}.
 |     In Figure \@ref(fig:psscore), the PS for vaccinated and unvaccinated individuals appear to be well-balanced, supporting the positivity assumption, which means that both treatement groups have a chance to get the treatment given the covariates \citep{westreich}.
 
 ### PS as Covariate
@@ -276,7 +276,7 @@ tab1 %>%
 
 ### Inverse Probability Weighting (IPW)
 
-|   With the aforementioned PS, IPW is calculated by $\frac{1}{PS}$ for the vaccinated group and $\frac{1}{1-PS}$ for the unvaccinated. IPW creates a pseudo-population by equaling the effect of the confounders mimicking a random control trial. \citep{shiba}.
+| With the aforementioned PS, IPW is calculated by $\frac{1}{PS}$ for the vaccinated group and $\frac{1}{1-PS}$ for the unvaccinated. IPW creates a pseudo-population by equaling the effect of the confounders mimicking a random control trial. \citep{shiba}.
 
 |   Two logistic regression models, with stabalized- and unstabilized weights. When using stabilized weights the numerator model also includes confounders, giving more stable estimates compared to the unstabilized weights \citep{ipw}. In both models bootstrapping was used to account for the inflated sample size of the pseudo population. 
 
@@ -474,11 +474,11 @@ res_ipw_c <- boot.ipw.stab$t0[7]
 
 | Table \@ref(tab:res) shows the crude association between vaccination status and hospitalization. The odds ratio (OR) was found to be `r res_crude[1]` (95% CI: `r res_crude[2]`, `r res_crude[3]`), indicating a non-significant association (p = `r print_p_value(res_crude_p)`). The C-statistic, a measure of discrimination, was `r res_crude_c`, suggesting poor predictive performance of the model.
 |     Considering the second model in Table \@ref(tab:res), which presents the PS as covariate, the OR suggests a significant negative association ($OR_{adjusted}$: `r res_ps[1]`. 95% CI `r res_ps[2]` to `r res_ps[3]`; p `r print_p_value(res_ps_p)`). The C-Statistic of `r res_ps_c` suggests that the model has moderate discriminatory power.
-|     The IPW model with unstabilised weights yields significant negative association between the exposure and outcome variable ($OR_{adjusted}$: `r res_unipw[1]`, 95%CI `r res_unipw[2]` to `r res_unipw[3]`; p `r print_p_value(res_unipw_p)`). The model presents moderate discriminatory power, where C = `r res_unipw_c`.
-|     The last model in Table \@ref(tab:res) is an IPW model with stabilised weights. This model also presents a negative association between vaccination and hospitalization ($OR_{adjusted}$: `r res_ipw[1]`, 95% CI `r res_ipw[2]` to `r res_ipw[3]`; p `r print_p_value(res_ipw_p)`). The C-statistic suggests moderate discriminatory power (C= `r res_ipw_c`).
+|     The IPW model with unstabilized weights yields significant negative association between the exposure and outcome variable ($OR_{adjusted}$: `r res_unipw[1]`, 95%CI `r res_unipw[2]` to `r res_unipw[3]`; p `r print_p_value(res_unipw_p)`). The model presents moderate discriminatory power, where C = `r res_unipw_c`.
+|     The IPW model with stabilized weights. This model presents a negative association between vaccination and hospitalization ($OR_{adjusted}$: `r res_ipw[1]`, 95% CI `r res_ipw[2]` to `r res_ipw[3]`; p `r print_p_value(res_ipw_p)`). The C-statistic suggests moderate discriminatory power (C= `r res_ipw_c`).
 
 ```{r}
-models <- c('Unadjusted', 'PS as covariate', 'Unstabilised IPW', 'Stabilised IPW')
+models <- c('Unadjusted', 'PS as covariate', 'Unstabilized IPW', 'stabilized IPW')
 
 OR_95 <- c(make_or(res_crude), make_or(res_ps), make_or(res_unipw), make_or(res_ipw))
 
