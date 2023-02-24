@@ -9,15 +9,25 @@ date: "2023-02-15"
 
 output:
   bookdown::pdf_book:
-    extra_dependencies: "subfig"
+   
     toc: false 
-    number_sections: false
+    number_sections: true
+    citation_package: natbib
+    bibliography: references.bib
+    keep_tex: true
+    fig_caption: true
+    pandoc_args: [
+      "--bibliography", "references.bib",
+      "--csl", "apa.csl"
+    ]
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, comment = NA, warning = FALSE,
                       error=FALSE, results='hide',fig.keep='all')
 ```
+
+\newpage
 
 # Introduction
 
@@ -37,7 +47,7 @@ attach(data)
 
 In this paper the
 
-In this paper we will examine whether there is a causal effect from  elderly people (i.e., 65+) who have received an influenza vaccine and the likelihood of hospitalization. This will be examined by using the patient records dataset. 
+In this paper we will examine whether there is a causal effect from elderly people (i.e., 65+) who have received an influenza vaccine and the likelihood of hospitalization. This will be examined by using the patient records dataset.
 
 Write here a short motivation with a RQ
 
@@ -48,7 +58,9 @@ Write here a short motivation with a RQ
 # Methods
 
 ## Examening the causal structure
-| Domain knowledge was used to create a DAG (Figure @ref(fig:dag)) that explains the causal structure present in the data. The variable 'contact with chiropractor' was given as a proxy for the unobserved variable healthy lifestyle. An influenza vaccination is season, hence does the time from last contact with the chiropractor form a causal path to vaccination status. Furthermore is the national distribution of an influenza vaccination determined age, hence does age form a causal path towards vaccination status. Having obtained a influenza vaccination was associated with a lower risk for adverse cardiovascular events with hospitalization as a result (Behrouzi et al., 2022). Having pulmonary disease and diabetes increases ones chances to get severe cardiovascular disease (Nederlands Huisartsen Genootschap, date not given). The healthiness of ones lifestyle forms a major cause in getting (severe) cardiovascular disease, pulmonary disease and diabetes. In return is once sex an important confounder in the healthiness of ones lifestyle (Loef & Walach, 2012). The previously mentioned diseases could all be a cause for hospitalization. 
+
+| Domain knowledge was used to create a DAG (Figure \@ref(fig:dag) ) that explains the causal structure present in the data. The variable 'contact with chiropractor' was given as a proxy for the unobserved variable healthy lifestyle. An influenza vaccination is season, hence does the time from last contact with the chiropractor form a causal path to vaccination status. Furthermore is the national distribution of an influenza vaccination determined age, hence does age form a causal path towards vaccination status. Having obtained a influenza vaccination was associated with a lower risk for adverse cardiovascular events with hospitalization as a result (Behrouzi et al., 2022). Having pulmonary disease and diabetes increases ones chances to get severe cardiovascular disease (Nederlands Huisartsen Genootschap, date not given). The healthiness of ones lifestyle forms a major cause in getting (severe) cardiovascular disease, pulmonary disease and diabetes. In return is once sex an important confounder in the healthiness of ones lifestyle (Loef & Walach, 2012). The previously mentioned diseases could all be a cause for hospitalization.
+| The causal paths of the DAG should be examined to asses whether unbiased causal inference is possible. The main two causal paths from vaccination status towards hospitalisation are a direct path and a path through the mediator cardiovascular disease. However, there is a flow of statistical information through open backdoor paths as well. This is due to observed and unobserved confounders like age, contact with chiropractor and healthy lifestyle. The eventual model would need to adjust for these confounders in order to perform an unbiased causel inference.
 
 ```{r dag, fig.cap = 'DAG model with Vaccine as exposure and hospitalization as outcome', out.width='50%'}
 dag1 <- dagify(
@@ -240,10 +252,9 @@ tab1 <- data.frame(
 )
 ```
 
-
 ### Baseline Characteristics
 
-| The electronic patient records dataset consist of eight variables. The variables age and contact with a chiropractor were continues, the variables vaccination status, sex, cardiovascular disease, pulmonary disease, diabetes and hospitalization were binominal. Table \@ref(tab:des) presents the baseline characteristics of `r length(data$vacc)` individuals who were included in the study. The mean age was `r age_mean` (sd = `r age_sd`). The majority of the study were woman (`r sex_mean`%). Approximately half (`r cvd_mean`%) of the respondents had Cardiovascular disease, whereas `r pulm_mean` percent had Pulmonary disease. Of the participants, `r dm_mean`% had Diabetes Mellitus.
+| The electronic patient records dataset consist of eight variables. The variables age and contact with a chiropractor were continues, the variables vaccination status, sex, cardiovascular disease, pulmonary disease, diabetes and hospitalization were binominal. Table \@ref(tab:des) presents the baseline characteristics of `r nrow(data)` individuals who were included in the study. The mean age was `r age_mean` (sd = `r age_sd`). The majority of the study were woman (`r sex_mean`%). Approximately half (`r cvd_mean`%) of the respondents had Cardiovascular disease, whereas `r pulm_mean` percent had Pulmonary disease. Of the participants, `r dm_mean`% had Diabetes Mellitus.
 |   A total of `r sum(vacc)` (`r round(100*mean(vacc),2)`%) respondents were vaccinated. People who received a vaccination had on average more often pulmonary disease (`r pulm_vacc_mean`% vs `r pulm_novacc_mean`%), cardiovascular disease (`r cvd_vacc_mean`% vs `r cvd_novacc_mean`%) and diabetes (`r dm_vacc_mean`% vs `r dm_novacc_mean`%).
 |   Baseline characteristics stratified by the study outcome indicate that `r sum(hosp)` of the respondents were hospitalized as opposed to `r sum(hosp==0)` who were not. Respondents who were hospitalized were older (`r age_hosp_mean` vs `r age_nohosp_mean`), had more often contact with the GP (`r contact_hosp_mean` vs `r contact_nohosp_mean`), were on average less often a female (`r sex_hosp_mean`% vs `r sex_nohosp_mean`%), had on average more often cardiovascular disease (`r cvd_hosp_mean`% vs `r cvd_nohosp_mean`%) and on average more often Diabetes (`r dm_hosp_mean`% vs `r dm_nohosp_mean`%).
 
@@ -260,35 +271,25 @@ tab1 %>%
 
 ### Propensity Scores (PS)
 
-| In order to control for confounding (observed and unobserved), a PS was estimated by fitting a logistic regression. A PS gives the probability being vaccinated for the respondents. The variables used to calculate the propensity score are derived from the aforementioned DAG (Figure @ref(fig:dag)), namely: age, sex, cardiovascular disease, pulmonary disease, diabetis mellitus, and GP contact in 12 months prior to start of study. For the variables age and contact a spline is used, because showed favorable performance compared to other propensity score methods (Tian, Baro & Zhang, 2019).
-|     In Figure @ref(fig:psscore), the PS for vaccinated and unvaccinated individuals appear to be well-balanced, indicating that the distribution of covariates between the two groups is similar. This plot also supports the positivity assumption, which means that both vaccinated and unvaccinated individuals are represented in all sub-populations defined by different combinations of covariates (Westreich & Cole, 2010).
-
-
+| In order to control for confounding (observed and unobserved), a PS was estimated by fitting a logistic regression. A PS gives the probability being vaccinated for the respondents. The variables used to calculate the propensity score are derived from the aforementioned DAG (Figure \@ref(fig:dag) ), namely: age, sex, cardiovascular disease, pulmonary disease, diabetis mellitus, and GP contact in 12 months prior to start of study. For the variables age and contact a spline is used, because showed favorable performance compared to other propensity score methods \citep{Tian}.
+|     In Figure \@ref(fig:psscore), the PS for vaccinated and unvaccinated individuals appear to be well-balanced, indicating that the distribution of covariates between the two groups is similar. This plot also supports the positivity assumption, which means that both vaccinated and unvaccinated individuals are represented in all sub-populations defined by different combinations of covariates (Westreich & Cole, 2010).
 
 ### PS as Covariate
 
-| The first adjusted model is to use the PS as a covariate. By including PS as a covariate, the effect of treatment or exposure can be estimated while adjusted for potential confounders. This method can provide mroe statistical power and precision than matching, particularly when the sample size is large (Austin, 2011)
-
+| The first adjusted model is to use the PS as a covariate. In theory   This method can also provide more statistical power and precision than matching, particularly when the sample size is large \citep{austin}. 
 
 ### Inverse Probability Weighting (IPW)
 
 | With the aforementioned propensity scores, IPW is calculated by $\frac{1}{PS}$ for the vaccinated group and $\frac{1}{1-PS}$ for the unvaccinated. IPW creates a pseudo-population by replicating observations of individuals with higher weights, so the probability of exposure isn't affected by covariates. For example, if gender affects both exposure and outcome, IPW assigns greater weights to underrepresented groups, achieving a comparable gender ratio between the exposed and unexposed groups in the pseudo-population. This allows for comparison of the weighted outcome averages between the exposed and unexposed individuals in the pseudo-population, with no confounding from measured covariates (Shiba & Kawahara, 2021).
-|   
-
-
-
+| 
 
 What's the difference compared to unstabilized weights? *The difference is in the numerator of the weights. Here, the results are equal, because the numerator is just a constant. However, the numerator model can include confounders too, in which case the stabilized weight yield more stable estimates.*
-
-
 
 ```{r}
 ps.formula <- vacc ~ rcs(age) + cvd + DM + rcs(contact) + pulm + sex
 ps.fit <- lrm(ps.formula, data=data)
 ps.fit$stats['C']
 ```
-
-
 
 ```{r, fig.show='hide'}
 data$ps.score <- predict(ps.fit,type='fitted')
@@ -313,13 +314,9 @@ data %>%
 mean(data$ps.score[vacc==0]) ; mean(data$ps.score[vacc==1])
 ```
 
-
 ```{r}
 data$ipw <- with(data, 1 / (ifelse(data$vacc == 1, ps.score, 1-ps.score)))
 ```
-
-
-
 
 ```{r}
 num <- glm(vacc ~ 1, family='binomial', data=data)$fitted.values
@@ -333,10 +330,7 @@ nrow(data)
 
 ```
 
-
-
 # Results
-
 
 ```{r}
 crude.fit <- lrm(hosp ~ vacc, data=data)
@@ -401,7 +395,7 @@ make_or <- function(OR) {
 | As shown in Table \@ref(tab:res), the crude association between vaccination status and hospitalization was examined using logistic regression, and the odds ratio was found to be `r res_crude[1]` (95% CI: `r res_crude[2]`, `r res_crude[3]`), indicating a non-significant association (p = `r print_p_value(res_crude_p)`). The C-statistic, a measure of discrimination, was `r res_crude_c`, suggesting poor predictive performance of the model.
 |     Considering the second model in Table \@ref(tab:res), which presents the PS score as covariate, the Odds Ratio suggests a significant negative association (adjusted OR: `r res_ps[1]`. 95% CI `r res_ps[2]` to `r res_ps[3]`; p `r print_p_value(res_ps_p)`). The C-Statistic of `r res_ps_c` suggests that the model has moderate discriminatory power.
 |     The IPW model with unstabilised weights yields significant negative association between the exposure and outcome variable (adjusted OR: `r res_unipw[1]`, 95%CI `r res_unipw[2]` to `r res_unipw[3]`; p `r print_p_value(res_unipw_p)`). The model presents moderate discriminatory power, where C = `r res_unipw_c`.
-|     The last model in Table \@ref(tab:res) is an IPW model with stabilised weights. This model also presents a negative association between vaccination and hospitalisation (Adjusted OR: `r res_ipw[1]`, 95% CI `r res_ipw[2]` to `r res_ipw[3]`; p `r print_p_value(res_ipw_p)`). The C-statistic suggests moderate discriminatory power (C= `r res_ipw_c`). 
+|     The last model in Table \@ref(tab:res) is an IPW model with stabilised weights. This model also presents a negative association between vaccination and hospitalisation (Adjusted OR: `r res_ipw[1]`, 95% CI `r res_ipw[2]` to `r res_ipw[3]`; p `r print_p_value(res_ipw_p)`). The C-statistic suggests moderate discriminatory power (C= `r res_ipw_c`).
 
 ```{r}
 models <- c('Unadjusted', 'PS score as covariate', 'Unstabilised IPW', 'Stabilised IPW')
@@ -434,26 +428,23 @@ tab2 %>%
   kable_styling(latex_options = "hold_position")
 ```
 
-
-
 # Conclusion / Discussion
 
-- Conclusions supported by data
+-   Conclusions supported by data
 
-- Other issues (both positive and negative) Maybe write something about matching here?
+-   Other issues (both positive and negative) Maybe write something about matching here?
 
 # References
 
-Austin, P. C. (2011). An introduction to propensity score methods for reducing the effects of confounding in observational studies. Multivariate Behavioral Research, 46(3), 399-424.
 
-Behrouzi, B., Bhatt, D. L., Cannon, C. P., Vardeny, O., Lee, D. S., Solomon, S. D., &amp; Udell, J. A. (2022). Association of influenza vaccination with cardiovascular risk. JAMA Network Open, 5(4). https://doi.org/10.1001/jamanetworkopen.2022.8873.
+Behrouzi, B., Bhatt, D. L., Cannon, C. P., Vardeny, O., Lee, D. S., Solomon, S. D., & Udell, J. A. (2022). Association of influenza vaccination with cardiovascular risk. JAMA Network Open, 5(4). <https://doi.org/10.1001/jamanetworkopen.2022.8873>.
 
-Loef, M., &amp; Walach, H. (2012). The combined effects of healthy lifestyle behaviors on all cause mortality: A systematic review and meta-analysis. Preventive Medicine, 55(3), 163–170. https://doi.org/10.1016/j.ypmed.2012.06.017
+Loef, M., & Walach, H. (2012). The combined effects of healthy lifestyle behaviors on all cause mortality: A systematic review and meta-analysis. Preventive Medicine, 55(3), 163--170. <https://doi.org/10.1016/j.ypmed.2012.06.017>
 
 Shiba K, Kawahara T. Using Propensity Scores for Causal Inference: Pitfalls and Tips. J Epidemiol. 2021 Aug 5;31(8):457-463. doi: 10.2188/jea.JE20210145. Epub 2021 Jun 12. PMID: 34121051; PMCID: PMC8275441.
 
 Yuxi Tian, Elande Baro & Rongmei Zhang (2019) Performance evaluation of regression splines for propensity score adjustment in post-market safety analysis with multiple treatments, Journal of Biopharmaceutical Statistics, 29:5, 810-821, DOI: 10.1080/10543406.2019.1657138
 
-Nederlands Huisartsen Genootschap, _Risico hart- en vaatziekten verlagen_, https://www.thuisarts.nl/risico-hart-en-vaatziekten-verlagen, accesed: 23-2-2023
+Nederlands Huisartsen Genootschap, *Risico hart- en vaatziekten verlagen*, <https://www.thuisarts.nl/risico-hart-en-vaatziekten-verlagen>, accesed: 23-2-2023
 
 Westreich, D., & Cole, S. R. (2010). Invited commentary: positivity in practice. American journal of epidemiology, 171(6), 674-677.
