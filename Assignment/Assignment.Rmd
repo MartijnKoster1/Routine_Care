@@ -57,7 +57,7 @@ In this paper we will examine whether there is a causal effect from elderly peop
 ## Examening the causal structure
 
 | Domain knowledge was used to create a DAG (Figure \@ref(fig:dag) ) that explains the causal structure present in the data. The variable 'contact with chiropractor (GP)' forms a proxy for the unobserved variable healthy lifestyle. Getting the influenza vaccine is connected to age and contact with GP. Having obtained a influenza vaccination was associated with a lower risk for adverse cardiovascular events \citep{behrouzi}. Having pulmonary disease and diabetes increases the chance for cardiovascular disease \citep{nhg}. Sex forms a confounder between hospitalization and healthy lifestyle \citep{loef} which in turn causes the afore mentioned diseases. 
-| The causal paths of the DAG should be examined to asses whether unbiased causal inference is possible. There is a flow of statistical information through open backdoor paths due to observed and unobserved confounders. The eventual model would need to adjust for these confounders in order to perform an unbiased causal inference.
+|   The causal paths of the DAG should be examined to asses whether unbiased causal inference is possible. There is a flow of statistical information through open backdoor paths due to observed and unobserved confounders. The eventual model would need to adjust for these confounders in order to perform an unbiased causal inference.
 
 ```{r dag, fig.cap = 'DAG model with Vaccine as exposure and hospitalization as outcome', out.width='50%'}
 dag1 <- dagify(
@@ -251,7 +251,7 @@ tab1 <- data.frame(
 
 ### Baseline Characteristics
 
-| The electronic patient records dataset consist of eight variables. The variables age and contact with a chiropractor were continues, the variables vaccination status, sex, cardiovascular disease, pulmonary disease, diabetes and hospitalization were binominal. Table \@ref(tab:des) presents the baseline characteristics of `r nrow(data)` individuals who were included in the study.
+|   The electronic patient records dataset consist of eight variables. The variables age and contact with a chiropractor were continues, the variables vaccination status, sex, cardiovascular disease, pulmonary disease, diabetes and hospitalization were binominal. Table \@ref(tab:des) presents the baseline characteristics of `r nrow(data)` individuals who were included in the study.
 |   Baseline characteristics stratified by the study outcome indicate that `r sum(hosp)` of the respondents were hospitalized. Respondents who were hospitalized were older (`r age_hosp_mean` vs `r age_nohosp_mean`), had more contact with the GP (`r contact_hosp_mean` vs `r contact_nohosp_mean`), were less often female (`r sex_hosp_mean`%), had more often cardiovascular disease (`r cvd_hosp_mean`% vs `r cvd_nohosp_mean`%) and more often Diabetes (`r dm_hosp_mean`% vs `r dm_nohosp_mean`%).
 
 ```{r des, echo = FALSE, results='hold'}
@@ -267,18 +267,18 @@ tab1 %>%
 
 ### Propensity Scores (PS)
 
-| In order to control for confounding, a PS was estimated by fitting a logistic regression. A PS gives the probability being vaccinated for the respondents. Based on the DAG (Figure \@ref(fig:dag) ) the variables: age, sex, cardiovascular disease, pulmonary disease, diabetis mellitus, and GP contact were used in the PS model. For the variables age and contact a spline is used \citep{Tian}.
+|   In order to control for confounding, a PS was estimated by fitting a logistic regression. A PS gives the probability being vaccinated for the respondents. Based on the DAG (Figure \@ref(fig:dag) ) the variables: age, sex, cardiovascular disease, pulmonary disease, diabetis mellitus, and GP contact were used in the PS model. For the variables age and contact a spline is used \citep{Tian}.
 |     In Figure \@ref(fig:psscore), the PS for vaccinated and unvaccinated individuals appear to be well-balanced, supporting the positivity assumption, which means that both treatement groups have a chance to get the treatment given the covariates \citep{westreich}.
 
 ### PS as Covariate
 
-| The first adjusted model is to use the PS as a covariate. In a observational study the treated and untreated group have an equal distribution given that these are divided in groups of a constant propensity. The propensity score can be used as a baseline variable to account for the dimensional difference between groups since it is assumed that the treatment is unconfounded given this propensity score \citep{schafer}. 
+|   The first adjusted model is to use the PS as a covariate. In a observational study the treated and untreated group have an equal distribution given that these are divided in groups of a constant propensity. The propensity score can be used as a baseline variable to account for the dimensional difference between groups since it is assumed that the treatment is unconfounded given this propensity score \citep{schafer}. 
 
 ### Inverse Probability Weighting (IPW)
 
-| With the aforementioned propensity scores, IPW is calculated by $\frac{1}{PS}$ for the vaccinated group and $\frac{1}{1-PS}$ for the unvaccinated. IPW creates a pseudo-population by equaling the effect of the confounders mimicking a random control trial. \citep{shiba}.
+|   With the aforementioned propensity scores, IPW is calculated by $\frac{1}{PS}$ for the vaccinated group and $\frac{1}{1-PS}$ for the unvaccinated. IPW creates a pseudo-population by equaling the effect of the confounders mimicking a random control trial. \citep{shiba}.
 
-| Two models were created, one with stabilized- and one with unstabilized weights. When using stabilized weights the numerator model also includes confounders, giving more stable estimates compared to the unstabilized weights \citep{ipw}. In both models bootstrapping was used to account for the inflated sample size of the pseudo population. 
+|   Two models were created, one with stabilized- and one with unstabilized weights. When using stabilized weights the numerator model also includes confounders, giving more stable estimates compared to the unstabilized weights \citep{ipw}. In both models bootstrapping was used to account for the inflated sample size of the pseudo population. 
 
 ```{r}
 ps.formula <- vacc ~ rcs(age) + cvd + DM + rcs(contact) + pulm + sex
@@ -510,6 +510,6 @@ tab2 %>%
 
 # Discussion
 
-| The results indicate that the model with the PS as a covariate gives the most clear results. Both IPW models have narrower confidence interval, however their C-statistic is very poor. This makes the PS as covariate model the most addquate. Accounted for confouders, this would mean that being vaccinated causes a lower odds of being hospitalized compared to people without a vaccination. 
+|   The results indicate that the model with the PS as a covariate gives the most clear results. Both IPW models have narrower confidence interval, however their C-statistic is very poor. This makes the PS as covariate model the most adequate. Accounted for confouders, this would mean that being vaccinated causes a lower odds of being hospitalized compared to people without a vaccination. 
 
-| Other modelling methods could yield even more accurate results. Using machine learning techniques to calculate the PS could create an even better, overfitted, model \ref[schafer]. Using other techniques, like matching or a doubly robust estimation like weigthed residual bias correction could also improve the results of the estimation. In this study it was chosen to only use the PS as a covariate and the IPW to compare the most common PS methods \ref[schafer].
+|   Other modelling methods could yield even more accurate results. Using machine learning techniques to calculate the PS could create an even better, overfitted, model \citep{schafer}. Using other techniques, like matching or a doubly robust estimation like weigthed residual bias correction could also improve the results of the estimation. In this study it was chosen to only use the PS as a covariate and the IPW to compare the most common PS methods \citep{schafer}.
