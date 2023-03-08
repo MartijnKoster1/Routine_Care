@@ -9,12 +9,7 @@ output: html_document
 #install.packages('data.table')
 library(data.table)
 library(tidyverse)
-
-df1 <- fread("Tables/CDM_SOURCE.csv")[, lapply(.SD, FUN=function(x) gsub("^$|^ $", NA, x))]
-df2 <- fread("Tables/EVENTS.csv")[, lapply(.SD, FUN=function(x) gsub("^$|^ $", NA, x))]
-df3 <- fread("Tables/INSTANCE.csv", fill = T)[, lapply(.SD, FUN=function(x) gsub("^$|^ $", NA, x))]
-df4 <- fread("Tables/METADATA.csv")[, lapply(.SD, FUN=function(x) gsub("^$|^ $", NA, x))]
-df6 <- fread("Tables/PERSONS.csv")[, lapply(.SD, FUN=function(x) gsub("^$|^ $", NA, x))]
+library(readxl)
 ```
 
 
@@ -22,16 +17,21 @@ df6 <- fread("Tables/PERSONS.csv")[, lapply(.SD, FUN=function(x) gsub("^$|^ $", 
 O_P <- read.csv("Tables/OBSERVATION_PERIODS.csv")
 events <- read.csv('Tables/EVENTS.csv')
 persons <- read.csv('Tables/PERSONS.csv')
+instance <- read.csv('Tables/INSTANCE.csv')
+codelist <- read_excel("Tables/CodeList_20210128(1).xlsx", 
+    sheet = "ANAPHYL")
+codelist2 <- read_excel("Tables/CodeList_20210128(1).xlsx", 
+    sheet = "GBS")
 ```
 
 ### Step 1
 
 
 ```{r}
-df1 <- O_P %>% 
+dfp1 <- O_P %>% 
   filter(op_start_date <= 20160101,
          op_end_date >= 20170102)
-df1$start_study <- 20170101
+dfp1$start_study <- 20170101
 ```
 
 ### Step 2
@@ -44,10 +44,87 @@ persons <- persons %>%
                          breaks = c(0,19,39,59,79,Inf), 
                          include.lowest = T,include.highest = T, 
                          labels = c("[0,19]",'[20,39]', '[40,59]', '[60,79]', '[80+]')))
-
-data <- left_join(df1, persons, by = "person_id")
-
 ```
 
 
 ### Step 3
+
+```{r}
+data <- left_join(dfp1, persons, by = "person_id")
+```
+
+### Step 4
+
+```{r}
+anaphyl <- codelist %>% 
+  filter(`Coding system`== c('ICD9', 'ICD10/CM'))
+
+gbs <- codelist2 %>% 
+  filter(`Coding system`== c('ICD9', 'ICD10/CM'))
+
+codes <- data.table(Diagnosis = paste0('anaphyl_',anaphyl$Algorithm,sep = ""), 
+                event_code = anaphyl$Code, 
+                vocabulary = anaphyl$`Coding system`)
+
+gbstemp <- data.table(Diagnosis = paste0('gbs_',gbs$Algorithm,sep = ""), 
+                event_code = gbs$Code, 
+                vocabulary = gbs$`Coding system`)
+
+codes <- rbind(codes, gbstemp)
+```
+
+
+### Step 5
+
+```{r}
+dfp2 <- merge(codes, events, by = 'event_code')
+dfp2 <- dfp2 %>% 
+  filter(start_date_record > 20170101,
+         start_date_record < 20210101) %>% 
+  arrange(start_date_record)
+
+dfp2 <- dfp2[!duplicated(dfp2$person_id)]
+dfp2$end_date_record <- dfp2$start_date_record
+dfp2$is_event <- 1
+
+```
+
+```{r}
+dftotal <- left_join(data,dfp2, by = 'person_id')
+dftotal$is_event[is.na(dftotal$is_event)] <- 0
+```
+
+```{r}
+dftotal$end_incidence <- dftotal$end_date_record
+dftotal$end_incidence[is.na(dftotal$end_incidence)] <- 20210101 # even over nadenken, hoe reken je iemand die eind november neervalt?
+dftotal$years_in_study <- round(dftotal$end_incidence/10000)-round(dftotal$start_study/10000) #zorg ervoor dat dit een comma getal wordt
+```
+
+
+```{r}
+TNE_anaphP <- dftotal %>% 
+  filter(Diagnosis == 'anaphyl_possible') %>% nrow()
+
+TPY <- sum(dftotal$years_in_study)
+
+(iro_anaphP <- TNE_anaphP/TPY)
+
+TNE_anaphN <- dftotal %>% 
+  filter(Diagnosis == 'anaphyl_narrow') %>% nrow()
+
+(iro_anaphN <- TNE_anaphN/TPY)
+```
+
+```{r}
+TNE_gbs <- dftotal %>% 
+  filter(Diagnosis == 'gbs_narrow') %>% nrow()
+
+(iro_gbs <- TNE_gbs/TPY)
+```
+
+
+---------------------------
+```{r}
+
+```
+
