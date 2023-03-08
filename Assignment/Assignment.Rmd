@@ -54,9 +54,9 @@ In this paper we will examine whether there is a causal effect from elderly peop
 
 # Methods
 
-## Examening the causal structure
+## Examining the causal structure
 
-| Domain knowledge was used to create a DAG (Figure \@ref(fig:dag)) that explains the causal structure present in the data. The variable 'contact with chiropractor (GP)' forms a proxy for the unobserved variable healthy lifestyle. Getting the influenza vaccine is connected to age and contact with GP. Having obtained influenza vaccination was associated with lower risk for adverse cardiovascular events \citep{behrouzi}. Having pulmonary disease and diabetes increases the chance for cardiovascular disease (cvd) \citep{nhg}. Sex forms a confounder between hospitalization and healthy lifestyle \citep{loef} which in turn causes the aforementioned diseases. 
+| Domain knowledge was used to create a DAG (Figure \@ref(fig:dag)) that explains the causal structure present in the data. The variable 'contact with chiropractor (GP)' forms a proxy for the unobserved variable healthy lifestyle. Getting the influenza vaccine is connected to age and contact with GP. Having obtained influenza vaccination was associated with lower risk for adverse cardiovascular events \citep{behrouzi}. Having pulmonary disease and diabetes increases the chance for cardiovascular disease (cvd) \citep{nhg}. Sex forms a confounder between hospitalization and healthy lifestyle \citep{loef}, which in turn causes the aforementioned diseases. 
 |   The causal paths of the DAG are examined to assess whether unbiased causal inference is possible. There is a flow of statistical information through open backdoor paths due to observed and unobserved confounders. The model would need to adjust for these confounders in order to perform unbiased causal inference.
 
 ```{r dag, fig.cap = 'DAG model with Vaccine as exposure and hospitalization as outcome', out.width='50%'}
@@ -251,7 +251,7 @@ tab1 <- data.frame(
 
 ### Baseline Characteristics
 
-|   The electronic patient records dataset consist of eight variables. The variables age and contact with a chiropractor were continuous, the variables vaccination status, sex, cvd, pulmonary disease, diabetes and hospitalization were binominal. Table \@ref(tab:des) presents the baseline characteristics of `r nrow(data)` individuals who were included in the study.
+| The electronic patient records dataset consist of eight variables. The variables age and contact with a chiropractor were continuous, the variables vaccination status, sex, cvd, pulmonary disease, diabetes and hospitalization were binominal. Table \@ref(tab:des) presents the baseline characteristics of `r nrow(data)` individuals who were included in the study.
 |   Baseline characteristics stratified by the study outcome indicate that `r sum(hosp)` of the respondents were hospitalized. Respondents who were hospitalized were older (`r age_hosp_mean` vs `r age_nohosp_mean`), had more contact with the GP (`r contact_hosp_mean` vs `r contact_nohosp_mean`), were less often female (`r sex_hosp_mean`%), had more often cvd (`r cvd_hosp_mean`% vs `r cvd_nohosp_mean`%) and more often Diabetes (`r dm_hosp_mean`% vs `r dm_nohosp_mean`%).
 
 ```{r des, echo = FALSE, results='hold'}
@@ -272,7 +272,7 @@ tab1 %>%
 
 ### PS as Covariate
 
-|   The first adjusted model is to use the PS as a covariate. In a observational study the treated and untreated group have an equal distribution given that these are divided in groups of a constant propensity. The PS can be used as a baseline variable to account for the dimensional difference between groups since it is assumed that the treatment is unconfounded given this PS \citep{schafer}. 
+| The first adjusted model is to use the PS as a covariate. In a observational study the treated and untreated group have an equal distribution given that these are divided in groups of a constant propensity. The PS can be used as a baseline variable to account for the dimensional difference between groups since it is assumed that the treatment is unconfounded given this PS \citep{schafer}. 
 
 ### Inverse Probability Weighting (IPW)
 
@@ -510,8 +510,8 @@ tab2 %>%
 
 # Discussion
 
-|   The results indicate that the model with the PS as covariate gives the most clear results. Both IPW models have narrower confidence interval, however their C-statistic is very poor. This makes the PS as covariate model the most adequate. Accounted for confounders, this would mean that being vaccinated causes a lower odds of being hospitalized compared to people without a vaccination. 
-|   Other modelling methods could yield even more accurate results. Using machine learning techniques to calculate the PS could create an even better, overfitted, model \citep{schafer}. Using other techniques, like matching or a doubly robust estimation like weighted residual bias correction could also improve the results of the estimation. 
+| The results indicate that the model with the PS as covariate gives the most clear results. Both IPW models have narrower confidence interval, however their C-statistic is very poor. This makes the PS as covariate model the most adequate. Accounted for confounders, this would mean that being vaccinated causes a lower odds of being hospitalized compared to people without a vaccination. 
+|   Other modelling methods could yield even more accurate results. Using machine learning techniques to calculate the PS could create an even better, overfitted, model \citep{schafer}. Using other techniques, like matching or a doubly robust estimation, like weighted residual bias correction, could also improve the results of the estimation.     
 |   This paper shows that PS and IPW are necessary to make causal inference regarding the Influenza vaccine and hospitalization association. 
 
 
