@@ -14,7 +14,40 @@ df1 <- fread("Tables/CDM_SOURCE.csv")[, lapply(.SD, FUN=function(x) gsub("^$|^ $
 df2 <- fread("Tables/EVENTS.csv")[, lapply(.SD, FUN=function(x) gsub("^$|^ $", NA, x))]
 df3 <- fread("Tables/INSTANCE.csv", fill = T)[, lapply(.SD, FUN=function(x) gsub("^$|^ $", NA, x))]
 df4 <- fread("Tables/METADATA.csv")[, lapply(.SD, FUN=function(x) gsub("^$|^ $", NA, x))]
-df5<- fread("Tables/OBSERVATION_PERIODS.csv")[, lapply(.SD, FUN=function(x) gsub("^$|^ $", NA, x))]
 df6 <- fread("Tables/PERSONS.csv")[, lapply(.SD, FUN=function(x) gsub("^$|^ $", NA, x))]
 ```
 
+
+```{r}
+O_P <- read.csv("Tables/OBSERVATION_PERIODS.csv")
+events <- read.csv('Tables/EVENTS.csv')
+persons <- read.csv('Tables/PERSONS.csv')
+```
+
+### Step 1
+
+
+```{r}
+df1 <- O_P %>% 
+  filter(op_start_date <= 20160101,
+         op_end_date >= 20170102)
+df1$start_study <- 20170101
+```
+
+### Step 2
+
+```{r}
+persons <- persons %>% 
+  mutate(birthdate = year_of_birth*10000+month_of_birth*100+day_of_birth,
+         age = 2017 - year_of_birth,
+         age_bands = cut(age, 
+                         breaks = c(0,19,39,59,79,Inf), 
+                         include.lowest = T,include.highest = T, 
+                         labels = c("[0,19]",'[20,39]', '[40,59]', '[60,79]', '[80+]')))
+
+data <- left_join(df1, persons, by = "person_id")
+
+```
+
+
+### Step 3
