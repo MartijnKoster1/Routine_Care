@@ -7,6 +7,7 @@ output: html_document
 
 ```{r message=FALSE, warning=FALSE, paged.print=FALSE}
 #install.packages('data.table')
+library(knitr)
 library(data.table)
 library(tidyverse)
 library(readxl)
@@ -15,6 +16,8 @@ library(lubridate)
 
 
 ```{r}
+
+# load the tables
 O_P <- read.csv("Tables/OBSERVATION_PERIODS.csv")
 events <- read.csv('Tables/EVENTS.csv')
 persons <- read.csv('Tables/PERSONS.csv')
@@ -29,13 +32,16 @@ codelist2 <- read_excel("Tables/CodeList_20210128(1).xlsx",
 
 
 ```{r}
+
+
 dfp1 <- O_P %>% 
-  filter(op_start_date <= 20160101,
-         op_end_date >= 20170102)
+  filter(op_start_date <= 20160101, # Remove individuals that do not have at least 1 year of FU before start of study
+         op_end_date >= 20170102) # make sure that the individuals at least have 1 day of fu during study period 
 dfp1$start_study <- 20170101
 ```
 
 ```{r}
+# Make sure that all dates are in Date format YYYY-MM-DD
 dfp1 <- dfp1 %>% 
   mutate(op_start_date = as.Date(ymd(op_start_date)),
          op_end_date = as.Date(ymd(op_end_date)),
@@ -47,13 +53,13 @@ dfp1 <- dfp1 %>%
 
 ```{r}
 persons <- persons %>% 
-  mutate(birthdate = as.Date(ymd(year_of_birth*10000+month_of_birth*100+day_of_birth)),
+  mutate(birthdate = as.Date(ymd(year_of_birth*10000+month_of_birth*100+day_of_birth)), # calculate the birth date
          age = as.numeric(difftime
                           (as.Date(ymd(20170101)), 
-                            birthdate, units='days')) / 365.25,
+                            birthdate, units='days')) / 365.25, # calculate the age 
          age_bands = cut(age, breaks = c(0,19,39,59,79,Inf), 
                          include.lowest = T,include.highest = T, 
-                         labels = c("[0,19]",'[20,39]', '[40,59]', '[60,79]', '[80+]'))
+                         labels = c("[0,19]",'[20,39]', '[40,59]', '[60,79]', '[80+]')) # Make sure the ages are divided in age bands 
                          )
 ```
 
@@ -74,7 +80,7 @@ persons <- persons %>%
 ### Step 3
 
 ```{r}
-data <- left_join(dfp1, persons, by = "person_id")
+data <- left_join(dfp1, persons, by = "person_id") # merge the OBSERVATION_PERIODS and PERSONS table (keep only individuals who are in OBSERVATIONS_PERIODS table)
 ```
 
 ### Step 4
@@ -95,6 +101,9 @@ gbstemp <- data.table(Diagnosis = paste0('gbs_',gbs$Algorithm,sep = ""),
                 vocabulary = gbs$`Coding system`)
 
 codes <- rbind(codes, gbstemp)
+
+kable(codes) ## Deze op later moment nog wat mooier maken 
+
 ```
 
 
@@ -119,9 +128,11 @@ dftotal$is_event[is.na(dftotal$is_event)] <- 0
 ```
 
 ```{r}
+# einde van de studie periode op het moment dat er een event is bij een observatie
 dftotal$end_incidence <- as.Date(ymd(dftotal$end_date_record))
-dftotal$end_incidence[is.na(dftotal$end_incidence)] <- as.Date(ymd(20210101)) # even over nadenken, hoe reken je iemand die eind november neervalt?
-# dftotal$years_in_study <- round(dftotal$end_incidence/10000)-round(dftotal$start_study/10000) #zorg ervoor dat dit een comma getal wordt
+# When observation does not have an event, make sure end_incidence is coded as end study period (2021-01-01)
+dftotal$end_incidence[is.na(dftotal$end_incidence)] <- as.Date(ymd(20210101)) 
+#Calculate how many years each observaiton was in the study. 
 dftotal$years_in_study <- as.numeric(difftime
                           (dftotal$end_incidence, 
                             dftotal$start_study, units='days')) / 365.25
@@ -130,37 +141,43 @@ dftotal$years_in_study <- as.numeric(difftime
 
 
 ```{r}
+#total PY in study period
+TPY <- sum(dftotal$years_in_study)
+
+#calculate the amount of anaph shocks Possible in study period 
 TNE_anaphP <- dftotal %>% 
   filter(Diagnosis == 'anaphyl_possible') %>% nrow()
 
-TPY <- sum(dftotal$years_in_study)
-
+# Incidence Rate for anaph shock possible in study period 
 (iro_anaphP <- TNE_anaphP/TPY)
 
-
+#calculate the amount of anaph shocks narrow in study period 
 TNE_anaphN <- dftotal %>% 
   filter(Diagnosis == 'anaphyl_narrow') %>% nrow()
 
+# IR for anaph shock narrow in study period
 (iro_anaphN <- TNE_anaphN/TPY)
-```
 
-```{r}
+# amount of gbs cases in study period
 TNE_gbs <- dftotal %>% 
   filter(Diagnosis == 'gbs_narrow') %>% nrow()
 
+# IR for gbs in study period
 (iro_gbs <- TNE_gbs/TPY)
 ```
 
 
 ---------------------------
 
-Make end incidence for every year
+
 
 ```{r}
-dftotal$end_incidence_2017 <- as.Date(ymd(dftotal$end_date_record))
+dftotal$end_incidence_2017 <- as.Date(ymd(dftotal$end_date_record)) 
 dftotal$end_incidence_2017[is.na(dftotal$end_incidence_2017)] <- as.Date(ymd(20180101))
 dftotal$end_incidence_2017 <- as.Date(ifelse(year(dftotal$end_incidence_2017) > 2017, as.Date("2018-01-01"), dftotal$end_incidence_2017), origin = "1970-01-01")
 ```
+
+Make end incidence for every year
 
 ```{r}
 df_2018 <- 
@@ -200,17 +217,68 @@ TNE_anaphP_2017 <- events_2017 %>%
 #the Total personyears for an event in 2017
 TPY_2017 <- sum(dftotal$years_in_study_2017)
 
-(iro_anaphP_2017 <- TNE_anaphP_2017/TPY_2017)
+(iro_anaphP_2017_1000PY <- TNE_anaphP_2017/TPY_2017 * 1000)
 
 TNE_anaphN_2017 <- events_2017 %>% 
   filter(Diagnosis == 'anaphyl_narrow') %>% nrow()
 
 
-(iro_anaphN_2017 <- TNE_anaphN_2017/TPY_2017)
+(iro_anaphN_2017_1000PY <- TNE_anaphN_2017/TPY_2017 * 1000)
 
 TNE_gbs_2017 <- events_2017 %>% 
   filter(Diagnosis == 'gbs_narrow') %>% nrow()
 
-(iro_gbs_2017 <- TNE_gbs_2017/TPY_2017)
+(iro_gbs_2017_1000PY <- TNE_gbs_2017/TPY_2017*1000)
+```
+
+```{r}
+# for every observation who has an event put in the date. 
+df_2018$end_incidence_2018 <- as.Date(ymd(df_2018$end_date_record))
+
+#for everybody who does not have an event, make sure the end of incidence is 01-01-2019. 
+df_2018$end_incidence_2018[is.na(df_2018$end_incidence_2018)] <- as.Date(ymd(20190101))
+
+# If an observation has the event after 2018, the end of the observation will be 01-01-2019
+df_2018$end_incidence_2018 <- as.Date(ifelse(year(df_2018$end_incidence_2018) > 2018, as.Date("2019-01-01"), df_2018$end_incidence_2018), origin = "1970-01-01")
+df_2018$start_incidence_2018 <- as.Date(ymd(20180101))
+
+# Count the person years of the observation in 2018
+df_2018$years_in_study_2018 <- as.numeric(difftime
+                          (df_2018$end_incidence_2018, 
+                            df_2018$start_incidence_2018, units='days')) / 365
+
+```
+
+
+```{r}
+
+# All the events in 2018 in a new dataset
+events_2018 <- subset(dftotal, year(end_incidence) == 2018) 
+
+# Total person years observed in 2018
+TPY_2018 <- sum(df_2018$years_in_study_2018)
+
+# Amount of events of anaphylatic shock possible in 2018 
+TNE_anaphP_2018 <- events_2018 %>% 
+  filter(Diagnosis == 'anaphyl_possible') %>% nrow()
+
+# Incidence rate in 1000 PY for anaphalytic shock possible in 2018
+(iro_anaphP_2018_1000PY <- TNE_anaphP_2018/TPY_2018 * 1000)
+
+
+# Amount of events of anaphylatic shock narrow in 2018 
+TNE_anaphN_2018 <- events_2018 %>% 
+  filter(Diagnosis == 'anaphyl_narrow') %>% nrow()
+
+# IR in 1000 PY for analphalytic shock naroow in 2018
+(iro_anaphN_2018_1000PY <- TNE_anaphN_2018/TPY_2018 * 1000)
+
+
+# Amount of events of GBS in 2018 
+TNE_gbs_2018 <- events_2018 %>% 
+  filter(Diagnosis == 'gbs_narrow') %>% nrow()
+
+#IR for gbs in 1000 PY
+(iro_gbs_2018_1000PY <- TNE_gbs_2018/TPY_2018*1000)
 ```
 
