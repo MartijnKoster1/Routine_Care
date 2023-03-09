@@ -65,18 +65,6 @@ persons <- persons %>%
 
 
 
-
-```{r}
-# persons <- persons %>% 
-#   mutate(birthdate = year_of_birth*10000+month_of_birth*100+day_of_birth,
-#          age = 2017 - year_of_birth,
-#          age_bands = cut(age, 
-#                          breaks = c(0,19,39,59,79,Inf), 
-#                          include.lowest = T,include.highest = T, 
-#                          labels = c("[0,19]",'[20,39]', '[40,59]', '[60,79]', '[80+]')))
-```
-
-
 ### Step 3
 
 ```{r}
@@ -149,37 +137,42 @@ TNE_anaphP <- dftotal %>%
   filter(Diagnosis == 'anaphyl_possible') %>% nrow()
 
 # Incidence Rate for anaph shock possible in study period 
-(iro_anaphP <- TNE_anaphP/TPY)
+(iro_anaphP <- TNE_anaphP/TPY * 1000)
 
 #calculate the amount of anaph shocks narrow in study period 
 TNE_anaphN <- dftotal %>% 
   filter(Diagnosis == 'anaphyl_narrow') %>% nrow()
 
 # IR for anaph shock narrow in study period
-(iro_anaphN <- TNE_anaphN/TPY)
+(iro_anaphN <- TNE_anaphN/TPY * 1000)
 
 # amount of gbs cases in study period
 TNE_gbs <- dftotal %>% 
   filter(Diagnosis == 'gbs_narrow') %>% nrow()
 
 # IR for gbs in study period
-(iro_gbs <- TNE_gbs/TPY)
+(iro_gbs <- TNE_gbs/TPY * 1000)
 ```
 
 
 ---------------------------
 
-
+2017!!! 
 
 ```{r}
+# Add for every observations with an event the date of the event in the dataset. 
 dftotal$end_incidence_2017 <- as.Date(ymd(dftotal$end_date_record)) 
+# for every observtion who does not have an event, make sure these will get the start of 2018 as end date, since we want to calculate the IR for 2017
 dftotal$end_incidence_2017[is.na(dftotal$end_incidence_2017)] <- as.Date(ymd(20180101))
+
+# If observation has an event after 2017, it will become the end of the obs period (2018-01-01)
 dftotal$end_incidence_2017 <- as.Date(ifelse(year(dftotal$end_incidence_2017) > 2017, as.Date("2018-01-01"), dftotal$end_incidence_2017), origin = "1970-01-01")
 ```
 
-Make end incidence for every year
+
 
 ```{r}
+# Make end incidence for every year
 df_2018 <- 
   dftotal %>% 
   filter(!year(end_incidence) == 2017)
@@ -197,40 +190,51 @@ df_2021 <-
   filter(!year(end_incidence) == 2020) 
 
 
-dftotal$years_in_study_2017 <- as.numeric(difftime
-                          (dftotal$end_incidence_2017, 
-                            dftotal$start_study, units='days')) / 365
 
 ```
 
 
 
+```{r}
+# calculate for each individual the py observed in 2017. 
+dftotal$years_in_study_2017 <- as.numeric(difftime
+                          (dftotal$end_incidence_2017, 
+                            dftotal$start_study, units='days')) / 365
+```
 
 
 ```{r}
 # Calculate the events in 2017
 events_2017 <- subset(dftotal, year(end_incidence) == 2017) 
 
-TNE_anaphP_2017 <- events_2017 %>% 
-  filter(Diagnosis == 'anaphyl_possible') %>% nrow()
-
 #the Total personyears for an event in 2017
 TPY_2017 <- sum(dftotal$years_in_study_2017)
 
+# Count the amount of anaphyl possible shocks in 2017 
+TNE_anaphP_2017 <- events_2017 %>% 
+  filter(Diagnosis == 'anaphyl_possible') %>% nrow()
+
+# calculate the IR in 1000 PY for anaphyl possible in 2017
 (iro_anaphP_2017_1000PY <- TNE_anaphP_2017/TPY_2017 * 1000)
 
+
+# Count the amount of anaphyl shocks narrow in 2017 
 TNE_anaphN_2017 <- events_2017 %>% 
   filter(Diagnosis == 'anaphyl_narrow') %>% nrow()
 
-
+# calculate the IR in 1000 PY for anaphyl narrow in 2017
 (iro_anaphN_2017_1000PY <- TNE_anaphN_2017/TPY_2017 * 1000)
 
+# Count the amount of gbs in 2017 
 TNE_gbs_2017 <- events_2017 %>% 
   filter(Diagnosis == 'gbs_narrow') %>% nrow()
 
+# calculate the IR in 1000 PY for gbs in 2017
 (iro_gbs_2017_1000PY <- TNE_gbs_2017/TPY_2017*1000)
 ```
 
+
+2018
 ```{r}
 # for every observation who has an event put in the date. 
 df_2018$end_incidence_2018 <- as.Date(ymd(df_2018$end_date_record))
@@ -270,7 +274,7 @@ TNE_anaphP_2018 <- events_2018 %>%
 TNE_anaphN_2018 <- events_2018 %>% 
   filter(Diagnosis == 'anaphyl_narrow') %>% nrow()
 
-# IR in 1000 PY for analphalytic shock naroow in 2018
+# IR in 1000 PY for anaphalytic shock naroow in 2018
 (iro_anaphN_2018_1000PY <- TNE_anaphN_2018/TPY_2018 * 1000)
 
 
@@ -281,4 +285,128 @@ TNE_gbs_2018 <- events_2018 %>%
 #IR for gbs in 1000 PY
 (iro_gbs_2018_1000PY <- TNE_gbs_2018/TPY_2018*1000)
 ```
+
+2019
+
+```{r}
+# for every observation who has an event put in the date. 
+df_2019$end_incidence_2019 <- as.Date(ymd(df_2019$end_date_record))
+
+#for everybody who does not have an event, make sure the end of incidence is 01-01-2019. 
+df_2019$end_incidence_2019[is.na(df_2019$end_incidence_2019)] <- as.Date(ymd(20200101))
+
+# If an observation has the event after 2018, the end of the observation will be 01-01-2019
+df_2019$end_incidence_2019 <- as.Date(ifelse(year(df_2019$end_incidence_2019) > 2019, as.Date("2020-01-01"), df_2019$end_incidence_2019), origin = "1970-01-01")
+df_2019$start_incidence_2019 <- as.Date(ymd(20190101))
+
+# Count the person years of the observation in 2018
+df_2019$years_in_study_2019 <- as.numeric(difftime
+                          (df_2019$end_incidence_2019, 
+                            df_2019$start_incidence_2019, units='days')) / 365
+
+```
+
+
+```{r}
+
+# All the events in 2019 in a new dataset
+events_2019 <- subset(dftotal, year(end_incidence) == 2019) 
+
+# Total person years observed in 2019
+TPY_2019 <- sum(df_2019$years_in_study_2019)
+
+# Amount of events of anaphylatic shock possible in 2019 
+TNE_anaphP_2019 <- events_2019 %>% 
+  filter(Diagnosis == 'anaphyl_possible') %>% nrow()
+
+# Incidence rate in 1000 PY for anaphalytic shock possible in 2019
+(iro_anaphP_2019_1000PY <- TNE_anaphP_2019/TPY_2019 * 1000)
+
+
+# Amount of events of anaphylatic shock narrow in 2019 
+TNE_anaphN_2019 <- events_2019 %>% 
+  filter(Diagnosis == 'anaphyl_narrow') %>% nrow()
+
+# IR in 1000 PY for anaphalytic shock naroow in 2019
+(iro_anaphN_2019_1000PY <- TNE_anaphN_2019/TPY_2019 * 1000)
+
+
+# Amount of events of GBS in 2019 
+TNE_gbs_2019 <- events_2019 %>% 
+  filter(Diagnosis == 'gbs_narrow') %>% nrow()
+
+#IR for gbs in 1000 PY
+(iro_gbs_2019_1000PY <- TNE_gbs_2019/TPY_2019*1000)
+```
+
+
+2020
+```{r}
+# for every observation who has an event put in the date. 
+df_2020$end_incidence_2020 <- as.Date(ymd(df_2020$end_date_record))
+
+#for everybody who does not have an event, make sure the end of incidence is 01-01-2021. 
+df_2020$end_incidence_2020[is.na(df_2020$end_incidence_2020)] <- as.Date(ymd(20210101))
+
+# If an observation has the event after 2018, the end of the observation will be 01-01-2020
+df_2020$end_incidence_2020 <- as.Date(ifelse(year(df_2020$end_incidence_2020) > 2020, as.Date("2021-01-01"), df_2020$end_incidence_2020), origin = "1970-01-01")
+df_2020$start_incidence_2020 <- as.Date(ymd(20200101))
+
+# Count the person years of the observation in 2018
+df_2020$years_in_study_2020 <- as.numeric(difftime
+                          (df_2020$end_incidence_2020, 
+                            df_2020$start_incidence_2020, units='days')) / 365
+
+```
+
+
+```{r}
+
+# All the events in 2020 in a new dataset
+events_2020 <- subset(dftotal, year(end_incidence) == 2020) 
+
+# Total person years observed in 2020
+TPY_2020 <- sum(df_2020$years_in_study_2020)
+
+# Amount of events of anaphylatic shock possible in 2020 
+TNE_anaphP_2020 <- events_2020 %>% 
+  filter(Diagnosis == 'anaphyl_possible') %>% nrow()
+
+# Incidence rate in 1000 PY for anaphalytic shock possible in 2020
+(iro_anaphP_2020_1000PY <- TNE_anaphP_2020/TPY_2020 * 1000)
+
+
+# Amount of events of anaphylatic shock narrow in 2020 
+TNE_anaphN_2020 <- events_2020 %>% 
+  filter(Diagnosis == 'anaphyl_narrow') %>% nrow()
+
+# IR in 1000 PY for anaphalytic shock naroow in 2020
+(iro_anaphN_2020_1000PY <- TNE_anaphN_2020/TPY_2020 * 1000)
+
+
+# Amount of events of GBS in 2020 
+TNE_gbs_2020 <- events_2020 %>% 
+  filter(Diagnosis == 'gbs_narrow') %>% nrow()
+
+#IR for gbs in 1000 PY
+(iro_gbs_2020_1000PY <- TNE_gbs_2020/TPY_2020*1000)
+```
+
+
+```{r}
+Diagnosis <- c('anaphylaxis_narrow', 'anaphylaxis_narrow', 'anaphylaxis_narrow', 'anaphylaxis_narrow','anaphylaxis_narrow', 'anaphylaxis_possible', 'anaphylaxis_possible', 'anaphylaxis_possible', 'anaphylaxis_possible', 'anaphylaxis_possible', 'gbs_narrow', 'gbs_narrow', 'gbs_narrow', 'gbs_narrow', 'gbs_narrow')
+Years <- c('Total', '2017', '2018', '2019', '2020',
+           'Total', '2017', '2018', '2019', '2020',
+           'Total', '2017', '2018', '2019', '2020')
+
+IR <- round(c(iro_anaphN, iro_anaphN_2017_1000PY, iro_anaphN_2018_1000PY, iro_anaphN_2019_1000PY, iro_anaphN_2020_1000PY, iro_anaphP,
+        iro_anaphP_2017_1000PY, iro_anaphP_2018_1000PY, iro_anaphP_2019_1000PY, iro_anaphP_2020_1000PY, iro_gbs, iro_gbs_2017_1000PY, iro_gbs_2018_1000PY, iro_gbs_2019_1000PY, iro_gbs_2020_1000PY),2)
+
+
+tab <- data.frame(Diagnosis = Diagnosis, Year = Years, 'IR per 1000 py' = IR)
+
+```
+
+
+
 
