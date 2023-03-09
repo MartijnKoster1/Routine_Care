@@ -137,10 +137,11 @@ TPY <- sum(dftotal$years_in_study)
 
 (iro_anaphP <- TNE_anaphP/TPY)
 
+
 TNE_anaphN <- dftotal %>% 
   filter(Diagnosis == 'anaphyl_narrow') %>% nrow()
 
-(iro_anaphN <- TNE_anaphN/TPY * 1000)
+(iro_anaphN <- TNE_anaphN/TPY)
 ```
 
 ```{r}
@@ -152,7 +153,64 @@ TNE_gbs <- dftotal %>%
 
 
 ---------------------------
-```{r}
 
+Make end incidence for every year
+
+```{r}
+dftotal$end_incidence_2017 <- as.Date(ymd(dftotal$end_date_record))
+dftotal$end_incidence_2017[is.na(dftotal$end_incidence_2017)] <- as.Date(ymd(20180101))
+dftotal$end_incidence_2017 <- as.Date(ifelse(year(dftotal$end_incidence_2017) > 2017, as.Date("2018-01-01"), dftotal$end_incidence_2017), origin = "1970-01-01")
+```
+
+```{r}
+df_2018 <- 
+  dftotal %>% 
+  filter(!year(end_incidence) == 2017)
+
+df_2019 <- 
+  df_2018 %>% 
+  filter(!year(end_incidence) == 2018)
+
+df_2020 <- 
+  df_2019 %>% 
+  filter(!year(end_incidence) == 2019)
+
+df_2021 <- 
+  df_2020 %>% 
+  filter(!year(end_incidence) == 2020) 
+
+
+dftotal$years_in_study_2017 <- as.numeric(difftime
+                          (dftotal$end_incidence_2017, 
+                            dftotal$start_study, units='days')) / 365
+
+```
+
+
+
+
+
+```{r}
+# Calculate the events in 2017
+events_2017 <- subset(dftotal, year(end_incidence) == 2017) 
+
+TNE_anaphP_2017 <- events_2017 %>% 
+  filter(Diagnosis == 'anaphyl_possible') %>% nrow()
+
+#the Total personyears for an event in 2017
+TPY_2017 <- sum(dftotal$years_in_study_2017)
+
+(iro_anaphP_2017 <- TNE_anaphP_2017/TPY_2017)
+
+TNE_anaphN_2017 <- events_2017 %>% 
+  filter(Diagnosis == 'anaphyl_narrow') %>% nrow()
+
+
+(iro_anaphN_2017 <- TNE_anaphN_2017/TPY_2017)
+
+TNE_gbs_2017 <- events_2017 %>% 
+  filter(Diagnosis == 'gbs_narrow') %>% nrow()
+
+(iro_gbs_2017 <- TNE_gbs_2017/TPY_2017)
 ```
 
