@@ -60,7 +60,8 @@ persons <- persons %>%
          age_bands = cut(age, breaks = c(0,19,39,59,79,Inf), 
                          include.lowest = T,include.highest = T, 
                          labels = c("[0,19]",'[20,39]', '[40,59]', '[60,79]', '[80+]')) # Make sure the ages are divided in age bands 
-                         )
+                         ) %>% 
+  filter(age >= 0)
 ```
 
 
@@ -404,8 +405,111 @@ IR <- round(c(iro_anaphN, iro_anaphN_2017_1000PY, iro_anaphN_2018_1000PY, iro_an
 
 
 tab <- data.frame(Diagnosis = Diagnosis, Year = Years, 'IR per 1000 py' = IR)
+tab
+```
+
+
+```{r}
+
+make_year_age_bands <- function(data, age_group) {
+  new_data <- data %>% 
+    filter(age_bands==age_group) 
+  return(new_data)
+  }
+
+
+dftotal0019 <- make_year_age_bands(dftotal, '[0,19]')
+dftotal2039 <- make_year_age_bands(dftotal, '[20,39]')
+dftotal4059 <- make_year_age_bands(dftotal, '[40,59]')
+dftotal6079 <- make_year_age_bands(dftotal, '[60,79]')
+dftotal80 <- make_year_age_bands(dftotal, '[80+]')
 
 ```
+
+
+```{r}
+# Make function to calculate amount of events
+amount_events <- function(data, diagn) {
+  events <- data %>% 
+    filter(Diagnosis == diagn) %>%  nrow()
+  return(events)
+}
+```
+
+
+```{r}
+#total personyears in study for ageband 0-19
+TPY0019 <- sum(dftotal0019$years_in_study)
+# amount of events for each event for age_band 0-19
+TNE_anaphP0019 <- amount_events(dftotal0019, 'anaphyl_possible')
+TNE_anaphN0019 <- amount_events(dftotal0019, 'anaphyl_narrow')
+TNE_gbs0019 <- amount_events(dftotal0019, 'gbs_narrow')
+
+#IR for each event in 1000PY for age_band 0-19 
+(iro_anaphP0019 <- TNE_anaphP0019/TPY0019 * 1000)
+(iro_anaphN0019 <- TNE_anaphN0019/TPY0019 * 1000)
+(iro_gbs0019 <- TNE_gbs0019/TPY0019 * 1000)
+```
+
+```{r}
+#total personyears in study for ageband 20-39
+TPY2039 <- sum(dftotal2039$years_in_study)
+# amount of events for each event for age_band 20-39
+TNE_anaphP2039 <- amount_events(dftotal2039, 'anaphyl_possible')
+TNE_anaphN2039 <- amount_events(dftotal2039, 'anaphyl_narrow')
+TNE_gbs2039 <- amount_events(dftotal2039, 'gbs_narrow')
+
+#IR for each event in 1000PY for age_band 20-39 
+(iro_anaphP2039 <- TNE_anaphP2039/TPY2039 * 1000)
+(iro_anaphN2039 <- TNE_anaphN2039/TPY2039 * 1000)
+(iro_gbs2039 <- TNE_gbs2039/TPY2039 * 1000)
+```
+
+```{r}
+#total personyears in study for ageband 0-19
+TPY4059 <- sum(dftotal4059$years_in_study)
+# amount of events for each event for age_band 0-19
+TNE_anaphP4059 <- amount_events(dftotal4059, 'anaphyl_possible')
+TNE_anaphN4059 <- amount_events(dftotal4059, 'anaphyl_narrow')
+TNE_gbs4059 <- amount_events(dftotal4059, 'gbs_narrow')
+
+#IR for each event in 1000PY for age_band 0-19 
+(iro_anaphP4059 <- TNE_anaphP4059/TPY4059 * 1000)
+(iro_anaphN4059 <- TNE_anaphN4059/TPY4059 * 1000)
+(iro_gbs4059 <- TNE_gbs4059/TPY4059 * 1000)
+```
+
+```{r}
+#total personyears in study for ageband 0-19
+TPY6079 <- sum(dftotal6079$years_in_study)
+# amount of events for each event for age_band 0-19
+TNE_anaphP6079 <- amount_events(dftotal6079, 'anaphyl_possible')
+TNE_anaphN6079 <- amount_events(dftotal6079, 'anaphyl_narrow')
+TNE_gbs6079 <- amount_events(dftotal6079, 'gbs_narrow')
+
+#IR for each event in 1000PY for age_band 0-19 
+(iro_anaphP6079 <- TNE_anaphP6079/TPY6079 * 1000)
+(iro_anaphN6079 <- TNE_anaphN6079/TPY6079 * 1000)
+(iro_gbs6079 <- TNE_gbs6079/TPY * 1000)
+```
+
+```{r}
+events_2017_0019 <- subset(dftotal0019, year(end_incidence) == 2017) 
+#the Total personyears for an event in 2017 age_band0019
+TPY_2017_0019 <- sum(dftotal0019$years_in_study_2017)
+
+# Count thenumber of events for age_band 0019 in 2017
+TNE_anaphP_0019_2017 <- amount_events(events_2017_0019, 'anaphyl_possible')
+TNE_anaphN_0019_2017 <- amount_events(events_2017_0019, 'anaphyl_narrow')
+TNE_gbs_0019_2017 <- amount_events(events_2017_0019, 'gbs_narrow')
+
+#IR for each event in 1000PY for age_band 0-19 
+(iro_anaphP_0019_2017 <- TNE_anaphP0019/TPY_2017_0019 * 1000)
+(iro_anaphN_0019_2017 <- TNE_anaphN0019/TPY_2017_0019 * 1000)
+(iro_gbs_0019_2017 <- TNE_gbs0019/TPY_2017_0019 * 1000)
+```
+
+
 
 
 
