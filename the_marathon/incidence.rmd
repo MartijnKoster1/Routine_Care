@@ -216,7 +216,7 @@ TNE_anaphP_2017 <- events_2017 %>%
   filter(Diagnosis == 'anaphyl_possible') %>% nrow()
 
 # calculate the IR in 1000 PY for anaphyl possible in 2017
-(iro_anaphP_2017_1000PY <- TNE_anaphP_2017/TPY_2017 * 1000)
+(iro_anaphP_2017 <- TNE_anaphP_2017/TPY_2017 * 1000)
 
 
 # Count the amount of anaphyl shocks narrow in 2017 
@@ -224,14 +224,14 @@ TNE_anaphN_2017 <- events_2017 %>%
   filter(Diagnosis == 'anaphyl_narrow') %>% nrow()
 
 # calculate the IR in 1000 PY for anaphyl narrow in 2017
-(iro_anaphN_2017_1000PY <- TNE_anaphN_2017/TPY_2017 * 1000)
+(iro_anaphN_2017 <- TNE_anaphN_2017/TPY_2017 * 1000)
 
 # Count the amount of gbs in 2017 
 TNE_gbs_2017 <- events_2017 %>% 
   filter(Diagnosis == 'gbs_narrow') %>% nrow()
 
 # calculate the IR in 1000 PY for gbs in 2017
-(iro_gbs_2017_1000PY <- TNE_gbs_2017/TPY_2017*1000)
+(iro_gbs_2017 <- TNE_gbs_2017/TPY_2017*1000)
 ```
 
 
@@ -268,7 +268,7 @@ TNE_anaphP_2018 <- events_2018 %>%
   filter(Diagnosis == 'anaphyl_possible') %>% nrow()
 
 # Incidence rate in 1000 PY for anaphalytic shock possible in 2018
-(iro_anaphP_2018_1000PY <- TNE_anaphP_2018/TPY_2018 * 1000)
+(iro_anaphP_2018 <- TNE_anaphP_2018/TPY_2018 * 1000)
 
 
 # Amount of events of anaphylatic shock narrow in 2018 
@@ -276,7 +276,7 @@ TNE_anaphN_2018 <- events_2018 %>%
   filter(Diagnosis == 'anaphyl_narrow') %>% nrow()
 
 # IR in 1000 PY for anaphalytic shock naroow in 2018
-(iro_anaphN_2018_1000PY <- TNE_anaphN_2018/TPY_2018 * 1000)
+(iro_anaphN_2018 <- TNE_anaphN_2018/TPY_2018 * 1000)
 
 
 # Amount of events of GBS in 2018 
@@ -284,7 +284,7 @@ TNE_gbs_2018 <- events_2018 %>%
   filter(Diagnosis == 'gbs_narrow') %>% nrow()
 
 #IR for gbs in 1000 PY
-(iro_gbs_2018_1000PY <- TNE_gbs_2018/TPY_2018*1000)
+(iro_gbs_2018 <- TNE_gbs_2018/TPY_2018*1000)
 ```
 
 2019
@@ -321,7 +321,7 @@ TNE_anaphP_2019 <- events_2019 %>%
   filter(Diagnosis == 'anaphyl_possible') %>% nrow()
 
 # Incidence rate in 1000 PY for anaphalytic shock possible in 2019
-(iro_anaphP_2019_1000PY <- TNE_anaphP_2019/TPY_2019 * 1000)
+(iro_anaphP_2019 <- TNE_anaphP_2019/TPY_2019 * 1000)
 
 
 # Amount of events of anaphylatic shock narrow in 2019 
@@ -329,7 +329,7 @@ TNE_anaphN_2019 <- events_2019 %>%
   filter(Diagnosis == 'anaphyl_narrow') %>% nrow()
 
 # IR in 1000 PY for anaphalytic shock naroow in 2019
-(iro_anaphN_2019_1000PY <- TNE_anaphN_2019/TPY_2019 * 1000)
+(iro_anaphN_2019 <- TNE_anaphN_2019/TPY_2019 * 1000)
 
 
 # Amount of events of GBS in 2019 
@@ -337,7 +337,7 @@ TNE_gbs_2019 <- events_2019 %>%
   filter(Diagnosis == 'gbs_narrow') %>% nrow()
 
 #IR for gbs in 1000 PY
-(iro_gbs_2019_1000PY <- TNE_gbs_2019/TPY_2019*1000)
+(iro_gbs_2019 <- TNE_gbs_2019/TPY_2019*1000)
 ```
 
 
@@ -374,7 +374,7 @@ TNE_anaphP_2020 <- events_2020 %>%
   filter(Diagnosis == 'anaphyl_possible') %>% nrow()
 
 # Incidence rate in 1000 PY for anaphalytic shock possible in 2020
-(iro_anaphP_2020_1000PY <- TNE_anaphP_2020/TPY_2020 * 1000)
+(iro_anaphP_2020 <- TNE_anaphP_2020/TPY_2020 * 1000)
 
 
 # Amount of events of anaphylatic shock narrow in 2020 
@@ -382,7 +382,7 @@ TNE_anaphN_2020 <- events_2020 %>%
   filter(Diagnosis == 'anaphyl_narrow') %>% nrow()
 
 # IR in 1000 PY for anaphalytic shock naroow in 2020
-(iro_anaphN_2020_1000PY <- TNE_anaphN_2020/TPY_2020 * 1000)
+(iro_anaphN_2020 <- TNE_anaphN_2020/TPY_2020 * 1000)
 
 
 # Amount of events of GBS in 2020 
@@ -390,7 +390,7 @@ TNE_gbs_2020 <- events_2020 %>%
   filter(Diagnosis == 'gbs_narrow') %>% nrow()
 
 #IR for gbs in 1000 PY
-(iro_gbs_2020_1000PY <- TNE_gbs_2020/TPY_2020*1000)
+(iro_gbs_2020 <- TNE_gbs_2020/TPY_2020*1000)
 ```
 
 
@@ -400,8 +400,8 @@ Years <- c('Total', '2017', '2018', '2019', '2020',
            'Total', '2017', '2018', '2019', '2020',
            'Total', '2017', '2018', '2019', '2020')
 
-IR <- round(c(iro_anaphN, iro_anaphN_2017_1000PY, iro_anaphN_2018_1000PY, iro_anaphN_2019_1000PY, iro_anaphN_2020_1000PY, iro_anaphP,
-        iro_anaphP_2017_1000PY, iro_anaphP_2018_1000PY, iro_anaphP_2019_1000PY, iro_anaphP_2020_1000PY, iro_gbs, iro_gbs_2017_1000PY, iro_gbs_2018_1000PY, iro_gbs_2019_1000PY, iro_gbs_2020_1000PY),2)
+IR <- round(c(iro_anaphN, iro_anaphN_2017, iro_anaphN_2018, iro_anaphN_2019, iro_anaphN_2020, iro_anaphP,
+        iro_anaphP_2017, iro_anaphP_2018, iro_anaphP_2019, iro_anaphP_2020, iro_gbs, iro_gbs_2017, iro_gbs_2018, iro_gbs_2019, iro_gbs_2020),2)
 
 
 tab <- data.frame(Diagnosis = Diagnosis, Year = Years, 'IR per 1000 py' = IR)
@@ -785,4 +785,127 @@ TNE_gbs_6079_2020 <- amount_events(events_2020_6079, 'gbs_narrow')
 (iro_anaphN_6079_2020 <- TNE_anaphN_6079_2020/TPY_2020_6079 * 1000)
 (iro_gbs_6079_2020 <- TNE_gbs_6079_2020/TPY_2020_6079 * 1000)
 ```
+
+
+```{r}
+Diag1 <- rep('Anaphylaxis narrow', times=25)
+Diag2 <- rep('Anaphylaxis possible', times=25)
+Diag3 <- rep('gbs narrow', times=25)
+all_diag <- c(Diag1, Diag2, Diag3)
+
+all_years <- rep(c('Total', '2017', '2018', '2019', '2020'), times=15)
+
+rep_total <- rep('Total', times=5)
+rep_0019 <- rep('0-19', times=5)
+rep_2039 <- rep('20-39', times=5)
+rep_4059 <- rep('40-59', times=5)
+rep_6079 <- rep('60-79', times=5)
+
+all_ages <- rep(c(rep_total, rep_0019, rep_2039, rep_4059, rep_6079), times=3)
+
+
+
+count_events <- c(
+  TNE_anaphN, TNE_anaphN_2017, TNE_anaphN_2018, 
+  TNE_anaphN_2019, TNE_anaphN_2020, 
+  TNE_anaphN0019, TNE_anaphN_0019_2017, TNE_anaphN_0019_2018,
+  TNE_anaphN_0019_2019, TNE_anaphN_0019_2020, 
+  TNE_anaphN2039, TNE_anaphN_2039_2017, TNE_anaphN_2039_2018,
+  TNE_anaphN_2039_2019, TNE_anaphN_2039_2020,
+  TNE_anaphN4059, TNE_anaphN_4059_2017, TNE_anaphN_4059_2018,
+  TNE_anaphN_4059_2019, TNE_anaphN_4059_2020,
+  TNE_anaphN6079, TNE_anaphN_6079_2017, TNE_anaphN_6079_2018,
+  TNE_anaphN_6079_2019, TNE_anaphN_6079_2020,
+  #### Anaph Possible 
+  TNE_anaphP, TNE_anaphP_2017, TNE_anaphP_2018, 
+  TNE_anaphP_2019, TNE_anaphP_2020, 
+  TNE_anaphP0019, TNE_anaphP_0019_2017, TNE_anaphP_0019_2018,
+  TNE_anaphP_0019_2019, TNE_anaphP_0019_2020, 
+  TNE_anaphP2039, TNE_anaphP_2039_2017, TNE_anaphP_2039_2018,
+  TNE_anaphP_2039_2019, TNE_anaphP_2039_2020,
+  TNE_anaphP4059, TNE_anaphP_4059_2017, TNE_anaphP_4059_2018,
+  TNE_anaphP_4059_2019, TNE_anaphP_4059_2020,
+  TNE_anaphP6079, TNE_anaphP_6079_2017, TNE_anaphP_6079_2018,
+  TNE_anaphP_6079_2019, TNE_anaphP_6079_2020,
+  #### GBS 
+  TNE_gbs, TNE_gbs_2017, TNE_gbs_2018, 
+  TNE_gbs_2019, TNE_gbs_2020, 
+  TNE_gbs0019, TNE_gbs_0019_2017, TNE_gbs_0019_2018,
+  TNE_gbs_0019_2019, TNE_gbs_0019_2020, 
+  TNE_gbs2039, TNE_gbs_2039_2017, TNE_gbs_2039_2018,
+  TNE_gbs_2039_2019, TNE_gbs_2039_2020,
+  TNE_gbs4059, TNE_gbs_4059_2017, TNE_gbs_4059_2018,
+  TNE_gbs_4059_2019, TNE_gbs_4059_2020,
+  TNE_gbs6079, TNE_gbs_6079_2017, TNE_gbs_6079_2018,
+  TNE_gbs_6079_2019, TNE_gbs_6079_2020
+  )
+
+
+PersYear <- c(TPY, TPY_2017, TPY_2018, 
+  TPY_2019, TPY_2020, 
+  TPY0019, TPY_2017_0019, TPY_2018_0019,
+  TPY_2019_0019, TPY_2020_0019, 
+  TPY2039, TPY_2017_2039, TPY_2018_2039,
+  TPY_2019_2039, TPY_2020_2039,
+  TPY4059, TPY_2017_4059, TPY_2018_4059,
+  TPY_2019_4059, TPY_2020_4059,
+  TPY6079, TPY_2017_4059, TPY_2018_4059,
+  TPY_2019_4059, TPY_2020_4059)
+
+
+pers_year_all <- rep(PersYear, times=3)
+
+```
+
+```{r}
+IR_1000PY <- c(
+  iro_anaphN, iro_anaphN_2017, iro_anaphN_2018, 
+  iro_anaphN_2019, iro_anaphN_2020, 
+  iro_anaphN0019, iro_anaphN_0019_2017, iro_anaphN_0019_2018,
+  iro_anaphN_0019_2019, iro_anaphN_0019_2020, 
+  iro_anaphN2039, iro_anaphN_2039_2017, iro_anaphN_2039_2018,
+  iro_anaphN_2039_2019, iro_anaphN_2039_2020,
+  iro_anaphN4059, iro_anaphN_4059_2017, iro_anaphN_4059_2018,
+  iro_anaphN_4059_2019, iro_anaphN_4059_2020,
+  iro_anaphN6079, iro_anaphN_6079_2017, iro_anaphN_6079_2018,
+  iro_anaphN_6079_2019, iro_anaphN_6079_2020,
+  #### Anaph Possible 
+  iro_anaphP, iro_anaphP_2017, iro_anaphP_2018, 
+  iro_anaphP_2019, iro_anaphP_2020, 
+  iro_anaphP0019, iro_anaphP_0019_2017, iro_anaphP_0019_2018,
+  iro_anaphP_0019_2019, iro_anaphP_0019_2020, 
+  iro_anaphP2039, iro_anaphP_2039_2017, iro_anaphP_2039_2018,
+  iro_anaphP_2039_2019, iro_anaphP_2039_2020,
+  iro_anaphP4059, iro_anaphP_4059_2017, iro_anaphP_4059_2018,
+  iro_anaphP_4059_2019, iro_anaphP_4059_2020,
+  iro_anaphP6079, iro_anaphP_6079_2017, iro_anaphP_6079_2018,
+  iro_anaphP_6079_2019, iro_anaphP_6079_2020,
+  #### GBS 
+  iro_gbs, iro_gbs_2017, iro_gbs_2018, 
+  iro_gbs_2019, iro_gbs_2020, 
+  iro_gbs0019, iro_gbs_0019_2017, iro_gbs_0019_2018,
+  iro_gbs_0019_2019, iro_gbs_0019_2020, 
+  iro_gbs2039, iro_gbs_2039_2017, iro_gbs_2039_2018,
+  iro_gbs_2039_2019, iro_gbs_2039_2020,
+  iro_gbs4059, iro_gbs_4059_2017, iro_gbs_4059_2018,
+  iro_gbs_4059_2019, iro_gbs_4059_2020,
+  iro_gbs6079, iro_gbs_6079_2017, iro_gbs_6079_2018,
+  iro_gbs_6079_2019, iro_gbs_6079_2020
+  )
+```
+
+
+```{r}
+Big_table <- data.table(Diagnosis = all_diag, 
+                        Age_Bands = all_ages,
+                        Year = all_years,
+                        Count = count_events,
+                        Person_Years = pers_year_all,
+                        IR_1000_PY = IR_1000PY)
+```
+
+```{r}
+Big_table
+```
+
 
