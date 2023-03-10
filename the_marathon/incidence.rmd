@@ -493,7 +493,9 @@ TNE_gbs6079 <- amount_events(dftotal6079, 'gbs_narrow')
 (iro_gbs6079 <- TNE_gbs6079/TPY * 1000)
 ```
 
+
 ```{r}
+#Events in 2017 for age group 00-19
 events_2017_0019 <- subset(dftotal0019, year(end_incidence) == 2017) 
 #the Total personyears for an event in 2017 age_band0019
 TPY_2017_0019 <- sum(dftotal0019$years_in_study_2017)
@@ -504,13 +506,283 @@ TNE_anaphN_0019_2017 <- amount_events(events_2017_0019, 'anaphyl_narrow')
 TNE_gbs_0019_2017 <- amount_events(events_2017_0019, 'gbs_narrow')
 
 #IR for each event in 1000PY for age_band 0-19 
-(iro_anaphP_0019_2017 <- TNE_anaphP0019/TPY_2017_0019 * 1000)
-(iro_anaphN_0019_2017 <- TNE_anaphN0019/TPY_2017_0019 * 1000)
-(iro_gbs_0019_2017 <- TNE_gbs0019/TPY_2017_0019 * 1000)
+(iro_anaphP_0019_2017 <- TNE_anaphP_0019_2017/TPY_2017_0019 * 1000)
+(iro_anaphN_0019_2017 <- TNE_anaphN_0019_2017/TPY_2017_0019 * 1000)
+(iro_gbs_0019_2017 <- TNE_gbs_0019_2017/TPY_2017_0019 * 1000)
+```
+
+```{r}
+#Events in 2017 for age group 00-19
+events_2017_2039 <- subset(dftotal2039, year(end_incidence) == 2017) 
+#the Total personyears for an event in 2017 age_band2039
+TPY_2017_2039 <- sum(dftotal2039$years_in_study_2017)
+
+# Count thenumber of events for age_band 2039 in 2017
+TNE_anaphP_2039_2017 <- amount_events(events_2017_2039, 'anaphyl_possible')
+TNE_anaphN_2039_2017 <- amount_events(events_2017_2039, 'anaphyl_narrow')
+TNE_gbs_2039_2017 <- amount_events(events_2017_2039, 'gbs_narrow')
+
+#IR for each event in 1000PY for age_band 0-19 
+(iro_anaphP_2039_2017 <- TNE_anaphP_2039_2017/TPY_2017_2039 * 1000)
+(iro_anaphN_2039_2017 <- TNE_anaphN_2039_2017/TPY_2017_2039 * 1000)
+(iro_gbs_2039_2017 <- TNE_gbs_2039_2017/TPY_2017_2039 * 1000)
+```
+
+```{r}
+#Events in 2017 for age group 00-19
+events_2017_4059 <- subset(dftotal4059, year(end_incidence) == 2017) 
+#the Total personyears for an event in 2017 age_band4059
+TPY_2017_4059 <- sum(dftotal4059$years_in_study_2017)
+
+# Count thenumber of events for age_band 4059 in 2017
+TNE_anaphP_4059_2017 <- amount_events(events_2017_4059, 'anaphyl_possible')
+TNE_anaphN_4059_2017 <- amount_events(events_2017_4059, 'anaphyl_narrow')
+TNE_gbs_4059_2017 <- amount_events(events_2017_4059, 'gbs_narrow')
+
+#IR for each event in 1000PY for age_band 0-19 
+(iro_anaphP_4059_2017 <- TNE_anaphP_4059_2017/TPY_2017_4059 * 1000)
+(iro_anaphN_4059_2017 <- TNE_anaphN_4059_2017/TPY_2017_4059 * 1000)
+(iro_gbs_4059_2017 <- TNE_gbs_4059_2017/TPY_2017_4059 * 1000)
+```
+
+```{r}
+#Events in 2017 for age group 00-19
+events_2017_6079 <- subset(dftotal6079, year(end_incidence) == 2017) 
+#the Total personyears for an event in 2017 age_band6079
+TPY_2017_6079 <- sum(dftotal6079$years_in_study_2017)
+
+# Count thenumber of events for age_band 6079 in 2017
+TNE_anaphP_6079_2017 <- amount_events(events_2017_6079, 'anaphyl_possible')
+TNE_anaphN_6079_2017 <- amount_events(events_2017_6079, 'anaphyl_narrow')
+TNE_gbs_6079_2017 <- amount_events(events_2017_6079, 'gbs_narrow')
+
+#IR for each event in 1000PY for age_band 0-19 
+(iro_anaphP_6079_2017 <- TNE_anaphP_6079_2017/TPY_2017_6079 * 1000)
+(iro_anaphN_6079_2017 <- TNE_anaphN_6079_2017/TPY_2017_6079 * 1000)
+(iro_gbs_6079_2017 <- TNE_gbs_6079_2017/TPY_2017_6079 * 1000)
+```
+
+#2018 
+
+```{r}
+df_2018_0019 <- make_year_age_bands(df_2018, '[0,19]')
+df_2018_2039 <- make_year_age_bands(df_2018, '[20,39]')
+df_2018_4059 <- make_year_age_bands(df_2018, '[40,59]')
+df_2018_6079 <- make_year_age_bands(df_2018, '[60,79]')
 ```
 
 
+```{r}
+events_2018_0019 <- subset(dftotal0019, year(end_incidence) == 2018) 
+
+TPY_2018_0019 <- sum(df_2018_0019$years_in_study_2018)
+
+# Count thenumber of events for age_band 0019 in 2018
+TNE_anaphP_0019_2018 <- amount_events(events_2018_0019, 'anaphyl_possible')
+TNE_anaphN_0019_2018 <- amount_events(events_2018_0019, 'anaphyl_narrow')
+TNE_gbs_0019_2018 <- amount_events(events_2018_0019, 'gbs_narrow')
+
+#IR for each event in 1000PY for age_band 0-19 
+(iro_anaphP_0019_2018 <- TNE_anaphP_0019_2018/TPY_2018_0019 * 1000)
+(iro_anaphN_0019_2018 <- TNE_anaphN_0019_2018/TPY_2018_0019 * 1000)
+(iro_gbs_0019_2018 <- TNE_gbs_0019_2018/TPY_2018_0019 * 1000)
+```
+
+```{r}
+events_2018_2039 <- subset(dftotal2039, year(end_incidence) == 2018) 
+
+TPY_2018_2039 <- sum(df_2018_2039$years_in_study_2018)
+
+# Count thenumber of events for age_band 2039 in 2018
+TNE_anaphP_2039_2018 <- amount_events(events_2018_2039, 'anaphyl_possible')
+TNE_anaphN_2039_2018 <- amount_events(events_2018_2039, 'anaphyl_narrow')
+TNE_gbs_2039_2018 <- amount_events(events_2018_2039, 'gbs_narrow')
+
+#IR for each event in 1000PY for age_band 0-19 
+(iro_anaphP_2039_2018 <- TNE_anaphP_2039_2018/TPY_2018_2039 * 1000)
+(iro_anaphN_2039_2018 <- TNE_anaphN_2039_2018/TPY_2018_2039 * 1000)
+(iro_gbs_2039_2018 <- TNE_gbs_2039_2018/TPY_2018_2039 * 1000)
+```
+
+```{r}
+events_2018_4059 <- subset(dftotal4059, year(end_incidence) == 2018) 
+
+TPY_2018_4059 <- sum(df_2018_4059$years_in_study_2018)
+
+# Count thenumber of events for age_band 4059 in 2018
+TNE_anaphP_4059_2018 <- amount_events(events_2018_4059, 'anaphyl_possible')
+TNE_anaphN_4059_2018 <- amount_events(events_2018_4059, 'anaphyl_narrow')
+TNE_gbs_4059_2018 <- amount_events(events_2018_4059, 'gbs_narrow')
+
+#IR for each event in 1000PY for age_band 0-19 
+(iro_anaphP_4059_2018 <- TNE_anaphP_4059_2018/TPY_2018_4059 * 1000)
+(iro_anaphN_4059_2018 <- TNE_anaphN_4059_2018/TPY_2018_4059 * 1000)
+(iro_gbs_4059_2018 <- TNE_gbs_4059_2018/TPY_2018_4059 * 1000)
+```
+
+```{r}
+events_2018_6079 <- subset(dftotal6079, year(end_incidence) == 2018) 
+
+TPY_2018_6079 <- sum(df_2018_6079$years_in_study_2018)
+
+# Count thenumber of events for age_band 6079 in 2018
+TNE_anaphP_6079_2018 <- amount_events(events_2018_6079, 'anaphyl_possible')
+TNE_anaphN_6079_2018 <- amount_events(events_2018_6079, 'anaphyl_narrow')
+TNE_gbs_6079_2018 <- amount_events(events_2018_6079, 'gbs_narrow')
+
+#IR for each event in 1000PY for age_band 0-19 
+(iro_anaphP_6079_2018 <- TNE_anaphP_6079_2018/TPY_2018_6079 * 1000)
+(iro_anaphN_6079_2018 <- TNE_anaphN_6079_2018/TPY_2018_6079 * 1000)
+(iro_gbs_6079_2018 <- TNE_gbs_6079_2018/TPY_2018_6079 * 1000)
+```
+
+#2019 
+
+```{r}
+df_2019_0019 <- make_year_age_bands(df_2019, '[0,19]')
+df_2019_2039 <- make_year_age_bands(df_2019, '[20,39]')
+df_2019_4059 <- make_year_age_bands(df_2019, '[40,59]')
+df_2019_6079 <- make_year_age_bands(df_2019, '[60,79]')
+```
 
 
+```{r}
+events_2019_0019 <- subset(dftotal0019, year(end_incidence) == 2019) 
 
+TPY_2019_0019 <- sum(df_2019_0019$years_in_study_2019)
+
+# Count thenumber of events for age_band 0019 in 2019
+TNE_anaphP_0019_2019 <- amount_events(events_2019_0019, 'anaphyl_possible')
+TNE_anaphN_0019_2019 <- amount_events(events_2019_0019, 'anaphyl_narrow')
+TNE_gbs_0019_2019 <- amount_events(events_2019_0019, 'gbs_narrow')
+
+#IR for each event in 1000PY for age_band 0-19 
+(iro_anaphP_0019_2019 <- TNE_anaphP_0019_2019/TPY_2019_0019 * 1000)
+(iro_anaphN_0019_2019 <- TNE_anaphN_0019_2019/TPY_2019_0019 * 1000)
+(iro_gbs_0019_2019 <- TNE_gbs_0019_2019/TPY_2019_0019 * 1000)
+```
+
+```{r}
+events_2019_2039 <- subset(dftotal2039, year(end_incidence) == 2019) 
+
+TPY_2019_2039 <- sum(df_2019_2039$years_in_study_2019)
+
+# Count thenumber of events for age_band 2039 in 2019
+TNE_anaphP_2039_2019 <- amount_events(events_2019_2039, 'anaphyl_possible')
+TNE_anaphN_2039_2019 <- amount_events(events_2019_2039, 'anaphyl_narrow')
+TNE_gbs_2039_2019 <- amount_events(events_2019_2039, 'gbs_narrow')
+
+#IR for each event in 1000PY for age_band 0-19 
+(iro_anaphP_2039_2019 <- TNE_anaphP_2039_2019/TPY_2019_2039 * 1000)
+(iro_anaphN_2039_2019 <- TNE_anaphN_2039_2019/TPY_2019_2039 * 1000)
+(iro_gbs_2039_2019 <- TNE_gbs_2039_2019/TPY_2019_2039 * 1000)
+```
+
+```{r}
+events_2019_4059 <- subset(dftotal4059, year(end_incidence) == 2019) 
+
+TPY_2019_4059 <- sum(df_2019_4059$years_in_study_2019)
+
+# Count thenumber of events for age_band 4059 in 2019
+TNE_anaphP_4059_2019 <- amount_events(events_2019_4059, 'anaphyl_possible')
+TNE_anaphN_4059_2019 <- amount_events(events_2019_4059, 'anaphyl_narrow')
+TNE_gbs_4059_2019 <- amount_events(events_2019_4059, 'gbs_narrow')
+
+#IR for each event in 1000PY for age_band 0-19 
+(iro_anaphP_4059_2019 <- TNE_anaphP_4059_2019/TPY_2019_4059 * 1000)
+(iro_anaphN_4059_2019 <- TNE_anaphN_4059_2019/TPY_2019_4059 * 1000)
+(iro_gbs_4059_2019 <- TNE_gbs_4059_2019/TPY_2019_4059 * 1000)
+```
+
+```{r}
+events_2019_6079 <- subset(dftotal6079, year(end_incidence) == 2019) 
+
+TPY_2019_6079 <- sum(df_2019_6079$years_in_study_2019)
+
+# Count thenumber of events for age_band 6079 in 2019
+TNE_anaphP_6079_2019 <- amount_events(events_2019_6079, 'anaphyl_possible')
+TNE_anaphN_6079_2019 <- amount_events(events_2019_6079, 'anaphyl_narrow')
+TNE_gbs_6079_2019 <- amount_events(events_2019_6079, 'gbs_narrow')
+
+#IR for each event in 1000PY for age_band 0-19 
+(iro_anaphP_6079_2019 <- TNE_anaphP_6079_2019/TPY_2019_6079 * 1000)
+(iro_anaphN_6079_2019 <- TNE_anaphN_6079_2019/TPY_2019_6079 * 1000)
+(iro_gbs_6079_2019 <- TNE_gbs_6079_2019/TPY_2019_6079 * 1000)
+```
+
+# 2020
+
+2020 
+
+```{r}
+df_2020_0019 <- make_year_age_bands(df_2020, '[0,19]')
+df_2020_2039 <- make_year_age_bands(df_2020, '[20,39]')
+df_2020_4059 <- make_year_age_bands(df_2020, '[40,59]')
+df_2020_6079 <- make_year_age_bands(df_2020, '[60,79]')
+```
+
+
+```{r}
+events_2020_0019 <- subset(dftotal0019, year(end_incidence) == 2020) 
+
+TPY_2020_0019 <- sum(df_2020_0019$years_in_study_2020)
+
+# Count thenumber of events for age_band 0019 in 2020
+TNE_anaphP_0019_2020 <- amount_events(events_2020_0019, 'anaphyl_possible')
+TNE_anaphN_0019_2020 <- amount_events(events_2020_0019, 'anaphyl_narrow')
+TNE_gbs_0019_2020 <- amount_events(events_2020_0019, 'gbs_narrow')
+
+#IR for each event in 1000PY for age_band 0-19 
+(iro_anaphP_0019_2020 <- TNE_anaphP_0019_2020/TPY_2020_0019 * 1000)
+(iro_anaphN_0019_2020 <- TNE_anaphN_0019_2020/TPY_2020_0019 * 1000)
+(iro_gbs_0019_2020 <- TNE_gbs_0019_2020/TPY_2020_0019 * 1000)
+```
+
+```{r}
+events_2020_2039 <- subset(dftotal2039, year(end_incidence) == 2020) 
+
+TPY_2020_2039 <- sum(df_2020_2039$years_in_study_2020)
+
+# Count thenumber of events for age_band 2039 in 2020
+TNE_anaphP_2039_2020 <- amount_events(events_2020_2039, 'anaphyl_possible')
+TNE_anaphN_2039_2020 <- amount_events(events_2020_2039, 'anaphyl_narrow')
+TNE_gbs_2039_2020 <- amount_events(events_2020_2039, 'gbs_narrow')
+
+#IR for each event in 1000PY for age_band 0-19 
+(iro_anaphP_2039_2020 <- TNE_anaphP_2039_2020/TPY_2020_2039 * 1000)
+(iro_anaphN_2039_2020 <- TNE_anaphN_2039_2020/TPY_2020_2039 * 1000)
+(iro_gbs_2039_2020 <- TNE_gbs_2039_2020/TPY_2020_2039 * 1000)
+```
+
+```{r}
+events_2020_4059 <- subset(dftotal4059, year(end_incidence) == 2020) 
+
+TPY_2020_4059 <- sum(df_2020_4059$years_in_study_2020)
+
+# Count thenumber of events for age_band 4059 in 2020
+TNE_anaphP_4059_2020 <- amount_events(events_2020_4059, 'anaphyl_possible')
+TNE_anaphN_4059_2020 <- amount_events(events_2020_4059, 'anaphyl_narrow')
+TNE_gbs_4059_2020 <- amount_events(events_2020_4059, 'gbs_narrow')
+
+#IR for each event in 1000PY for age_band 0-19 
+(iro_anaphP_4059_2020 <- TNE_anaphP_4059_2020/TPY_2020_4059 * 1000)
+(iro_anaphN_4059_2020 <- TNE_anaphN_4059_2020/TPY_2020_4059 * 1000)
+(iro_gbs_4059_2020 <- TNE_gbs_4059_2020/TPY_2020_4059 * 1000)
+```
+
+```{r}
+events_2020_6079 <- subset(dftotal6079, year(end_incidence) == 2020) 
+
+TPY_2020_6079 <- sum(df_2020_6079$years_in_study_2020)
+
+# Count thenumber of events for age_band 6079 in 2020
+TNE_anaphP_6079_2020 <- amount_events(events_2020_6079, 'anaphyl_possible')
+TNE_anaphN_6079_2020 <- amount_events(events_2020_6079, 'anaphyl_narrow')
+TNE_gbs_6079_2020 <- amount_events(events_2020_6079, 'gbs_narrow')
+
+#IR for each event in 1000PY for age_band 0-19 
+(iro_anaphP_6079_2020 <- TNE_anaphP_6079_2020/TPY_2020_6079 * 1000)
+(iro_anaphN_6079_2020 <- TNE_anaphN_6079_2020/TPY_2020_6079 * 1000)
+(iro_gbs_6079_2020 <- TNE_gbs_6079_2020/TPY_2020_6079 * 1000)
+```
 
