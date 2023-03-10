@@ -12,6 +12,7 @@ library(data.table)
 library(tidyverse)
 library(readxl)
 library(lubridate)
+library(DT)
 ```
 
 
@@ -900,12 +901,12 @@ Big_table <- data.table(Diagnosis = all_diag,
                         Age_Bands = all_ages,
                         Year = all_years,
                         Count = count_events,
-                        Person_Years = pers_year_all,
-                        IR_1000_PY = IR_1000PY)
+                        Person_Years = round(pers_year_all, 2),
+                        IR_1000_PY = round(IR_1000PY,2))
 ```
 
 ```{r}
-Big_table
+datatable(Big_table)
 ```
 
 
