@@ -13,9 +13,10 @@ library(tidyverse)
 library(readxl)
 library(lubridate)
 library(DT)
+library(epiR)
 ```
 
-
+# Assignment 2 {.tabset}
 ```{r}
 
 # load the tables
@@ -29,7 +30,7 @@ codelist2 <- read_excel("Tables/CodeList_20210128(1).xlsx",
     sheet = "GBS")
 ```
 
-### Step 1
+## Step 1 
 
 
 ```{r}
@@ -131,6 +132,22 @@ dftotal$years_in_study <- as.numeric(difftime
 
 
 ```{r}
+#making IR with 95% CI 
+IR_95_CI <- function(events, py, N){
+  tmp <- as.matrix(cbind(events, py))
+  conf_ints <- round(epi.conf(tmp, ctype = "inc.rate", method = "exact", N = N, design = 1, 
+   conf.level = 0.95) * 1000, 2)
+  return(conf_ints)
+}
+```
+
+Ulm K (1990). A simple method to calculate the confidence interval of a standardized mortality ratio. American Journal of Epidemiology 131: 373 - 375
+
+```{r}
+
+```
+
+```{r}
 #total PY in study period
 TPY <- sum(dftotal$years_in_study)
 
@@ -139,21 +156,24 @@ TNE_anaphP <- dftotal %>%
   filter(Diagnosis == 'anaphyl_possible') %>% nrow()
 
 # Incidence Rate for anaph shock possible in study period 
-(iro_anaphP <- TNE_anaphP/TPY * 1000)
+
+
+iro_anaphP <-  IR_95_CI(TNE_anaphP, TPY, nrow(data))
+
 
 #calculate the amount of anaph shocks narrow in study period 
 TNE_anaphN <- dftotal %>% 
   filter(Diagnosis == 'anaphyl_narrow') %>% nrow()
 
 # IR for anaph shock narrow in study period
-(iro_anaphN <- TNE_anaphN/TPY * 1000)
+iro_anaphN <- IR_95_CI(TNE_anaphN, TPY, nrow(data))
 
 # amount of gbs cases in study period
 TNE_gbs <- dftotal %>% 
   filter(Diagnosis == 'gbs_narrow') %>% nrow()
 
 # IR for gbs in study period
-(iro_gbs <- TNE_gbs/TPY * 1000)
+iro_gbs <- IR_95_CI(TNE_gbs, TPY, nrow(data))
 ```
 
 
@@ -217,7 +237,7 @@ TNE_anaphP_2017 <- events_2017 %>%
   filter(Diagnosis == 'anaphyl_possible') %>% nrow()
 
 # calculate the IR in 1000 PY for anaphyl possible in 2017
-(iro_anaphP_2017 <- TNE_anaphP_2017/TPY_2017 * 1000)
+iro_anaphP_2017 <- IR_95_CI(TNE_anaphP_2017, TPY_2017, nrow(df_total))
 
 
 # Count the amount of anaphyl shocks narrow in 2017 
@@ -225,14 +245,14 @@ TNE_anaphN_2017 <- events_2017 %>%
   filter(Diagnosis == 'anaphyl_narrow') %>% nrow()
 
 # calculate the IR in 1000 PY for anaphyl narrow in 2017
-(iro_anaphN_2017 <- TNE_anaphN_2017/TPY_2017 * 1000)
+iro_anaphN_2017 <- IR_95_CI(TNE_anaphN_2017, TPY_2017, nrow(df_total))
 
 # Count the amount of gbs in 2017 
 TNE_gbs_2017 <- events_2017 %>% 
   filter(Diagnosis == 'gbs_narrow') %>% nrow()
 
 # calculate the IR in 1000 PY for gbs in 2017
-(iro_gbs_2017 <- TNE_gbs_2017/TPY_2017*1000)
+iro_gbs_2017 <- IR_95_CI(TNE_gbs_2017, TPY_2017, nrow(df_total))
 ```
 
 
@@ -269,7 +289,7 @@ TNE_anaphP_2018 <- events_2018 %>%
   filter(Diagnosis == 'anaphyl_possible') %>% nrow()
 
 # Incidence rate in 1000 PY for anaphalytic shock possible in 2018
-(iro_anaphP_2018 <- TNE_anaphP_2018/TPY_2018 * 1000)
+iro_anaphP_2018 <- IR_95_CI(TNE_anaphP_2018, TPY_2018, nrow(df_2018))
 
 
 # Amount of events of anaphylatic shock narrow in 2018 
@@ -277,7 +297,7 @@ TNE_anaphN_2018 <- events_2018 %>%
   filter(Diagnosis == 'anaphyl_narrow') %>% nrow()
 
 # IR in 1000 PY for anaphalytic shock naroow in 2018
-(iro_anaphN_2018 <- TNE_anaphN_2018/TPY_2018 * 1000)
+iro_anaphN_2018 <-  IR_95_CI(TNE_anaphN_2018, TPY_2018, nrow(df_2018))
 
 
 # Amount of events of GBS in 2018 
@@ -285,7 +305,7 @@ TNE_gbs_2018 <- events_2018 %>%
   filter(Diagnosis == 'gbs_narrow') %>% nrow()
 
 #IR for gbs in 1000 PY
-(iro_gbs_2018 <- TNE_gbs_2018/TPY_2018*1000)
+iro_gbs_2018 <-  IR_95_CI(TNE_gbs_2018, TPY_2018, nrow(df_2018))
 ```
 
 2019
@@ -322,7 +342,7 @@ TNE_anaphP_2019 <- events_2019 %>%
   filter(Diagnosis == 'anaphyl_possible') %>% nrow()
 
 # Incidence rate in 1000 PY for anaphalytic shock possible in 2019
-(iro_anaphP_2019 <- TNE_anaphP_2019/TPY_2019 * 1000)
+iro_anaphP_2019 <-  IR_95_CI(TNE_anaphP_2019, TPY_2019, nrow(df_2019))
 
 
 # Amount of events of anaphylatic shock narrow in 2019 
@@ -330,7 +350,7 @@ TNE_anaphN_2019 <- events_2019 %>%
   filter(Diagnosis == 'anaphyl_narrow') %>% nrow()
 
 # IR in 1000 PY for anaphalytic shock naroow in 2019
-(iro_anaphN_2019 <- TNE_anaphN_2019/TPY_2019 * 1000)
+iro_anaphN_2019 <- IR_95_CI(TNE_anaphN_2019, TPY_2019, nrow(df_2019))
 
 
 # Amount of events of GBS in 2019 
@@ -338,7 +358,7 @@ TNE_gbs_2019 <- events_2019 %>%
   filter(Diagnosis == 'gbs_narrow') %>% nrow()
 
 #IR for gbs in 1000 PY
-(iro_gbs_2019 <- TNE_gbs_2019/TPY_2019*1000)
+iro_gbs_2019 <- IR_95_CI(TNE_gbs_2019, TPY_2019, nrow(df_2019))
 ```
 
 
@@ -357,7 +377,7 @@ df_2020$start_incidence_2020 <- as.Date(ymd(20200101))
 # Count the person years of the observation in 2018
 df_2020$years_in_study_2020 <- as.numeric(difftime
                           (df_2020$end_incidence_2020, 
-                            df_2020$start_incidence_2020, units='days')) / 365
+                            df_2020$start_incidence_2020, units='days')) / 366
 
 ```
 
@@ -375,7 +395,7 @@ TNE_anaphP_2020 <- events_2020 %>%
   filter(Diagnosis == 'anaphyl_possible') %>% nrow()
 
 # Incidence rate in 1000 PY for anaphalytic shock possible in 2020
-(iro_anaphP_2020 <- TNE_anaphP_2020/TPY_2020 * 1000)
+iro_anaphP_2020 <- IR_95_CI(TNE_anaphP_2020, TPY_2020, nrow(df_2020))
 
 
 # Amount of events of anaphylatic shock narrow in 2020 
@@ -383,7 +403,7 @@ TNE_anaphN_2020 <- events_2020 %>%
   filter(Diagnosis == 'anaphyl_narrow') %>% nrow()
 
 # IR in 1000 PY for anaphalytic shock naroow in 2020
-(iro_anaphN_2020 <- TNE_anaphN_2020/TPY_2020 * 1000)
+iro_anaphN_2020 <- IR_95_CI(TNE_anaphN_2020, TPY_2020, nrow(df_2020))
 
 
 # Amount of events of GBS in 2020 
@@ -391,7 +411,7 @@ TNE_gbs_2020 <- events_2020 %>%
   filter(Diagnosis == 'gbs_narrow') %>% nrow()
 
 #IR for gbs in 1000 PY
-(iro_gbs_2020 <- TNE_gbs_2020/TPY_2020*1000)
+iro_gbs_2020 <- IR_95_CI(TNE_gbs_2020, TPY_2020, nrow(df_2020))
 ```
 
 
@@ -401,8 +421,8 @@ Years <- c('Total', '2017', '2018', '2019', '2020',
            'Total', '2017', '2018', '2019', '2020',
            'Total', '2017', '2018', '2019', '2020')
 
-IR <- round(c(iro_anaphN, iro_anaphN_2017, iro_anaphN_2018, iro_anaphN_2019, iro_anaphN_2020, iro_anaphP,
-        iro_anaphP_2017, iro_anaphP_2018, iro_anaphP_2019, iro_anaphP_2020, iro_gbs, iro_gbs_2017, iro_gbs_2018, iro_gbs_2019, iro_gbs_2020),2)
+IR <- c(iro_anaphN, iro_anaphN_2017, iro_anaphN_2018, iro_anaphN_2019, iro_anaphN_2020, iro_anaphP,
+        iro_anaphP_2017, iro_anaphP_2018, iro_anaphP_2019, iro_anaphP_2020, iro_gbs, iro_gbs_2017, iro_gbs_2018, iro_gbs_2019, iro_gbs_2020)
 
 
 tab <- data.frame(Diagnosis = Diagnosis, Year = Years, 'IR per 1000 py' = IR)
@@ -447,9 +467,9 @@ TNE_anaphN0019 <- amount_events(dftotal0019, 'anaphyl_narrow')
 TNE_gbs0019 <- amount_events(dftotal0019, 'gbs_narrow')
 
 #IR for each event in 1000PY for age_band 0-19 
-(iro_anaphP0019 <- TNE_anaphP0019/TPY0019 * 1000)
-(iro_anaphN0019 <- TNE_anaphN0019/TPY0019 * 1000)
-(iro_gbs0019 <- TNE_gbs0019/TPY0019 * 1000)
+iro_anaphP0019 <- IR_95_CI(TNE_anaphP0019, TPY0019, nrow(dftotal0019))
+iro_anaphN0019 <- IR_95_CI(TNE_anaphN0019, TPY0019, nrow(dftotal0019))
+iro_gbs0019 <- IR_95_CI(TNE_gbs0019, TPY0019, nrow(dftotal0019))
 ```
 
 ```{r}
@@ -461,9 +481,9 @@ TNE_anaphN2039 <- amount_events(dftotal2039, 'anaphyl_narrow')
 TNE_gbs2039 <- amount_events(dftotal2039, 'gbs_narrow')
 
 #IR for each event in 1000PY for age_band 20-39 
-(iro_anaphP2039 <- TNE_anaphP2039/TPY2039 * 1000)
-(iro_anaphN2039 <- TNE_anaphN2039/TPY2039 * 1000)
-(iro_gbs2039 <- TNE_gbs2039/TPY2039 * 1000)
+iro_anaphP2039 <- IR_95_CI(TNE_anaphP2039, TPY2039, nrow(dftotal2039))
+iro_anaphN2039 <- IR_95_CI(TNE_anaphN2039, TPY2039, nrow(dftotal2039))
+iro_gbs2039 <- IR_95_CI(TNE_gbs2039, TPY2039, nrow(dftotal2039))
 ```
 
 ```{r}
@@ -475,9 +495,9 @@ TNE_anaphN4059 <- amount_events(dftotal4059, 'anaphyl_narrow')
 TNE_gbs4059 <- amount_events(dftotal4059, 'gbs_narrow')
 
 #IR for each event in 1000PY for age_band 0-19 
-(iro_anaphP4059 <- TNE_anaphP4059/TPY4059 * 1000)
-(iro_anaphN4059 <- TNE_anaphN4059/TPY4059 * 1000)
-(iro_gbs4059 <- TNE_gbs4059/TPY4059 * 1000)
+iro_anaphP4059 <- IR_95_CI(TNE_anaphP4059, TPY4059, nrow(dftotal4059))
+iro_anaphN4059 <- IR_95_CI(TNE_anaphN4059, TPY4059, nrow(dftotal4059))
+iro_gbs4059 <- IR_95_CI(TNE_gbs4059, TPY4059, nrow(dftotal4059))
 ```
 
 ```{r}
@@ -489,11 +509,12 @@ TNE_anaphN6079 <- amount_events(dftotal6079, 'anaphyl_narrow')
 TNE_gbs6079 <- amount_events(dftotal6079, 'gbs_narrow')
 
 #IR for each event in 1000PY for age_band 0-19 
-(iro_anaphP6079 <- TNE_anaphP6079/TPY6079 * 1000)
-(iro_anaphN6079 <- TNE_anaphN6079/TPY6079 * 1000)
-(iro_gbs6079 <- TNE_gbs6079/TPY * 1000)
+iro_anaphP6079 <- IR_95_CI(TNE_anaphP6079, TPY6079, nrow(dftotal6079))
+iro_anaphN6079 <- IR_95_CI(TNE_anaphN6079, TPY6079, nrow(dftotal6079))
+iro_gbs6079 <- IR_95_CI(TNE_gbs6079, TPY6079, nrow(dftotal6079))
 ```
 
+# 2017 
 
 ```{r}
 #Events in 2017 for age group 00-19
@@ -507,9 +528,9 @@ TNE_anaphN_0019_2017 <- amount_events(events_2017_0019, 'anaphyl_narrow')
 TNE_gbs_0019_2017 <- amount_events(events_2017_0019, 'gbs_narrow')
 
 #IR for each event in 1000PY for age_band 0-19 
-(iro_anaphP_0019_2017 <- TNE_anaphP_0019_2017/TPY_2017_0019 * 1000)
-(iro_anaphN_0019_2017 <- TNE_anaphN_0019_2017/TPY_2017_0019 * 1000)
-(iro_gbs_0019_2017 <- TNE_gbs_0019_2017/TPY_2017_0019 * 1000)
+iro_anaphP_0019_2017 <- IR_95_CI(TNE_anaphP_0019_2017, TPY_2017_0019, nrow(dftotal0019))
+iro_anaphN_0019_2017 <- IR_95_CI(TNE_anaphN_0019_2017, TPY_2017_0019, nrow(dftotal0019))
+iro_gbs_0019_2017 <- IR_95_CI(TNE_gbs_0019_2017, TPY_2017_0019, nrow(dftotal0019))
 ```
 
 ```{r}
@@ -524,9 +545,9 @@ TNE_anaphN_2039_2017 <- amount_events(events_2017_2039, 'anaphyl_narrow')
 TNE_gbs_2039_2017 <- amount_events(events_2017_2039, 'gbs_narrow')
 
 #IR for each event in 1000PY for age_band 0-19 
-(iro_anaphP_2039_2017 <- TNE_anaphP_2039_2017/TPY_2017_2039 * 1000)
-(iro_anaphN_2039_2017 <- TNE_anaphN_2039_2017/TPY_2017_2039 * 1000)
-(iro_gbs_2039_2017 <- TNE_gbs_2039_2017/TPY_2017_2039 * 1000)
+iro_anaphP_2039_2017 <- IR_95_CI(TNE_anaphP_2039_2017, TPY_2017_2039, nrow(dftotal2039))
+iro_anaphN_2039_2017 <- IR_95_CI(TNE_anaphN_2039_2017, TPY_2017_2039, nrow(dftotal2039))
+iro_gbs_2039_2017 <- IR_95_CI(TNE_gbs_2039_2017, TPY_2017_2039, nrow(dftotal2039))
 ```
 
 ```{r}
@@ -541,9 +562,9 @@ TNE_anaphN_4059_2017 <- amount_events(events_2017_4059, 'anaphyl_narrow')
 TNE_gbs_4059_2017 <- amount_events(events_2017_4059, 'gbs_narrow')
 
 #IR for each event in 1000PY for age_band 0-19 
-(iro_anaphP_4059_2017 <- TNE_anaphP_4059_2017/TPY_2017_4059 * 1000)
-(iro_anaphN_4059_2017 <- TNE_anaphN_4059_2017/TPY_2017_4059 * 1000)
-(iro_gbs_4059_2017 <- TNE_gbs_4059_2017/TPY_2017_4059 * 1000)
+iro_anaphP_4059_2017 <- IR_95_CI(TNE_anaphP_4059_2017, TPY_2017_4059, nrow(dftotal4059))
+iro_anaphN_4059_2017 <- IR_95_CI(TNE_anaphN_4059_2017, TPY_2017_4059, nrow(dftotal4059))
+iro_gbs_4059_2017 <- IR_95_CI(TNE_gbs_4059_2017, TPY_2017_4059, nrow(dftotal4059))
 ```
 
 ```{r}
@@ -558,9 +579,9 @@ TNE_anaphN_6079_2017 <- amount_events(events_2017_6079, 'anaphyl_narrow')
 TNE_gbs_6079_2017 <- amount_events(events_2017_6079, 'gbs_narrow')
 
 #IR for each event in 1000PY for age_band 0-19 
-(iro_anaphP_6079_2017 <- TNE_anaphP_6079_2017/TPY_2017_6079 * 1000)
-(iro_anaphN_6079_2017 <- TNE_anaphN_6079_2017/TPY_2017_6079 * 1000)
-(iro_gbs_6079_2017 <- TNE_gbs_6079_2017/TPY_2017_6079 * 1000)
+iro_anaphP_6079_2017 <- IR_95_CI(TNE_anaphP_6079_2017, TPY_2017_6079, nrow(dftotal6079))
+iro_anaphN_6079_2017 <- IR_95_CI(TNE_anaphN_6079_2017, TPY_2017_6079, nrow(dftotal6079))
+iro_gbs_6079_2017 <- IR_95_CI(TNE_gbs_6079_2017, TPY_2017_6079, nrow(dftotal6079))
 ```
 
 #2018 
@@ -574,8 +595,9 @@ df_2018_6079 <- make_year_age_bands(df_2018, '[60,79]')
 
 
 ```{r}
-events_2018_0019 <- subset(dftotal0019, year(end_incidence) == 2018) 
-
+#Events in 2017 for age group 00-19
+events_2018_0019 <- subset(df_2018_0019, year(end_incidence) == 2018) 
+#the _2018_ personyears for an event in 2018 age_band0019
 TPY_2018_0019 <- sum(df_2018_0019$years_in_study_2018)
 
 # Count thenumber of events for age_band 0019 in 2018
@@ -584,14 +606,15 @@ TNE_anaphN_0019_2018 <- amount_events(events_2018_0019, 'anaphyl_narrow')
 TNE_gbs_0019_2018 <- amount_events(events_2018_0019, 'gbs_narrow')
 
 #IR for each event in 1000PY for age_band 0-19 
-(iro_anaphP_0019_2018 <- TNE_anaphP_0019_2018/TPY_2018_0019 * 1000)
-(iro_anaphN_0019_2018 <- TNE_anaphN_0019_2018/TPY_2018_0019 * 1000)
-(iro_gbs_0019_2018 <- TNE_gbs_0019_2018/TPY_2018_0019 * 1000)
+iro_anaphP_0019_2018 <- IR_95_CI(TNE_anaphP_0019_2018, TPY_2018_0019, nrow(df_2018_0019))
+iro_anaphN_0019_2018 <- IR_95_CI(TNE_anaphN_0019_2018, TPY_2018_0019, nrow(df_2018_0019))
+iro_gbs_0019_2018 <- IR_95_CI(TNE_gbs_0019_2018, TPY_2018_0019, nrow(df_2018_0019))
 ```
 
 ```{r}
-events_2018_2039 <- subset(dftotal2039, year(end_incidence) == 2018) 
-
+#Events in 2018 for age group 00-19
+events_2018_2039 <- subset(df_2018_2039, year(end_incidence) == 2018) 
+#the _2018_ personyears for an event in 2018 age_band2039
 TPY_2018_2039 <- sum(df_2018_2039$years_in_study_2018)
 
 # Count thenumber of events for age_band 2039 in 2018
@@ -600,14 +623,15 @@ TNE_anaphN_2039_2018 <- amount_events(events_2018_2039, 'anaphyl_narrow')
 TNE_gbs_2039_2018 <- amount_events(events_2018_2039, 'gbs_narrow')
 
 #IR for each event in 1000PY for age_band 0-19 
-(iro_anaphP_2039_2018 <- TNE_anaphP_2039_2018/TPY_2018_2039 * 1000)
-(iro_anaphN_2039_2018 <- TNE_anaphN_2039_2018/TPY_2018_2039 * 1000)
-(iro_gbs_2039_2018 <- TNE_gbs_2039_2018/TPY_2018_2039 * 1000)
+iro_anaphP_2039_2018 <- IR_95_CI(TNE_anaphP_2039_2018, TPY_2018_2039, nrow(df_2018_2039))
+iro_anaphN_2039_2018 <- IR_95_CI(TNE_anaphN_2039_2018, TPY_2018_2039, nrow(df_2018_2039))
+iro_gbs_2039_2018 <- IR_95_CI(TNE_gbs_2039_2018, TPY_2018_2039, nrow(df_2018_2039))
 ```
 
 ```{r}
-events_2018_4059 <- subset(dftotal4059, year(end_incidence) == 2018) 
-
+#Events in 2018 for age group 00-19
+events_2018_4059 <- subset(df_2018_4059, year(end_incidence) == 2018) 
+#the _2018_ personyears for an event in 2018 age_band4059
 TPY_2018_4059 <- sum(df_2018_4059$years_in_study_2018)
 
 # Count thenumber of events for age_band 4059 in 2018
@@ -616,14 +640,15 @@ TNE_anaphN_4059_2018 <- amount_events(events_2018_4059, 'anaphyl_narrow')
 TNE_gbs_4059_2018 <- amount_events(events_2018_4059, 'gbs_narrow')
 
 #IR for each event in 1000PY for age_band 0-19 
-(iro_anaphP_4059_2018 <- TNE_anaphP_4059_2018/TPY_2018_4059 * 1000)
-(iro_anaphN_4059_2018 <- TNE_anaphN_4059_2018/TPY_2018_4059 * 1000)
-(iro_gbs_4059_2018 <- TNE_gbs_4059_2018/TPY_2018_4059 * 1000)
+iro_anaphP_4059_2018 <- IR_95_CI(TNE_anaphP_4059_2018, TPY_2018_4059, nrow(df_2018_4059))
+iro_anaphN_4059_2018 <- IR_95_CI(TNE_anaphN_4059_2018, TPY_2018_4059, nrow(df_2018_4059))
+iro_gbs_4059_2018 <- IR_95_CI(TNE_gbs_4059_2018, TPY_2018_4059, nrow(df_2018_4059))
 ```
 
 ```{r}
-events_2018_6079 <- subset(dftotal6079, year(end_incidence) == 2018) 
-
+#Events in 2018 for age group 00-19
+events_2018_6079 <- subset(df_2018_6079, year(end_incidence) == 2018) 
+#the _2018_ personyears for an event in 2018 age_band6079
 TPY_2018_6079 <- sum(df_2018_6079$years_in_study_2018)
 
 # Count thenumber of events for age_band 6079 in 2018
@@ -632,12 +657,12 @@ TNE_anaphN_6079_2018 <- amount_events(events_2018_6079, 'anaphyl_narrow')
 TNE_gbs_6079_2018 <- amount_events(events_2018_6079, 'gbs_narrow')
 
 #IR for each event in 1000PY for age_band 0-19 
-(iro_anaphP_6079_2018 <- TNE_anaphP_6079_2018/TPY_2018_6079 * 1000)
-(iro_anaphN_6079_2018 <- TNE_anaphN_6079_2018/TPY_2018_6079 * 1000)
-(iro_gbs_6079_2018 <- TNE_gbs_6079_2018/TPY_2018_6079 * 1000)
+iro_anaphP_6079_2018 <- IR_95_CI(TNE_anaphP_6079_2018, TPY_2018_6079, nrow(df_2018_6079))
+iro_anaphN_6079_2018 <- IR_95_CI(TNE_anaphN_6079_2018, TPY_2018_6079, nrow(df_2018_6079))
+iro_gbs_6079_2018 <- IR_95_CI(TNE_gbs_6079_2018, TPY_2018_6079, nrow(df_2018_6079))
 ```
 
-#2019 
+# 2019 
 
 ```{r}
 df_2019_0019 <- make_year_age_bands(df_2019, '[0,19]')
@@ -648,8 +673,9 @@ df_2019_6079 <- make_year_age_bands(df_2019, '[60,79]')
 
 
 ```{r}
-events_2019_0019 <- subset(dftotal0019, year(end_incidence) == 2019) 
-
+#Events in 2017 for age group 00-19
+events_2019_0019 <- subset(df_2019_0019, year(end_incidence) == 2019) 
+#the _2019_ personyears for an event in 2019 age_band0019
 TPY_2019_0019 <- sum(df_2019_0019$years_in_study_2019)
 
 # Count thenumber of events for age_band 0019 in 2019
@@ -658,14 +684,15 @@ TNE_anaphN_0019_2019 <- amount_events(events_2019_0019, 'anaphyl_narrow')
 TNE_gbs_0019_2019 <- amount_events(events_2019_0019, 'gbs_narrow')
 
 #IR for each event in 1000PY for age_band 0-19 
-(iro_anaphP_0019_2019 <- TNE_anaphP_0019_2019/TPY_2019_0019 * 1000)
-(iro_anaphN_0019_2019 <- TNE_anaphN_0019_2019/TPY_2019_0019 * 1000)
-(iro_gbs_0019_2019 <- TNE_gbs_0019_2019/TPY_2019_0019 * 1000)
+iro_anaphP_0019_2019 <- IR_95_CI(TNE_anaphP_0019_2019, TPY_2019_0019, nrow(df_2019_0019))
+iro_anaphN_0019_2019 <- IR_95_CI(TNE_anaphN_0019_2019, TPY_2019_0019, nrow(df_2019_0019))
+iro_gbs_0019_2019 <- IR_95_CI(TNE_gbs_0019_2019, TPY_2019_0019, nrow(df_2019_0019))
 ```
 
 ```{r}
-events_2019_2039 <- subset(dftotal2039, year(end_incidence) == 2019) 
-
+#Events in 2019 for age group 00-19
+events_2019_2039 <- subset(df_2019_2039, year(end_incidence) == 2019) 
+#the _2019_ personyears for an event in 2019 age_band2039
 TPY_2019_2039 <- sum(df_2019_2039$years_in_study_2019)
 
 # Count thenumber of events for age_band 2039 in 2019
@@ -674,14 +701,15 @@ TNE_anaphN_2039_2019 <- amount_events(events_2019_2039, 'anaphyl_narrow')
 TNE_gbs_2039_2019 <- amount_events(events_2019_2039, 'gbs_narrow')
 
 #IR for each event in 1000PY for age_band 0-19 
-(iro_anaphP_2039_2019 <- TNE_anaphP_2039_2019/TPY_2019_2039 * 1000)
-(iro_anaphN_2039_2019 <- TNE_anaphN_2039_2019/TPY_2019_2039 * 1000)
-(iro_gbs_2039_2019 <- TNE_gbs_2039_2019/TPY_2019_2039 * 1000)
+iro_anaphP_2039_2019 <- IR_95_CI(TNE_anaphP_2039_2019, TPY_2019_2039, nrow(df_2019_2039))
+iro_anaphN_2039_2019 <- IR_95_CI(TNE_anaphN_2039_2019, TPY_2019_2039, nrow(df_2019_2039))
+iro_gbs_2039_2019 <- IR_95_CI(TNE_gbs_2039_2019, TPY_2019_2039, nrow(df_2019_2039))
 ```
 
 ```{r}
-events_2019_4059 <- subset(dftotal4059, year(end_incidence) == 2019) 
-
+#Events in 2019 for age group 00-19
+events_2019_4059 <- subset(df_2019_4059, year(end_incidence) == 2019) 
+#the _2019_ personyears for an event in 2019 age_band4059
 TPY_2019_4059 <- sum(df_2019_4059$years_in_study_2019)
 
 # Count thenumber of events for age_band 4059 in 2019
@@ -690,14 +718,15 @@ TNE_anaphN_4059_2019 <- amount_events(events_2019_4059, 'anaphyl_narrow')
 TNE_gbs_4059_2019 <- amount_events(events_2019_4059, 'gbs_narrow')
 
 #IR for each event in 1000PY for age_band 0-19 
-(iro_anaphP_4059_2019 <- TNE_anaphP_4059_2019/TPY_2019_4059 * 1000)
-(iro_anaphN_4059_2019 <- TNE_anaphN_4059_2019/TPY_2019_4059 * 1000)
-(iro_gbs_4059_2019 <- TNE_gbs_4059_2019/TPY_2019_4059 * 1000)
+iro_anaphP_4059_2019 <- IR_95_CI(TNE_anaphP_4059_2019, TPY_2019_4059, nrow(df_2019_4059))
+iro_anaphN_4059_2019 <- IR_95_CI(TNE_anaphN_4059_2019, TPY_2019_4059, nrow(df_2019_4059))
+iro_gbs_4059_2019 <- IR_95_CI(TNE_gbs_4059_2019, TPY_2019_4059, nrow(df_2019_4059))
 ```
 
 ```{r}
-events_2019_6079 <- subset(dftotal6079, year(end_incidence) == 2019) 
-
+#Events in 2019 for age group 00-19
+events_2019_6079 <- subset(df_2019_6079, year(end_incidence) == 2019) 
+#the _2019_ personyears for an event in 2019 age_band6079
 TPY_2019_6079 <- sum(df_2019_6079$years_in_study_2019)
 
 # Count thenumber of events for age_band 6079 in 2019
@@ -706,10 +735,11 @@ TNE_anaphN_6079_2019 <- amount_events(events_2019_6079, 'anaphyl_narrow')
 TNE_gbs_6079_2019 <- amount_events(events_2019_6079, 'gbs_narrow')
 
 #IR for each event in 1000PY for age_band 0-19 
-(iro_anaphP_6079_2019 <- TNE_anaphP_6079_2019/TPY_2019_6079 * 1000)
-(iro_anaphN_6079_2019 <- TNE_anaphN_6079_2019/TPY_2019_6079 * 1000)
-(iro_gbs_6079_2019 <- TNE_gbs_6079_2019/TPY_2019_6079 * 1000)
+iro_anaphP_6079_2019 <- IR_95_CI(TNE_anaphP_6079_2019, TPY_2019_6079, nrow(df_2019_6079))
+iro_anaphN_6079_2019 <- IR_95_CI(TNE_anaphN_6079_2019, TPY_2019_6079, nrow(df_2019_6079))
+iro_gbs_6079_2019 <- IR_95_CI(TNE_gbs_6079_2019, TPY_2019_6079, nrow(df_2019_6079))
 ```
+
 
 # 2020
 
@@ -724,8 +754,9 @@ df_2020_6079 <- make_year_age_bands(df_2020, '[60,79]')
 
 
 ```{r}
-events_2020_0019 <- subset(dftotal0019, year(end_incidence) == 2020) 
-
+#Events in 2017 for age group 00-19
+events_2020_0019 <- subset(df_2020_0019, year(end_incidence) == 2020) 
+#the _2020_ personyears for an event in 2020 age_band0019
 TPY_2020_0019 <- sum(df_2020_0019$years_in_study_2020)
 
 # Count thenumber of events for age_band 0019 in 2020
@@ -734,14 +765,15 @@ TNE_anaphN_0019_2020 <- amount_events(events_2020_0019, 'anaphyl_narrow')
 TNE_gbs_0019_2020 <- amount_events(events_2020_0019, 'gbs_narrow')
 
 #IR for each event in 1000PY for age_band 0-19 
-(iro_anaphP_0019_2020 <- TNE_anaphP_0019_2020/TPY_2020_0019 * 1000)
-(iro_anaphN_0019_2020 <- TNE_anaphN_0019_2020/TPY_2020_0019 * 1000)
-(iro_gbs_0019_2020 <- TNE_gbs_0019_2020/TPY_2020_0019 * 1000)
+iro_anaphP_0019_2020 <- IR_95_CI(TNE_anaphP_0019_2020, TPY_2020_0019, nrow(df_2020_0019))
+iro_anaphN_0019_2020 <- IR_95_CI(TNE_anaphN_0019_2020, TPY_2020_0019, nrow(df_2020_0019))
+iro_gbs_0019_2020 <- IR_95_CI(TNE_gbs_0019_2020, TPY_2020_0019, nrow(df_2020_0019))
 ```
 
 ```{r}
-events_2020_2039 <- subset(dftotal2039, year(end_incidence) == 2020) 
-
+#Events in 2020 for age group 00-19
+events_2020_2039 <- subset(df_2020_2039, year(end_incidence) == 2020) 
+#the _2020_ personyears for an event in 2020 age_band2039
 TPY_2020_2039 <- sum(df_2020_2039$years_in_study_2020)
 
 # Count thenumber of events for age_band 2039 in 2020
@@ -750,14 +782,15 @@ TNE_anaphN_2039_2020 <- amount_events(events_2020_2039, 'anaphyl_narrow')
 TNE_gbs_2039_2020 <- amount_events(events_2020_2039, 'gbs_narrow')
 
 #IR for each event in 1000PY for age_band 0-19 
-(iro_anaphP_2039_2020 <- TNE_anaphP_2039_2020/TPY_2020_2039 * 1000)
-(iro_anaphN_2039_2020 <- TNE_anaphN_2039_2020/TPY_2020_2039 * 1000)
-(iro_gbs_2039_2020 <- TNE_gbs_2039_2020/TPY_2020_2039 * 1000)
+iro_anaphP_2039_2020 <- IR_95_CI(TNE_anaphP_2039_2020, TPY_2020_2039, nrow(df_2020_2039))
+iro_anaphN_2039_2020 <- IR_95_CI(TNE_anaphN_2039_2020, TPY_2020_2039, nrow(df_2020_2039))
+iro_gbs_2039_2020 <- IR_95_CI(TNE_gbs_2039_2020, TPY_2020_2039, nrow(df_2020_2039))
 ```
 
 ```{r}
-events_2020_4059 <- subset(dftotal4059, year(end_incidence) == 2020) 
-
+#Events in 2020 for age group 00-19
+events_2020_4059 <- subset(df_2020_4059, year(end_incidence) == 2020) 
+#the _2020_ personyears for an event in 2020 age_band4059
 TPY_2020_4059 <- sum(df_2020_4059$years_in_study_2020)
 
 # Count thenumber of events for age_band 4059 in 2020
@@ -766,14 +799,15 @@ TNE_anaphN_4059_2020 <- amount_events(events_2020_4059, 'anaphyl_narrow')
 TNE_gbs_4059_2020 <- amount_events(events_2020_4059, 'gbs_narrow')
 
 #IR for each event in 1000PY for age_band 0-19 
-(iro_anaphP_4059_2020 <- TNE_anaphP_4059_2020/TPY_2020_4059 * 1000)
-(iro_anaphN_4059_2020 <- TNE_anaphN_4059_2020/TPY_2020_4059 * 1000)
-(iro_gbs_4059_2020 <- TNE_gbs_4059_2020/TPY_2020_4059 * 1000)
+iro_anaphP_4059_2020 <- IR_95_CI(TNE_anaphP_4059_2020, TPY_2020_4059, nrow(df_2020_4059))
+iro_anaphN_4059_2020 <- IR_95_CI(TNE_anaphN_4059_2020, TPY_2020_4059, nrow(df_2020_4059))
+iro_gbs_4059_2020 <- IR_95_CI(TNE_gbs_4059_2020, TPY_2020_4059, nrow(df_2020_4059))
 ```
 
 ```{r}
-events_2020_6079 <- subset(dftotal6079, year(end_incidence) == 2020) 
-
+#Events in 2020 for age group 00-19
+events_2020_6079 <- subset(df_2020_6079, year(end_incidence) == 2020) 
+#the _2020_ personyears for an event in 2020 age_band6079
 TPY_2020_6079 <- sum(df_2020_6079$years_in_study_2020)
 
 # Count thenumber of events for age_band 6079 in 2020
@@ -782,10 +816,11 @@ TNE_anaphN_6079_2020 <- amount_events(events_2020_6079, 'anaphyl_narrow')
 TNE_gbs_6079_2020 <- amount_events(events_2020_6079, 'gbs_narrow')
 
 #IR for each event in 1000PY for age_band 0-19 
-(iro_anaphP_6079_2020 <- TNE_anaphP_6079_2020/TPY_2020_6079 * 1000)
-(iro_anaphN_6079_2020 <- TNE_anaphN_6079_2020/TPY_2020_6079 * 1000)
-(iro_gbs_6079_2020 <- TNE_gbs_6079_2020/TPY_2020_6079 * 1000)
+iro_anaphP_6079_2020 <- IR_95_CI(TNE_anaphP_6079_2020, TPY_2020_6079, nrow(df_2020_6079))
+iro_anaphN_6079_2020 <- IR_95_CI(TNE_anaphN_6079_2020, TPY_2020_6079, nrow(df_2020_6079))
+iro_gbs_6079_2020 <- IR_95_CI(TNE_gbs_6079_2020, TPY_2020_6079, nrow(df_2020_6079))
 ```
+
 
 
 ```{r}
@@ -859,42 +894,116 @@ pers_year_all <- rep(PersYear, times=3)
 ```
 
 ```{r}
-IR_1000PY <- c(
-  iro_anaphN, iro_anaphN_2017, iro_anaphN_2018, 
-  iro_anaphN_2019, iro_anaphN_2020, 
-  iro_anaphN0019, iro_anaphN_0019_2017, iro_anaphN_0019_2018,
-  iro_anaphN_0019_2019, iro_anaphN_0019_2020, 
-  iro_anaphN2039, iro_anaphN_2039_2017, iro_anaphN_2039_2018,
-  iro_anaphN_2039_2019, iro_anaphN_2039_2020,
-  iro_anaphN4059, iro_anaphN_4059_2017, iro_anaphN_4059_2018,
-  iro_anaphN_4059_2019, iro_anaphN_4059_2020,
-  iro_anaphN6079, iro_anaphN_6079_2017, iro_anaphN_6079_2018,
-  iro_anaphN_6079_2019, iro_anaphN_6079_2020,
+IR_1000PY <-  c(
+  iro_anaphN[1], iro_anaphN_2017[1], iro_anaphN_2018[1], 
+  iro_anaphN_2019[1], iro_anaphN_2020[1], 
+  iro_anaphN0019[1], iro_anaphN_0019_2017[1], iro_anaphN_0019_2018[1],
+  iro_anaphN_0019_2019[1], iro_anaphN_0019_2020[1], 
+  iro_anaphN2039[1], iro_anaphN_2039_2017[1], iro_anaphN_2039_2018[1],
+  iro_anaphN_2039_2019[1], iro_anaphN_2039_2020[1],
+  iro_anaphN4059[1], iro_anaphN_4059_2017[1], iro_anaphN_4059_2018[1],
+  iro_anaphN_4059_2019[1], iro_anaphN_4059_2020[1],
+  iro_anaphN6079[1], iro_anaphN_6079_2017[1], iro_anaphN_6079_2018[1],
+  iro_anaphN_6079_2019[1], iro_anaphN_6079_2020[1],
   #### Anaph Possible 
-  iro_anaphP, iro_anaphP_2017, iro_anaphP_2018, 
-  iro_anaphP_2019, iro_anaphP_2020, 
-  iro_anaphP0019, iro_anaphP_0019_2017, iro_anaphP_0019_2018,
-  iro_anaphP_0019_2019, iro_anaphP_0019_2020, 
-  iro_anaphP2039, iro_anaphP_2039_2017, iro_anaphP_2039_2018,
-  iro_anaphP_2039_2019, iro_anaphP_2039_2020,
-  iro_anaphP4059, iro_anaphP_4059_2017, iro_anaphP_4059_2018,
-  iro_anaphP_4059_2019, iro_anaphP_4059_2020,
-  iro_anaphP6079, iro_anaphP_6079_2017, iro_anaphP_6079_2018,
-  iro_anaphP_6079_2019, iro_anaphP_6079_2020,
+  iro_anaphP[1], iro_anaphP_2017[1], iro_anaphP_2018[1], 
+  iro_anaphP_2019[1], iro_anaphP_2020[1], 
+  iro_anaphP0019[1], iro_anaphP_0019_2017[1], iro_anaphP_0019_2018[1],
+  iro_anaphP_0019_2019[1], iro_anaphP_0019_2020[1], 
+  iro_anaphP2039[1], iro_anaphP_2039_2017[1], iro_anaphP_2039_2018[1],
+  iro_anaphP_2039_2019[1], iro_anaphP_2039_2020[1],
+  iro_anaphP4059[1], iro_anaphP_4059_2017[1], iro_anaphP_4059_2018[1],
+  iro_anaphP_4059_2019[1], iro_anaphP_4059_2020[1],
+  iro_anaphP6079[1], iro_anaphP_6079_2017[1], iro_anaphP_6079_2018[1],
+  iro_anaphP_6079_2019[1], iro_anaphP_6079_2020[1],
   #### GBS 
-  iro_gbs, iro_gbs_2017, iro_gbs_2018, 
-  iro_gbs_2019, iro_gbs_2020, 
-  iro_gbs0019, iro_gbs_0019_2017, iro_gbs_0019_2018,
-  iro_gbs_0019_2019, iro_gbs_0019_2020, 
-  iro_gbs2039, iro_gbs_2039_2017, iro_gbs_2039_2018,
-  iro_gbs_2039_2019, iro_gbs_2039_2020,
-  iro_gbs4059, iro_gbs_4059_2017, iro_gbs_4059_2018,
-  iro_gbs_4059_2019, iro_gbs_4059_2020,
-  iro_gbs6079, iro_gbs_6079_2017, iro_gbs_6079_2018,
-  iro_gbs_6079_2019, iro_gbs_6079_2020
+    iro_gbs[1], iro_gbs_2017[1], iro_gbs_2018[1], 
+  iro_gbs_2019[1], iro_gbs_2020[1], 
+  iro_gbs0019[1], iro_gbs_0019_2017[1], iro_gbs_0019_2018[1],
+  iro_gbs_0019_2019[1], iro_gbs_0019_2020[1], 
+  iro_gbs2039[1], iro_gbs_2039_2017[1], iro_gbs_2039_2018[1],
+  iro_gbs_2039_2019[1], iro_gbs_2039_2020[1],
+  iro_gbs4059[1], iro_gbs_4059_2017[1], iro_gbs_4059_2018[1],
+  iro_gbs_4059_2019[1], iro_gbs_4059_2020[1],
+  iro_gbs6079[1], iro_gbs_6079_2017[1], iro_gbs_6079_2018[1],
+  iro_gbs_6079_2019[1], iro_gbs_6079_2020[1]
   )
 ```
 
+```{r}
+IR_1000PY_95L <- c(
+  iro_anaphN[2], iro_anaphN_2017[2], iro_anaphN_2018[2], 
+  iro_anaphN_2019[2], iro_anaphN_2020[2], 
+  iro_anaphN0019[2], iro_anaphN_0019_2017[2], iro_anaphN_0019_2018[2],
+  iro_anaphN_0019_2019[2], iro_anaphN_0019_2020[2], 
+  iro_anaphN2039[2], iro_anaphN_2039_2017[2], iro_anaphN_2039_2018[2],
+  iro_anaphN_2039_2019[2], iro_anaphN_2039_2020[2],
+  iro_anaphN4059[2], iro_anaphN_4059_2017[2], iro_anaphN_4059_2018[2],
+  iro_anaphN_4059_2019[2], iro_anaphN_4059_2020[2],
+  iro_anaphN6079[2], iro_anaphN_6079_2017[2], iro_anaphN_6079_2018[2],
+  iro_anaphN_6079_2019[2], iro_anaphN_6079_2020[2],
+  #### Anaph Possible 
+  iro_anaphP[2], iro_anaphP_2017[2], iro_anaphP_2018[2], 
+  iro_anaphP_2019[2], iro_anaphP_2020[2], 
+  iro_anaphP0019[2], iro_anaphP_0019_2017[2], iro_anaphP_0019_2018[2],
+  iro_anaphP_0019_2019[2], iro_anaphP_0019_2020[2], 
+  iro_anaphP2039[2], iro_anaphP_2039_2017[2], iro_anaphP_2039_2018[2],
+  iro_anaphP_2039_2019[2], iro_anaphP_2039_2020[2],
+  iro_anaphP4059[2], iro_anaphP_4059_2017[2], iro_anaphP_4059_2018[2],
+  iro_anaphP_4059_2019[2], iro_anaphP_4059_2020[2],
+  iro_anaphP6079[2], iro_anaphP_6079_2017[2], iro_anaphP_6079_2018[2],
+  iro_anaphP_6079_2019[2], iro_anaphP_6079_2020[2],
+  #### GBS 
+    iro_gbs[2], iro_gbs_2017[2], iro_gbs_2018[2], 
+  iro_gbs_2019[2], iro_gbs_2020[2], 
+  iro_gbs0019[2], iro_gbs_0019_2017[2], iro_gbs_0019_2018[2],
+  iro_gbs_0019_2019[2], iro_gbs_0019_2020[2], 
+  iro_gbs2039[2], iro_gbs_2039_2017[2], iro_gbs_2039_2018[2],
+  iro_gbs_2039_2019[2], iro_gbs_2039_2020[2],
+  iro_gbs4059[2], iro_gbs_4059_2017[2], iro_gbs_4059_2018[2],
+  iro_gbs_4059_2019[2], iro_gbs_4059_2020[2],
+  iro_gbs6079[2], iro_gbs_6079_2017[2], iro_gbs_6079_2018[2],
+  iro_gbs_6079_2019[2], iro_gbs_6079_2020[2]
+  )
+```
+
+
+```{r}
+IR_1000PY_95H <- c(
+  iro_anaphN[3], iro_anaphN_2017[3], iro_anaphN_2018[3], 
+  iro_anaphN_2019[3], iro_anaphN_2020[3], 
+  iro_anaphN0019[3], iro_anaphN_0019_2017[3], iro_anaphN_0019_2018[3],
+  iro_anaphN_0019_2019[3], iro_anaphN_0019_2020[3], 
+  iro_anaphN2039[3], iro_anaphN_2039_2017[3], iro_anaphN_2039_2018[3],
+  iro_anaphN_2039_2019[3], iro_anaphN_2039_2020[3],
+  iro_anaphN4059[3], iro_anaphN_4059_2017[3], iro_anaphN_4059_2018[3],
+  iro_anaphN_4059_2019[3], iro_anaphN_4059_2020[3],
+  iro_anaphN6079[3], iro_anaphN_6079_2017[3], iro_anaphN_6079_2018[3],
+  iro_anaphN_6079_2019[3], iro_anaphN_6079_2020[3],
+  #### Anaph Possible 
+  iro_anaphP[3], iro_anaphP_2017[3], iro_anaphP_2018[3], 
+  iro_anaphP_2019[3], iro_anaphP_2020[3], 
+  iro_anaphP0019[3], iro_anaphP_0019_2017[3], iro_anaphP_0019_2018[3],
+  iro_anaphP_0019_2019[3], iro_anaphP_0019_2020[3], 
+  iro_anaphP2039[3], iro_anaphP_2039_2017[3], iro_anaphP_2039_2018[3],
+  iro_anaphP_2039_2019[3], iro_anaphP_2039_2020[3],
+  iro_anaphP4059[3], iro_anaphP_4059_2017[3], iro_anaphP_4059_2018[3],
+  iro_anaphP_4059_2019[3], iro_anaphP_4059_2020[3],
+  iro_anaphP6079[3], iro_anaphP_6079_2017[3], iro_anaphP_6079_2018[3],
+  iro_anaphP_6079_2019[3], iro_anaphP_6079_2020[3],
+  #### GBS 
+    iro_gbs[3], iro_gbs_2017[3], iro_gbs_2018[3], 
+  iro_gbs_2019[3], iro_gbs_2020[3], 
+  iro_gbs0019[3], iro_gbs_0019_2017[3], iro_gbs_0019_2018[3],
+  iro_gbs_0019_2019[3], iro_gbs_0019_2020[3], 
+  iro_gbs2039[3], iro_gbs_2039_2017[3], iro_gbs_2039_2018[3],
+  iro_gbs_2039_2019[3], iro_gbs_2039_2020[3],
+  iro_gbs4059[3], iro_gbs_4059_2017[3], iro_gbs_4059_2018[3],
+  iro_gbs_4059_2019[3], iro_gbs_4059_2020[3],
+  iro_gbs6079[3], iro_gbs_6079_2017[3], iro_gbs_6079_2018[3],
+  iro_gbs_6079_2019[3], iro_gbs_6079_2020[3]
+  )
+```
 
 ```{r}
 Big_table <- data.table(Diagnosis = all_diag, 
@@ -902,11 +1011,17 @@ Big_table <- data.table(Diagnosis = all_diag,
                         Year = all_years,
                         Count = count_events,
                         Person_Years = round(pers_year_all, 2),
-                        IR_1000_PY = round(IR_1000PY,2))
+                        IR_1000_PY = IR_1000PY, 
+                        IR_1000_PY_95L = IR_1000PY_95L,
+                        IR_1000PY_95H = IR_1000PY_95H)
 ```
 
 ```{r}
 datatable(Big_table)
 ```
+
+### Calculate the 95%CI for IR using ULM 1990 
+
+
 
 
