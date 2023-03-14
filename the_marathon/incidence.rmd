@@ -894,7 +894,7 @@ pers_year_all <- rep(PersYear, times=3)
 ```
 
 ```{r}
-IR_1000PY <-  c(
+IR_1000PY <-  as.numeric(c(
   iro_anaphN[1], iro_anaphN_2017[1], iro_anaphN_2018[1], 
   iro_anaphN_2019[1], iro_anaphN_2020[1], 
   iro_anaphN0019[1], iro_anaphN_0019_2017[1], iro_anaphN_0019_2018[1],
@@ -927,11 +927,11 @@ IR_1000PY <-  c(
   iro_gbs_4059_2019[1], iro_gbs_4059_2020[1],
   iro_gbs6079[1], iro_gbs_6079_2017[1], iro_gbs_6079_2018[1],
   iro_gbs_6079_2019[1], iro_gbs_6079_2020[1]
-  )
+  ))
 ```
 
 ```{r}
-IR_1000PY_95L <- c(
+IR_1000PY_95L <- as.numeric(c(
   iro_anaphN[2], iro_anaphN_2017[2], iro_anaphN_2018[2], 
   iro_anaphN_2019[2], iro_anaphN_2020[2], 
   iro_anaphN0019[2], iro_anaphN_0019_2017[2], iro_anaphN_0019_2018[2],
@@ -964,12 +964,12 @@ IR_1000PY_95L <- c(
   iro_gbs_4059_2019[2], iro_gbs_4059_2020[2],
   iro_gbs6079[2], iro_gbs_6079_2017[2], iro_gbs_6079_2018[2],
   iro_gbs_6079_2019[2], iro_gbs_6079_2020[2]
-  )
+  ))
 ```
 
 
 ```{r}
-IR_1000PY_95H <- c(
+IR_1000PY_95H <- as.numeric(c(
   iro_anaphN[3], iro_anaphN_2017[3], iro_anaphN_2018[3], 
   iro_anaphN_2019[3], iro_anaphN_2020[3], 
   iro_anaphN0019[3], iro_anaphN_0019_2017[3], iro_anaphN_0019_2018[3],
@@ -1002,7 +1002,7 @@ IR_1000PY_95H <- c(
   iro_gbs_4059_2019[3], iro_gbs_4059_2020[3],
   iro_gbs6079[3], iro_gbs_6079_2017[3], iro_gbs_6079_2018[3],
   iro_gbs_6079_2019[3], iro_gbs_6079_2020[3]
-  )
+  ))
 ```
 
 ```{r}
@@ -1020,7 +1020,117 @@ Big_table <- data.table(Diagnosis = all_diag,
 datatable(Big_table)
 ```
 
-### Calculate the 95%CI for IR using ULM 1990 
+### Forest Plots {.tabset}
+
+
+#### Total 
+
+
+```{r}
+library(tidyverse)
+
+df <- Big_table 
+
+
+
+df_total <- df %>%  
+  filter(Year=='Total')
+
+df_total$y_order <- factor(paste(df_total$Diagnosis, df_total$Age_Bands, sep = " - "), levels = unique(paste(df_total$Diagnosis, df_total$Age_Bands, sep = " - ")), ordered = TRUE)
+# plot the forest plot
+ggplot(df_total, aes(x = IR_1000_PY, y = y_order)) +
+  geom_point() +
+  geom_errorbarh(aes(xmin = IR_1000_PY_95L, xmax = IR_1000PY_95H)) +
+  facet_grid(Diagnosis ~ ., scales = "free_y", space = "free_y") +
+  theme_bw() +
+  labs(title = "Forest Plot of Incidence Rates",
+       x = "Incidence Rate per 1000 Person-Years",
+       y = "Diagnosis and Age Band",
+       subtitle = "Data from 2017 to 2020")
+```
+
+#### 2017
+
+
+```{r}
+
+df_2017_P <- df %>%  
+  filter(Year=='2017')
+
+df_2017_P$y_order <- factor(paste(df_2017_P$Diagnosis, df_2017_P$Age_Bands, sep = " - "), levels = unique(paste(df_2017_P$Diagnosis, df_2017_P$Age_Bands, sep = " - ")), ordered = TRUE)
+# plot the forest plot
+ggplot(df_2017_P, aes(x = IR_1000_PY, y = y_order)) +
+  geom_point() +
+  geom_errorbarh(aes(xmin = IR_1000_PY_95L, xmax = IR_1000PY_95H)) +
+  facet_grid(Diagnosis ~ ., scales = "free_y", space = "free_y") +
+  theme_bw() +
+  labs(title = "Forest Plot of Incidence Rates",
+       x = "Incidence Rate per 1000 Person-Years",
+       y = "Diagnosis and Age Band",
+       subtitle = "Data from 2017")
+```
+
+
+#### 2018
+
+```{r}
+
+df_2018_P <- df %>%  
+  filter(Year=='2018')
+
+df_2018_P$y_order <- factor(paste(df_2018_P$Diagnosis, df_2018_P$Age_Bands, sep = " - "), levels = unique(paste(df_2018_P$Diagnosis, df_2018_P$Age_Bands, sep = " - ")), ordered = TRUE)
+# plot the forest plot
+ggplot(df_2018_P, aes(x = IR_1000_PY, y = y_order)) +
+  geom_point() +
+  geom_errorbarh(aes(xmin = IR_1000_PY_95L, xmax = IR_1000PY_95H)) +
+  facet_grid(Diagnosis ~ ., scales = "free_y", space = "free_y") +
+  theme_bw() +
+  labs(title = "Forest Plot of Incidence Rates",
+       x = "Incidence Rate per 1000 Person-Years",
+       y = "Diagnosis and Age Band",
+       subtitle = "Data from 2018")
+```
+
+
+#### 2019 
+
+```{r}
+
+df_2019_P <- df %>%  
+  filter(Year=='2019')
+
+df_2019_P$y_order <- factor(paste(df_2019_P$Diagnosis, df_2019_P$Age_Bands, sep = " - "), levels = unique(paste(df_2019_P$Diagnosis, df_2019_P$Age_Bands, sep = " - ")), ordered = TRUE)
+# plot the forest plot
+ggplot(df_2019_P, aes(x = IR_1000_PY, y = y_order)) +
+  geom_point() +
+  geom_errorbarh(aes(xmin = IR_1000_PY_95L, xmax = IR_1000PY_95H)) +
+  facet_grid(Diagnosis ~ ., scales = "free_y", space = "free_y") +
+  theme_bw() +
+  labs(title = "Forest Plot of Incidence Rates",
+       x = "Incidence Rate per 1000 Person-Years",
+       y = "Diagnosis and Age Band",
+       subtitle = "Data from 2019")
+```
+
+#### 2020
+
+```{r}
+
+df_2020_P <- df %>%  
+  filter(Year=='2020')
+
+df_2020_P$y_order <- factor(paste(df_2020_P$Diagnosis, df_2020_P$Age_Bands, sep = " - "), levels = unique(paste(df_2020_P$Diagnosis, df_2020_P$Age_Bands, sep = " - ")), ordered = TRUE)
+# plot the forest plot
+ggplot(df_2020_P, aes(x = IR_1000_PY, y = y_order)) +
+  geom_point() +
+  geom_errorbarh(aes(xmin = IR_1000_PY_95L, xmax = IR_1000PY_95H)) +
+  facet_grid(Diagnosis ~ ., scales = "free_y", space = "free_y") +
+  theme_bw() +
+  labs(title = "Forest Plot of Incidence Rates",
+       x = "Incidence Rate per 1000 Person-Years",
+       y = "Diagnosis and Age Band",
+       subtitle = "Data from 2020")
+```
 
 
 
