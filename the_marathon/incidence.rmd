@@ -5,8 +5,13 @@ date: "`r Sys.Date()`"
 output: html_document
 ---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, comment = NA, warning = FALSE,
+                      error=FALSE, results='hide',fig.keep='all')
+```
+
 ```{r message=FALSE, warning=FALSE, paged.print=FALSE}
-#install.packages('data.table')
+
 library(knitr)
 library(data.table)
 library(tidyverse)
@@ -16,7 +21,7 @@ library(DT)
 library(epiR)
 ```
 
-# Assignment 2 {.tabset}
+# Assignment 2 
 ```{r}
 
 # load the tables
@@ -30,7 +35,7 @@ codelist2 <- read_excel("Tables/CodeList_20210128(1).xlsx",
     sheet = "GBS")
 ```
 
-## Step 1 
+
 
 
 ```{r}
@@ -51,7 +56,6 @@ dfp1 <- dfp1 %>%
 ```
 
 
-### Step 2
 
 ```{r}
 persons <- persons %>% 
@@ -68,15 +72,14 @@ persons <- persons %>%
 
 
 
-### Step 3
 
 ```{r}
 data <- left_join(dfp1, persons, by = "person_id") # merge the OBSERVATION_PERIODS and PERSONS table (keep only individuals who are in OBSERVATIONS_PERIODS table)
 ```
 
-### Step 4
 
-```{r}
+
+```{r tab1, results='hold', }
 anaphyl <- codelist %>% 
   filter(`Coding system`== c('ICD9', 'ICD10/CM'))
 
@@ -85,20 +88,22 @@ gbs <- codelist2 %>%
 
 codes <- data.table(Diagnosis = paste0('anaphyl_',anaphyl$Algorithm,sep = ""), 
                 event_code = anaphyl$Code, 
-                vocabulary = anaphyl$`Coding system`)
+                Vocabulary = anaphyl$`Coding system`)
 
 gbstemp <- data.table(Diagnosis = paste0('gbs_',gbs$Algorithm,sep = ""), 
                 event_code = gbs$Code, 
-                vocabulary = gbs$`Coding system`)
+                Vocabulary = gbs$`Coding system`)
 
 codes <- rbind(codes, gbstemp)
 
-kable(codes) ## Deze op later moment nog wat mooier maken 
+datatable(codes, 
+          caption='Diagnostic codes retrieved from the .. Codesheet ' )## Deze op later moment nog wat mooier maken 
+
+
 
 ```
 
 
-### Step 5
 
 ```{r}
 dfp2 <- merge(codes, events, by = 'event_code')
@@ -141,7 +146,7 @@ IR_95_CI <- function(events, py, N){
 }
 ```
 
-Ulm K (1990). A simple method to calculate the confidence interval of a standardized mortality ratio. American Journal of Epidemiology 131: 373 - 375
+<!-- Ulm K (1990). A simple method to calculate the confidence interval of a standardized mortality ratio. American Journal of Epidemiology 131: 373 - 375 -->
 
 ```{r}
 
@@ -177,9 +182,7 @@ iro_gbs <- IR_95_CI(TNE_gbs, TPY, nrow(data))
 ```
 
 
----------------------------
 
-2017!!! 
 
 ```{r}
 # Add for every observations with an event the date of the event in the dataset. 
@@ -256,7 +259,7 @@ iro_gbs_2017 <- IR_95_CI(TNE_gbs_2017, TPY_2017, nrow(df_total))
 ```
 
 
-2018
+
 ```{r}
 # for every observation who has an event put in the date. 
 df_2018$end_incidence_2018 <- as.Date(ymd(df_2018$end_date_record))
@@ -308,7 +311,8 @@ TNE_gbs_2018 <- events_2018 %>%
 iro_gbs_2018 <-  IR_95_CI(TNE_gbs_2018, TPY_2018, nrow(df_2018))
 ```
 
-2019
+
+
 
 ```{r}
 # for every observation who has an event put in the date. 
@@ -362,7 +366,6 @@ iro_gbs_2019 <- IR_95_CI(TNE_gbs_2019, TPY_2019, nrow(df_2019))
 ```
 
 
-2020
 ```{r}
 # for every observation who has an event put in the date. 
 df_2020$end_incidence_2020 <- as.Date(ymd(df_2020$end_date_record))
@@ -426,7 +429,6 @@ IR <- c(iro_anaphN, iro_anaphN_2017, iro_anaphN_2018, iro_anaphN_2019, iro_anaph
 
 
 tab <- data.frame(Diagnosis = Diagnosis, Year = Years, 'IR per 1000 py' = IR)
-tab
 ```
 
 
@@ -514,7 +516,7 @@ iro_anaphN6079 <- IR_95_CI(TNE_anaphN6079, TPY6079, nrow(dftotal6079))
 iro_gbs6079 <- IR_95_CI(TNE_gbs6079, TPY6079, nrow(dftotal6079))
 ```
 
-# 2017 
+
 
 ```{r}
 #Events in 2017 for age group 00-19
@@ -662,7 +664,7 @@ iro_anaphN_6079_2018 <- IR_95_CI(TNE_anaphN_6079_2018, TPY_2018_6079, nrow(df_20
 iro_gbs_6079_2018 <- IR_95_CI(TNE_gbs_6079_2018, TPY_2018_6079, nrow(df_2018_6079))
 ```
 
-# 2019 
+
 
 ```{r}
 df_2019_0019 <- make_year_age_bands(df_2019, '[0,19]')
@@ -741,9 +743,6 @@ iro_gbs_6079_2019 <- IR_95_CI(TNE_gbs_6079_2019, TPY_2019_6079, nrow(df_2019_607
 ```
 
 
-# 2020
-
-2020 
 
 ```{r}
 df_2020_0019 <- make_year_age_bands(df_2020, '[0,19]')
@@ -1016,8 +1015,9 @@ Big_table <- data.table(Diagnosis = all_diag,
                         IR_1000PY_95H = IR_1000PY_95H)
 ```
 
-```{r}
-datatable(Big_table)
+```{r tab2, results = 'hold'}
+datatable(Big_table, 
+          caption='Incidence Rates with 95% CI')
 ```
 
 ### Forest Plots {.tabset}
@@ -1036,7 +1036,7 @@ df <- Big_table
 df_total <- df %>%  
   filter(Year=='Total')
 
-df_total$y_order <- factor(paste(df_total$Diagnosis, df_total$Age_Bands, sep = " - "), levels = unique(paste(df_total$Diagnosis, df_total$Age_Bands, sep = " - ")), ordered = TRUE)
+df_total$y_order <- factor(paste(df_total$Age_Bands), levels = unique(paste( df_total$Age_Bands)), ordered = TRUE)
 # plot the forest plot
 ggplot(df_total, aes(x = IR_1000_PY, y = y_order)) +
   geom_point() +
@@ -1046,7 +1046,8 @@ ggplot(df_total, aes(x = IR_1000_PY, y = y_order)) +
   labs(title = "Forest Plot of Incidence Rates",
        x = "Incidence Rate per 1000 Person-Years",
        y = "Diagnosis and Age Band",
-       subtitle = "Data from 2017 to 2020")
+       subtitle = "Data from 2017 to 2020")+
+  scale_x_continuous(limits = c(0, 150), breaks = seq(0, 160, by = 20))
 ```
 
 #### 2017
@@ -1067,7 +1068,8 @@ ggplot(df_2017_P, aes(x = IR_1000_PY, y = y_order)) +
   labs(title = "Forest Plot of Incidence Rates",
        x = "Incidence Rate per 1000 Person-Years",
        y = "Diagnosis and Age Band",
-       subtitle = "Data from 2017")
+       subtitle = "Data from 2017")+
+  scale_x_continuous(limits = c(0, 150), breaks = seq(0, 160, by = 20))
 ```
 
 
@@ -1088,7 +1090,8 @@ ggplot(df_2018_P, aes(x = IR_1000_PY, y = y_order)) +
   labs(title = "Forest Plot of Incidence Rates",
        x = "Incidence Rate per 1000 Person-Years",
        y = "Diagnosis and Age Band",
-       subtitle = "Data from 2018")
+       subtitle = "Data from 2018") +
+  scale_x_continuous(limits = c(0, 150), breaks = seq(0, 160, by = 20))
 ```
 
 
@@ -1109,7 +1112,8 @@ ggplot(df_2019_P, aes(x = IR_1000_PY, y = y_order)) +
   labs(title = "Forest Plot of Incidence Rates",
        x = "Incidence Rate per 1000 Person-Years",
        y = "Diagnosis and Age Band",
-       subtitle = "Data from 2019")
+       subtitle = "Data from 2019")+
+  scale_x_continuous(limits = c(0, 150), breaks = seq(0, 160, by = 20))
 ```
 
 #### 2020
@@ -1129,7 +1133,8 @@ ggplot(df_2020_P, aes(x = IR_1000_PY, y = y_order)) +
   labs(title = "Forest Plot of Incidence Rates",
        x = "Incidence Rate per 1000 Person-Years",
        y = "Diagnosis and Age Band",
-       subtitle = "Data from 2020")
+       subtitle = "Data from 2020")+
+  scale_x_continuous(limits = c(0, 150), breaks = seq(0, 160, by = 20))
 ```
 
 
