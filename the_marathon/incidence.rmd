@@ -1058,7 +1058,7 @@ ggplot(df_total, aes(x = IR_1000_PY, y = y_order)) +
 df_2017_P <- df %>%  
   filter(Year=='2017')
 
-df_2017_P$y_order <- factor(paste(df_2017_P$Diagnosis, df_2017_P$Age_Bands, sep = " - "), levels = unique(paste(df_2017_P$Diagnosis, df_2017_P$Age_Bands, sep = " - ")), ordered = TRUE)
+df_2017_P$y_order <- factor(paste(df_2017_P$Age_Bands), levels = unique(paste(df_2017_P$Age_Bands)), ordered = TRUE)
 # plot the forest plot
 ggplot(df_2017_P, aes(x = IR_1000_PY, y = y_order)) +
   geom_point() +
@@ -1080,7 +1080,7 @@ ggplot(df_2017_P, aes(x = IR_1000_PY, y = y_order)) +
 df_2018_P <- df %>%  
   filter(Year=='2018')
 
-df_2018_P$y_order <- factor(paste(df_2018_P$Diagnosis, df_2018_P$Age_Bands, sep = " - "), levels = unique(paste(df_2018_P$Diagnosis, df_2018_P$Age_Bands, sep = " - ")), ordered = TRUE)
+df_2018_P$y_order <- factor(paste(df_2018_P$Age_Bands), levels = unique(paste(df_2018_P$Age_Bands)), ordered = TRUE)
 # plot the forest plot
 ggplot(df_2018_P, aes(x = IR_1000_PY, y = y_order)) +
   geom_point() +
@@ -1102,7 +1102,7 @@ ggplot(df_2018_P, aes(x = IR_1000_PY, y = y_order)) +
 df_2019_P <- df %>%  
   filter(Year=='2019')
 
-df_2019_P$y_order <- factor(paste(df_2019_P$Diagnosis, df_2019_P$Age_Bands, sep = " - "), levels = unique(paste(df_2019_P$Diagnosis, df_2019_P$Age_Bands, sep = " - ")), ordered = TRUE)
+df_2019_P$y_order <- factor(paste(df_2019_P$Age_Bands), levels = unique(paste(df_2019_P$Age_Bands)), ordered = TRUE)
 # plot the forest plot
 ggplot(df_2019_P, aes(x = IR_1000_PY, y = y_order)) +
   geom_point() +
@@ -1123,7 +1123,7 @@ ggplot(df_2019_P, aes(x = IR_1000_PY, y = y_order)) +
 df_2020_P <- df %>%  
   filter(Year=='2020')
 
-df_2020_P$y_order <- factor(paste(df_2020_P$Diagnosis, df_2020_P$Age_Bands, sep = " - "), levels = unique(paste(df_2020_P$Diagnosis, df_2020_P$Age_Bands, sep = " - ")), ordered = TRUE)
+df_2020_P$y_order <- factor(paste(df_2020_P$Age_Bands), levels = unique(paste(df_2020_P$Age_Bands)), ordered = TRUE)
 # plot the forest plot
 ggplot(df_2020_P, aes(x = IR_1000_PY, y = y_order)) +
   geom_point() +
