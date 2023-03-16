@@ -2,7 +2,9 @@
 title: "Incidence"
 author: "Martijn Koster, Jurrian van de Kraats, Tim Poorthuis"
 date: "`r Sys.Date()`"
-output: html_document
+output:
+  bookdown::html_document2: default
+   
 ---
 
 ```{r setup, include=FALSE}
@@ -21,7 +23,7 @@ library(DT)
 library(epiR)
 ```
 
-# Assignment 2 
+# Assignment 2  {-#ass2}
 
 ```{r}
 
@@ -37,13 +39,13 @@ codelist2 <- read_excel("Tables/CodeList_20210128(1).xlsx",
 ```
 
 
-### Short objective
+### Short objective {-#short}
 
 The objective of this report is to analyze the incidence rates of Guillain-Barré Syndroom (gbs) and anaphylactic shock using the PHARMO database, and to present the results in a clear and concise manner.
 
-### Methods
+### Methods {-#meth}
 
-#### PHARMO
+#### PHARMO {-#phar}
 
 The data for this analysis was obtained from the PHARMO database, which is a research institute in the Netherlands that maintains a database of electronic medical records. The Pharmo Data Network is a population-based network of healthcare databases and combines data from different healthcare settings in the Netherlands. These different data sources are linked on a patient level through validated algorithms.
 
@@ -81,11 +83,11 @@ persons <- persons %>%
 
 
 
-#### Study population 
+#### Study population {-#stupop}
 
 For this research particularly, individuals who were in the study between 01/01/2017 and 31/12/2020 are included. In addition, the study's inclusion and exclusion criteria consist of three requirements. The first requirement is that individuals must have at least one year of follow-up before the study's start date. The second requirement is that individuals must have at least one day of follow-up after the study's start date. Lastly, the study will not consider repeated events, and individuals will be censored at the first occurrence of an event. After fulfilling the aforementioned requirements, we have a study population of _N_ = `r nrow(dfp1)`
 
-#### Data Preperation
+#### Data Preperation {-#datprep}
 
 Prior to the analysis, various tables are prepared and then combined in order to obtain the incidence rates. First the OBSERVATION_PERIOD table was loaded and individuals who are not in the above mentioned study population, will be removed. 
 
@@ -93,18 +95,32 @@ After doing this, the PERSONS table was loaded. In this table, an age variable i
 
 The next step in the date preparation, was merging the OBSERVATION_PERIODS and PERSON table. We only kept the individuals who are in the OBSERVATION_PERIODS table. 
 
+<<<<<<< Updated upstream
 When the aforementioned tables are merged, Concept sets were created. These sets were created from diagnostic codes from the codesheet. All diagnostic codes and vocabulary of the events used to make incidence rates can be found in Table \@ref(tab:tab1)
+=======
+When the aforementioned tables are merged, Concept sets were created. These sets were created from diagnostic codes from the codesheet. All diagnostic codes and vocabulary of the events we will make incidence rates of can be found in Table below.
+>>>>>>> Stashed changes
 
-#### Analyis
+Lastly, the EVENTS table is loaded, and merged with the event codes. Tell something about what we did and why
+
+a. Merge with the above data set.
+b. Look at the dates of events. What does it mean if an event date is recorded before
+start of study or after end of study? Should these observations be discarded or not?
+Make the appropriate changes to the table.
+c. Make sure to remove repeated events(more than 1 event for the same individual).
+
+#### Analyis {-#anal}
+
+incidence rates overall = $\frac{total number of events}{total person-years}$
 
 
 
 
 
 
-### Results
+### Results {-#res}
 
-### Lessons learned
+### Lessons learned {-#less}
 Annex 1: quality check findings day 6
 
 
@@ -119,7 +135,7 @@ data <- left_join(dfp1, persons, by = "person_id") # merge the OBSERVATION_PERIO
 
 
 
-```{r tab1, results='hold', }
+```{r codes, results='asis'}
 anaphyl <- codelist %>% 
   filter(`Coding system`== c('ICD9', 'ICD10/CM'))
 
@@ -622,7 +638,7 @@ iro_anaphN_6079_2017 <- IR_95_CI(TNE_anaphN_6079_2017, TPY_2017_6079, nrow(dftot
 iro_gbs_6079_2017 <- IR_95_CI(TNE_gbs_6079_2017, TPY_2017_6079, nrow(dftotal6079))
 ```
 
-#2018 
+
 
 ```{r}
 df_2018_0019 <- make_year_age_bands(df_2018, '[0,19]')
@@ -1056,10 +1072,9 @@ datatable(Big_table,
           caption='Incidence Rates with 95% CI')
 ```
 
-### Forest Plots {.tabset}
+### Forest Plots {-.tabset} 
 
-
-#### Total 
+#### Total  {-#tot}
 
 
 ```{r}
@@ -1086,7 +1101,7 @@ ggplot(df_total, aes(x = IR_1000_PY, y = y_order)) +
   scale_x_continuous(limits = c(0, 150), breaks = seq(0, 160, by = 20))
 ```
 
-#### 2017
+#### 2017 {-#2017}
 
 
 ```{r}
@@ -1109,7 +1124,7 @@ ggplot(df_2017_P, aes(x = IR_1000_PY, y = y_order)) +
 ```
 
 
-#### 2018
+#### 2018 {-#2018}
 
 ```{r}
 
@@ -1130,8 +1145,8 @@ ggplot(df_2018_P, aes(x = IR_1000_PY, y = y_order)) +
   scale_x_continuous(limits = c(0, 150), breaks = seq(0, 160, by = 20))
 ```
 
-
-#### 2019 
+ 
+#### 2019 {-#2019}
 
 ```{r}
 
@@ -1152,7 +1167,7 @@ ggplot(df_2019_P, aes(x = IR_1000_PY, y = y_order)) +
   scale_x_continuous(limits = c(0, 150), breaks = seq(0, 160, by = 20))
 ```
 
-#### 2020
+#### 2020 {-#2020}
 
 ```{r}
 
