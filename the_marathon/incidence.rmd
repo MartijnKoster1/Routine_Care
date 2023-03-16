@@ -22,6 +22,31 @@ library(epiR)
 ```
 
 # Assignment 2 
+
+
+```{r}
+persons <- persons %>% 
+  mutate(birthdate = as.Date(ymd(year_of_birth*10000+month_of_birth*100+day_of_birth)), # calculate the birth date
+         age = as.numeric(difftime
+                          (as.Date(ymd(20170101)), 
+                            birthdate, units='days')) / 365.25, # calculate the age 
+         age_bands = cut(age, breaks = c(0,19,39,59,79,Inf), 
+                         include.lowest = T,include.highest = T, 
+                         labels = c("[0,19]",'[20,39]', '[40,59]', '[60,79]', '[80+]')) # Make sure the ages are divided in age bands 
+                         ) %>% 
+  filter(age >= 0)
+```
+
+### Short objective
+
+The objective of this report is to analyze the incidence rates of Guillain-Barré Syndroom (gbs) and anaphylactic shock using the PHARMO database, and to present the results in a clear and concise manner.
+
+### Methods
+
+#### PHARMO
+
+The data for this analysis was obtained from the PHARMO database, which is a research institute in the Netherlands that maintains a database of electronic medical records. The Pharmo Data Network is a population-based network of healthcare databases and combines data from different healthcare settings in the Netherlands. These different data sources are linked on a patient level through validated algorithms.
+
 ```{r}
 
 # load the tables
@@ -54,17 +79,6 @@ dfp1 <- dfp1 %>%
 
 
 
-
-### Short objective
-
-The objective of this report is to analyze the incidence rates of Guillain-Barré Syndroom (gbs) and anaphylactic shock using the PHARMO database, and to present the results in a clear and concise manner.
-
-### Methods
-
-#### PHARMO
-
-The data for this analysis was obtained from the PHARMO database, which is a research institute in the Netherlands that maintains a database of electronic medical records. The Pharmo Data Network is a population-based network of healthcare databases and combines data from different healthcare settings in the Netherlands. These different data sources are linked on a patient level through validated algorithms.
-
 #### Study population 
 
 For this research particularly, individuals who were in the study between 01/01/2017 and 31/12/2020 are included. In addition, the study's inclusion and exclusion criteria consist of three requirements. The first requirement is that individuals must have at least one year of follow-up before the study's start date. The second requirement is that individuals must have at least one day of follow-up after the study's start date. Lastly, the study will not consider repeated events, and individuals will be censored at the first occurrence of an event. After fulfilling the aforementioned requirements, we have a study population of _N_ = `r nrow(dfp1)`
@@ -73,7 +87,7 @@ For this research particularly, individuals who were in the study between 01/01/
 
 Prior to the analysis, various tables are prepared and then combined in order to obtain the incidence rates. First the OBSERVATION_PERIOD table was loaded and individuals who are not in the above mentioned study population, will be removed. 
 
-After
+After doing this, the PERSONS table was loaded. In this table, an age variable is made with the birth data variable. The age was created with the start of the study period as reference. with this age variable, the following age bands are created: 0-19, 20-39, 40-59, 60-79. The age band 80+ is not created, because the there are no individuals who are older than `r round(max(persons$age))`.  
 
 #### Analyis
 
@@ -89,19 +103,6 @@ Annex 1: quality check findings day 6
 
 
 
-
-```{r}
-persons <- persons %>% 
-  mutate(birthdate = as.Date(ymd(year_of_birth*10000+month_of_birth*100+day_of_birth)), # calculate the birth date
-         age = as.numeric(difftime
-                          (as.Date(ymd(20170101)), 
-                            birthdate, units='days')) / 365.25, # calculate the age 
-         age_bands = cut(age, breaks = c(0,19,39,59,79,Inf), 
-                         include.lowest = T,include.highest = T, 
-                         labels = c("[0,19]",'[20,39]', '[40,59]', '[60,79]', '[80+]')) # Make sure the ages are divided in age bands 
-                         ) %>% 
-  filter(age >= 0)
-```
 
 
 
@@ -179,9 +180,7 @@ IR_95_CI <- function(events, py, N){
 
 <!-- Ulm K (1990). A simple method to calculate the confidence interval of a standardized mortality ratio. American Journal of Epidemiology 131: 373 - 375 -->
 
-```{r}
 
-```
 
 ```{r}
 #total PY in study period
