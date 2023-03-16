@@ -35,7 +35,17 @@ codelist2 <- read_excel("Tables/CodeList_20210128(1).xlsx",
     sheet = "GBS")
 ```
 
+### Short objective
 
+
+### Methods & description of the data source (use PHARMO)
+
+### Analysis plan
+
+### Results
+
+Lessons learned
+Annex 1: quality check findings day 6
 
 
 ```{r}
@@ -98,8 +108,6 @@ codes <- rbind(codes, gbstemp)
 
 datatable(codes, 
           caption='Diagnostic codes retrieved from the .. Codesheet ' )## Deze op later moment nog wat mooier maken 
-
-
 
 ```
 
