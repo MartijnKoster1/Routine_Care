@@ -93,7 +93,7 @@ After doing this, the PERSONS table was loaded. In this table, an age variable i
 
 The next step in the date preparation, was merging the OBSERVATION_PERIODS and PERSON table. We only kept the individuals who are in the OBSERVATION_PERIODS table. 
 
-When the aforementioned tables are merged, Concept sets were created. These sets were created from diagnostic codes from the codesheet. All diagnostic codes and vocabulary of the events we will make incidence rates of can be found in Table \@ref(tab:tab1)
+When the aforementioned tables are merged, Concept sets were created. These sets were created from diagnostic codes from the codesheet. All diagnostic codes and vocabulary of the events used to make incidence rates can be found in Table \@ref(tab:tab1)
 
 #### Analyis
 
