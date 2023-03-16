@@ -37,10 +37,20 @@ codelist2 <- read_excel("Tables/CodeList_20210128(1).xlsx",
 
 ### Short objective
 
+The objective of this report is to analyze the incidence rates of Guillain-Barré Syndroom (gbs) and anaphylactic shock using the PHARMO database, and to present the results in a clear and concise manner.
 
-### Methods & description of the data source (use PHARMO)
+### Methods
 
-### Analysis plan
+#### PHARMO
+
+The data for this analysis was obtained from the PHARMO database, which is a research institute in the Netherlands that maintains a database of electronic medical records. The Pharmo Data Network is a population-based network of healthcare databases and combines data from different healthcare settings in the Netherlands. These different data sources are linked on a patient level through validated algorithms.
+
+#### Study population 
+
+For this research particularly, individuals who were in the study between 01/01/2017 and 31/12/2020 are included. In addition, the study's inclusion and exclusion criteria consist of three requirements. The first requirement is that individuals must have at least one year of follow-up before the study's start date. The second requirement is that individuals must have at least one day of follow-up after the study's start date. Lastly, the study will not consider repeated events, and individuals will be censored at the first occurrence of an event.
+
+#### Analyis
+
 
 ### Results
 
