@@ -23,30 +23,6 @@ library(epiR)
 
 # Assignment 2 
 
-
-```{r}
-persons <- persons %>% 
-  mutate(birthdate = as.Date(ymd(year_of_birth*10000+month_of_birth*100+day_of_birth)), # calculate the birth date
-         age = as.numeric(difftime
-                          (as.Date(ymd(20170101)), 
-                            birthdate, units='days')) / 365.25, # calculate the age 
-         age_bands = cut(age, breaks = c(0,19,39,59,79,Inf), 
-                         include.lowest = T,include.highest = T, 
-                         labels = c("[0,19]",'[20,39]', '[40,59]', '[60,79]', '[80+]')) # Make sure the ages are divided in age bands 
-                         ) %>% 
-  filter(age >= 0)
-```
-
-### Short objective
-
-The objective of this report is to analyze the incidence rates of Guillain-Barré Syndroom (gbs) and anaphylactic shock using the PHARMO database, and to present the results in a clear and concise manner.
-
-### Methods
-
-#### PHARMO
-
-The data for this analysis was obtained from the PHARMO database, which is a research institute in the Netherlands that maintains a database of electronic medical records. The Pharmo Data Network is a population-based network of healthcare databases and combines data from different healthcare settings in the Netherlands. These different data sources are linked on a patient level through validated algorithms.
-
 ```{r}
 
 # load the tables
@@ -59,6 +35,19 @@ codelist <- read_excel("Tables/CodeList_20210128(1).xlsx",
 codelist2 <- read_excel("Tables/CodeList_20210128(1).xlsx", 
     sheet = "GBS")
 ```
+
+
+### Short objective
+
+The objective of this report is to analyze the incidence rates of Guillain-Barré Syndroom (gbs) and anaphylactic shock using the PHARMO database, and to present the results in a clear and concise manner.
+
+### Methods
+
+#### PHARMO
+
+The data for this analysis was obtained from the PHARMO database, which is a research institute in the Netherlands that maintains a database of electronic medical records. The Pharmo Data Network is a population-based network of healthcare databases and combines data from different healthcare settings in the Netherlands. These different data sources are linked on a patient level through validated algorithms.
+
+
 
 ```{r}
 
@@ -77,6 +66,19 @@ dfp1 <- dfp1 %>%
          start_study = as.Date(ymd(start_study)))
 ```
 
+```{r}
+persons <- persons %>% 
+  mutate(birthdate = as.Date(ymd(year_of_birth*10000+month_of_birth*100+day_of_birth)), # calculate the birth date
+         age = as.numeric(difftime
+                          (as.Date(ymd(20170101)), 
+                            birthdate, units='days')) / 365.25, # calculate the age 
+         age_bands = cut(age, breaks = c(0,19,39,59,79,Inf), 
+                         include.lowest = T,include.highest = T, 
+                         labels = c("[0,19]",'[20,39]', '[40,59]', '[60,79]', '[80+]')) # Make sure the ages are divided in age bands 
+                         ) %>% 
+  filter(age >= 0)
+```
+
 
 
 #### Study population 
@@ -88,6 +90,10 @@ For this research particularly, individuals who were in the study between 01/01/
 Prior to the analysis, various tables are prepared and then combined in order to obtain the incidence rates. First the OBSERVATION_PERIOD table was loaded and individuals who are not in the above mentioned study population, will be removed. 
 
 After doing this, the PERSONS table was loaded. In this table, an age variable is made with the birth data variable. The age was created with the start of the study period as reference. with this age variable, the following age bands are created: 0-19, 20-39, 40-59, 60-79. The age band 80+ is not created, because the there are no individuals who are older than `r round(max(persons$age))`.  
+
+The next step in the date preparation, was merging the OBSERVATION_PERIODS and PERSON table. We only kept the individuals who are in the OBSERVATION_PERIODS table. 
+
+When the aforementioned tables are merged, Concept sets were created. These sets were created from diagnostic codes from the codesheet. All diagnostic codes and vocabulary of the events we will make incidence rates of can be found in Table \@ref(tab:tab1)
 
 #### Analyis
 
