@@ -5,4 +5,13 @@ totaal 36 gbs nar
 
 high and low agebands have low data in person years and low confidence intervalls
 
-r
+overall: around 20 events, normal confidence (high in total)
+2017 veel events, low confidence in age bands (good in total)
+2018 weinig events, low confidence in age bands (good in total)
+2019 weinig events, low confidence
+2020 praktisch geen events, geen confidence.
+
+sprijden in age bands zorgt voor een skewd distribution. misschien daarom een CDM, zodat je kan stratafyen. (the importance CDM)
+
+
+vertekende sample size, want routine care data. 
