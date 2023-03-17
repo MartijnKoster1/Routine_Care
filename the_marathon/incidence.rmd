@@ -153,7 +153,13 @@ gbstemp <- data.table(Diagnosis = paste0('gbs_',gbs$Algorithm,sep = ""),
 codes <- rbind(codes, gbstemp)
 
 datatable(codes, 
-          caption='Diagnostic codes retrieved from the .. Codesheet ' )## Deze op later moment nog wat mooier maken 
+          caption='Diagnostic codes retrieved from the .. Codesheet ',
+          class='cell-border stripe', 
+          rownames=F, 
+          colnames=c('Diagnosis', 'Event Code', 'Vocabulary'),
+          extensions='Buttons',
+          options = list(dom = 'Bfrtip', buttons = c('copy', 'csv', 'excel', 'pdf', 'print')
+          ))## Deze op later moment nog wat mooier maken 
 
 ```
 
@@ -1069,7 +1075,14 @@ Big_table <- data.table(Diagnosis = all_diag,
 
 ```{r tab2, results = 'hold'}
 datatable(Big_table, 
-          caption='Incidence Rates with 95% CI')
+          caption='Incidence Rates with 95% CI',
+          class='cell-border stripe', 
+          rownames=F, 
+          colnames=c('Diagnosis', 'Age Bands', 'Year', 'Amount of Events', 
+                     'Person Years', 'IR 1000 Person Years', 'IR 1000 Person Years  95% CI Lower', 'IR 1000 Person Years 95% CI Higher'),
+          extensions='Buttons',
+          options = list(dom = 'Bfrtip', buttons = c('copy', 'csv', 'excel', 'pdf', 'print')
+          ))
 ```
 
 ### Forest Plots {-.tabset} 
