@@ -1088,7 +1088,7 @@ Big_table <- data.table(Diagnosis = all_diag,
                         IR_1000PY_95H = IR_1000PY_95H)
 ```
 
-The forest plot figures, show the incidence rates. A total of `r TNE_anaphN + TNE_anaphP + TNE_gbs` events occurred. Of these events `r TNE_anaphN` were anaphylaxis narrow, `r TNE_anaphP` were anaphylaxis possible and `r TNE_gbs` were GBS. When stratified in to age bands, the person years become lower and there is low confidence. Especially in the high and low age bands. Most events occurred in the first three years. In these years each type of event status had around 15 to 20 occurred events.  The last year of the study has almost no events and an insignificant incidence rate confidence interval.
+The forest plot figures (see Figure \@ref(fig:t)), show the incidence rates. A total of `r TNE_anaphN + TNE_anaphP + TNE_gbs` events occurred. Of these events `r TNE_anaphN` were anaphylaxis narrow, `r TNE_anaphP` were anaphylaxis possible and `r TNE_gbs` were GBS. When stratified in to age bands, the person years become lower and there is low confidence. Especially in the high and low age bands. Most events occurred in the first three years. In these years each type of event status had around 15 to 20 occurred events.  The last year of the study has almost no events and an insignificant incidence rate confidence interval.
 
 
 ### Forest Plot Figures {-.tabset} 
@@ -1216,6 +1216,7 @@ ggplot(df_2020_P, aes(x = IR_1000_PY, y = y_order, size=Person_Years)) +
 
 ## Lessons learned {-#less}
 
+We have learned to take data from various tables, and structure it to a dataset which can be analysed. In addition, we have learned that a lot of data is needed to make inference about incidence rates. That is, when data needs to be stratified, the confidence will get lower when there are not enough person years. Hence, Common Data Models are used, to improve the data quality. 
 
 # Annexes  {-.tabset}
 
