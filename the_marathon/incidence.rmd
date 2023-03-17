@@ -1,6 +1,6 @@
 ---
 title: "Assignment Day 8"
-author: "Martijn Koster, Jurrian van de Kraats 5961688, Tim Poorthuis"
+author: "Martijn Koster 6234119, Jurrian van de Kraats 5961688, Tim Poorthuis 0651478"
 date: "`r Sys.Date()`"
 output:
   bookdown::html_document2:
@@ -29,7 +29,7 @@ library(DT)
 library(epiR)
 ```
 
-# Assignment
+# Assignment {-}
 
 
 ```{r}
