@@ -1119,9 +1119,9 @@ df_total <- df %>%
 
 df_total$y_order <- factor(paste(df_total$Age_Bands), levels = unique(paste( df_total$Age_Bands)), ordered = TRUE)
 # plot the forest plot
-ggplot(df_total, aes(x = IR_1000_PY, y = y_order)) +
-  geom_point() +
-  geom_errorbarh(aes(xmin = IR_1000_PY_95L, xmax = IR_1000PY_95H)) +
+ggplot(df_total, aes(x = IR_1000_PY, y = y_order, size=Person_Years)) +
+  geom_point(shape=15) +
+  geom_errorbarh(aes(xmin = IR_1000_PY_95L, xmax = IR_1000PY_95H), size = 0.5) +
   facet_grid(Diagnosis ~ ., scales = "free_y", space = "free_y") +
   theme_bw() +
   labs(title = "Forest Plot of Incidence Rates",
@@ -1141,9 +1141,9 @@ df_2017_P <- df %>%
 
 df_2017_P$y_order <- factor(paste(df_2017_P$Age_Bands), levels = unique(paste(df_2017_P$Age_Bands)), ordered = TRUE)
 # plot the forest plot
-ggplot(df_2017_P, aes(x = IR_1000_PY, y = y_order)) +
-  geom_point() +
-  geom_errorbarh(aes(xmin = IR_1000_PY_95L, xmax = IR_1000PY_95H)) +
+ggplot(df_2017_P, aes(x = IR_1000_PY, y = y_order, size=Person_Years)) +
+  geom_point(shape=15) +
+  geom_errorbarh(aes(xmin = IR_1000_PY_95L, xmax = IR_1000PY_95H), size = 0.5) +
   facet_grid(Diagnosis ~ ., scales = "free_y", space = "free_y") +
   theme_bw() +
   labs(title = "Forest Plot of Incidence Rates",
@@ -1163,9 +1163,9 @@ df_2018_P <- df %>%
 
 df_2018_P$y_order <- factor(paste(df_2018_P$Age_Bands), levels = unique(paste(df_2018_P$Age_Bands)), ordered = TRUE)
 # plot the forest plot
-ggplot(df_2018_P, aes(x = IR_1000_PY, y = y_order)) +
-  geom_point() +
-  geom_errorbarh(aes(xmin = IR_1000_PY_95L, xmax = IR_1000PY_95H)) +
+ggplot(df_2018_P, aes(x = IR_1000_PY, y = y_order, size = Person_Years)) +
+  geom_point(shape=15) +
+  geom_errorbarh(aes(xmin = IR_1000_PY_95L, xmax = IR_1000PY_95H), size = 0.5) +
   facet_grid(Diagnosis ~ ., scales = "free_y", space = "free_y") +
   theme_bw() +
   labs(title = "Forest Plot of Incidence Rates",
@@ -1185,9 +1185,9 @@ df_2019_P <- df %>%
 
 df_2019_P$y_order <- factor(paste(df_2019_P$Age_Bands), levels = unique(paste(df_2019_P$Age_Bands)), ordered = TRUE)
 # plot the forest plot
-ggplot(df_2019_P, aes(x = IR_1000_PY, y = y_order)) +
-  geom_point() +
-  geom_errorbarh(aes(xmin = IR_1000_PY_95L, xmax = IR_1000PY_95H)) +
+ggplot(df_2019_P, aes(x = IR_1000_PY, y = y_order, size=Person_Years)) +
+  geom_point(shape=15) +
+  geom_errorbarh(aes(xmin = IR_1000_PY_95L, xmax = IR_1000PY_95H), size = 0.5) +
   facet_grid(Diagnosis ~ ., scales = "free_y", space = "free_y") +
   theme_bw() +
   labs(title = "Forest Plot of Incidence Rates",
@@ -1206,9 +1206,9 @@ df_2020_P <- df %>%
 
 df_2020_P$y_order <- factor(paste(df_2020_P$Age_Bands), levels = unique(paste(df_2020_P$Age_Bands)), ordered = TRUE)
 # plot the forest plot
-ggplot(df_2020_P, aes(x = IR_1000_PY, y = y_order)) +
-  geom_point() +
-  geom_errorbarh(aes(xmin = IR_1000_PY_95L, xmax = IR_1000PY_95H)) +
+ggplot(df_2020_P, aes(x = IR_1000_PY, y = y_order, size=Person_Years)) +
+  geom_point(shape=15) +
+  geom_errorbarh(aes(xmin = IR_1000_PY_95L, xmax = IR_1000PY_95H), size = 0.5) +
   facet_grid(Diagnosis ~ ., scales = "free_y", space = "free_y") +
   theme_bw() +
   labs(title = "Forest Plot of Incidence Rates",
