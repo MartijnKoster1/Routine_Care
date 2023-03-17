@@ -1215,11 +1215,6 @@ ggplot(df_2020_P, aes(x = IR_1000_PY, y = y_order, size=Person_Years)) +
 
 
 ### Lessons learned {-#less}
-Annex 1: quality check findings day 6
-
-
-
-
 
 
 
