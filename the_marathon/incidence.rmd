@@ -49,7 +49,7 @@ codelist2 <- read_excel("Tables/CodeList_20210128(1).xlsx",
 
 ### Short objective {-#short}
 
-The objective of this report is to analyze the incidence rates of Guillain-Barré Syndroom (gbs) and anaphylactic shock using the PHARMO database, and to present the results in a clear and concise manner.
+The objective of this report is to analyze the incidence rates of Guillain-Barré Syndrom (gbs) and anaphylactic shock using the PHARMO database, and to present the results in a clear and concise manner.
 
 ### Methods {-#meth}
 
@@ -109,43 +109,7 @@ When the aforementioned tables are merged, Concept sets were created. These sets
 When the aforementioned tables are merged, Concept sets were created. These sets were created from diagnostic codes from the codesheet. All diagnostic codes and vocabulary of the events we will make incidence rates of can be found in Table \@ref(fig:codes).
 
 
-Lastly, the EVENTS table is loaded, and merged with the event codes. Tell something about what we did and why
-
-a. Merge with the above data set.
-b. Look at the dates of events. What does it mean if an event date is recorded before
-start of study or after end of study? Should these observations be discarded or not?
-Make the appropriate changes to the table.
-c. Make sure to remove repeated events(more than 1 event for the same individual).
-
-#### Analyis {-#anal}
-
-\[
-\text{Incidence Rates overall} = \frac{Total \ number \ of \ events}{Total \ person-years}
-\]
-
-\[
-  \text{Incidence rates by year} = \frac{total \  number \ of \ events \ for \ each \ year} { person-years \ for \ each \ year} 
-\]
-
-
-\[
-  \text{Incidence rates by year by age bands} = \frac{Total \ number \ of \ events for \ each \ year \  per \  age \ band}{person-years \ for \ each \ year \  per \ age \ band}
-\]
-
-
-
-
-
-### Results {-#res}
-
-### Lessons learned {-#less}
-Annex 1: quality check findings day 6
-
-
-
-
-
-
+Lastly, the EVENTS table is loaded, and merged with the event codes. If the persons had an event before the start of the study, they are removed from the dataset. If a person has more than one event, the second event is removed. 
 
 ```{r}
 data <- left_join(dfp1, persons, by = "person_id") # merge the OBSERVATION_PERIODS and PERSONS table (keep only individuals who are in OBSERVATIONS_PERIODS table)
@@ -180,6 +144,40 @@ datatable(codes,
           ))## Deze op later moment nog wat mooier maken 
 
 ```
+
+
+
+#### Analyis {-#anal}
+
+For the analysis, incidence rates are created per event (i.e. Anaphylactic Shock Narrow, Anaphylactic shock broad, and gbs). 
+
+\[
+\text{Incidence Rates overall} = \frac{Total \ number \ of \ events}{Total \ person-years}
+\]
+
+\[
+  \text{Incidence rates by year} = \frac{total \  number \ of \ events \ for \ each \ year} { person-years \ for \ each \ year} 
+\]
+
+
+\[
+  \text{Incidence rates by year by age bands} = \frac{Total \ number \ of \ events for \ each \ year \  per \  age \ band}{person-years \ for \ each \ year \  per \ age \ band}
+\]
+
+
+
+
+
+### Results {-#res}
+
+### Lessons learned {-#less}
+Annex 1: quality check findings day 6
+
+
+
+
+
+
 
 
 
