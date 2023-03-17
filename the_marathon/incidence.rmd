@@ -172,6 +172,7 @@ where Y is the observed number of events, $Y_l$ and $Y_u$ are lower and upper co
 
 
 ## Results {-#res}
+
 ```{r}
 data <- left_join(dfp1, persons, by = "person_id") # merge the OBSERVATION_PERIODS and PERSONS table (keep only individuals who are in OBSERVATIONS_PERIODS table)
 ```
@@ -1087,13 +1088,15 @@ Big_table <- data.table(Diagnosis = all_diag,
                         IR_1000PY_95H = IR_1000PY_95H)
 ```
 
+The forest plot figures, show the incidence rates. A total of `r TNE_anaphN + TNE_anaphP + TNE_gbs` events occurred. Of these events `r TNE_anaphN` were anaphylaxis narrow, `r TNE_anaphP` were anaphylaxis possible and `r TNE_gbs` were GBS. When stratified in to age bands, the person years become lower and there is low confidence. Especially in the high and low age bands. Most events occurred in the first three years. In these years each type of event status had around 15 to 20 occurred events.  The last year of the study has almost no events and an insignificant incidence rate confidence interval.
 
-### Forest Plots {-.tabset} 
+
+### Forest Plot Figures {-.tabset} 
 
 #### Total  {-#tot}
 
 
-```{r}
+```{r t, fig.cap='Forest plots of total IR'}
 library(tidyverse)
 
 df <- Big_table 
@@ -1121,7 +1124,7 @@ ggplot(df_total, aes(x = IR_1000_PY, y = y_order, size=Person_Years)) +
 #### 2017 {-#2017}
 
 
-```{r}
+```{r k, fig.cap= 'forest plots data from 2017'}
 
 df_2017_P <- df %>%  
   filter(Year=='2017')
@@ -1144,7 +1147,7 @@ ggplot(df_2017_P, aes(x = IR_1000_PY, y = y_order, size=Person_Years)) +
 
 #### 2018 {-#2018}
 
-```{r}
+```{r i, fig.cap= 'Forest Plot data from 2018'}
 
 df_2018_P <- df %>%  
   filter(Year=='2018')
@@ -1167,7 +1170,7 @@ ggplot(df_2018_P, aes(x = IR_1000_PY, y = y_order, size = Person_Years)) +
  
 #### 2019 {-#2019}
 
-```{r}
+```{r o, fig.cap= 'Forest Plot data from 2019'}
 
 df_2019_P <- df %>%  
   filter(Year=='2019')
@@ -1189,7 +1192,7 @@ ggplot(df_2019_P, aes(x = IR_1000_PY, y = y_order, size=Person_Years)) +
 
 #### 2020 {-#2020}
 
-```{r}
+```{r 999, fig.cap= 'Forest plot data from 2020'}
 
 df_2020_P <- df %>%  
   filter(Year=='2020')
