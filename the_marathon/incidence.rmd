@@ -108,7 +108,7 @@ When the aforementioned tables are merged, Concept sets were created. These sets
 
 
 
-```{r codes, results='asis', fig.cap = 'A table'}
+```{r codes, results='asis', fig.cap = ' ANAPHYL and GBS event codes'}
 anaphyl <- codelist %>% 
   filter(`Coding system`== c('ICD9', 'ICD10/CM'))
 
