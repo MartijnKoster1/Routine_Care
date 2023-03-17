@@ -27,11 +27,8 @@ library(DT)
 library(epiR)
 ```
 
-# Assignment {-.tabset}
+# Assignment
 
-## Paper {-#pap}
-
-\tableofcontents
 
 ```{r}
 
@@ -47,13 +44,13 @@ codelist2 <- read_excel("Tables/CodeList_20210128(1).xlsx",
 ```
 
 
-### Short objective {-#short}
+## Short objective {-#short}
 
 The objective of this report is to analyze the incidence rates of Guillain-Barré Syndrom (gbs) and anaphylactic shock using the PHARMO database, and to present the results in a clear and concise manner.
 
-### Methods {-#meth}
+## Methods {-#meth}
 
-#### PHARMO {-#phar}
+### PHARMO {-#phar}
 
 The data for this analysis was obtained from the PHARMO database, which is a research institute in the Netherlands that maintains a database of electronic medical records. The Pharmo Data Network is a population-based network of healthcare databases and combines data from different healthcare settings in the Netherlands. These different data sources are linked on a patient level through validated algorithms.
 
@@ -91,11 +88,11 @@ persons <- persons %>%
 
 
 
-#### Study population {-#stupop}
+### Study population {-#stupop}
 
 For this research particularly, individuals who were in the study between 01/01/2017 and 31/12/2020 are included. In addition, the study's inclusion and exclusion criteria consist of three requirements. The first requirement is that individuals must have at least one year of follow-up before the study's start date. The second requirement is that individuals must have at least one day of follow-up after the study's start date. Lastly, the study will not consider repeated events, and individuals will be censored at the first occurrence of an event. After fulfilling the aforementioned requirements, we have a study population of _N_ = `r nrow(dfp1)`
 
-#### Data Preperation {-#datprep}
+### Data Preperation {-#datprep}
 
 Prior to the analysis, various tables are prepared and then combined in order to obtain the incidence rates. First the OBSERVATION_PERIOD table was loaded and individuals who are not in the above mentioned study population, will be removed. 
 
@@ -144,7 +141,7 @@ datatable(codes,
 
 Lastly, the EVENTS table is loaded, and merged with the event codes. If the persons had an event before the start of the study, they are removed from the dataset. If a person has more than one event, the second event is removed. 
 
-#### Analyis {-#anal}
+### Analyis {-#anal}
 
 
 For the analysis, incidence rates per 1000 person years for the study population are created per event (i.e. Anaphylactic Shock Narrow, Anaphylactic shock broad, and gbs). The formula for the incidence rates can be found below:
@@ -174,7 +171,7 @@ where Y is the observed number of events, $Y_l$ and $Y_u$ are lower and upper co
 
 
 
-### Results {-#res}
+## Results {-#res}
 ```{r}
 data <- left_join(dfp1, persons, by = "person_id") # merge the OBSERVATION_PERIODS and PERSONS table (keep only individuals who are in OBSERVATIONS_PERIODS table)
 ```
@@ -1091,9 +1088,9 @@ Big_table <- data.table(Diagnosis = all_diag,
 ```
 
 
-#### Forest Plots {-.tabset} 
+### Forest Plots {-.tabset} 
 
-##### Total  {-#tot}
+#### Total  {-#tot}
 
 
 ```{r}
@@ -1121,7 +1118,7 @@ ggplot(df_total, aes(x = IR_1000_PY, y = y_order, size=Person_Years)) +
   scale_size_continuous(limits=c(0,2500), breaks = seq(0,2500, by=500))
 ```
 
-##### 2017 {-#2017}
+#### 2017 {-#2017}
 
 
 ```{r}
@@ -1145,7 +1142,7 @@ ggplot(df_2017_P, aes(x = IR_1000_PY, y = y_order, size=Person_Years)) +
 ```
 
 
-##### 2018 {-#2018}
+#### 2018 {-#2018}
 
 ```{r}
 
@@ -1168,7 +1165,7 @@ ggplot(df_2018_P, aes(x = IR_1000_PY, y = y_order, size = Person_Years)) +
 ```
 
  
-##### 2019 {-#2019}
+#### 2019 {-#2019}
 
 ```{r}
 
@@ -1190,7 +1187,7 @@ ggplot(df_2019_P, aes(x = IR_1000_PY, y = y_order, size=Person_Years)) +
   scale_size_continuous(limits=c(0,2500), breaks = seq(0,2500, by=500))
 ```
 
-##### 2020 {-#2020}
+#### 2020 {-#2020}
 
 ```{r}
 
@@ -1214,10 +1211,10 @@ ggplot(df_2020_P, aes(x = IR_1000_PY, y = y_order, size=Person_Years)) +
 
 
 
-### Lessons learned {-#less}
+## Lessons learned {-#less}
 
 
-
+# Annexes  {-.tabset}
 
 ## Annex 1 Results Table {-#Tables}
 
