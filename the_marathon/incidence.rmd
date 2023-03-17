@@ -8,6 +8,7 @@ output:
     number_section: true
     highlight: tango
     theme: journal
+    code_download: true
    
 ---
 
