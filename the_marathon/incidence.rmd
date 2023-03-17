@@ -49,7 +49,7 @@ codelist2 <- read_excel("Tables/CodeList_20210128(1).xlsx",
 
 ### Short objective {-#short}
 
-The objective of this report is to analyze the incidence rates of Guillain-Barré Syndroom (gbs) and anaphylactic shock using the PHARMO database, and to present the results in a clear and concise manner.
+The objective of this report is to analyze the incidence rates of Guillain-Barré Syndrom (gbs) and anaphylactic shock using the PHARMO database, and to present the results in a clear and concise manner.
 
 ### Methods {-#meth}
 
@@ -142,28 +142,33 @@ datatable(codes,
 
 
 
-Lastly, the EVENTS table is loaded, and merged with the event codes. Tell something about what we did and why
-
-a. Merge with the above data set.
-b. Look at the dates of events. What does it mean if an event date is recorded before
-start of study or after end of study? Should these observations be discarded or not?
-Make the appropriate changes to the table.
-c. Make sure to remove repeated events(more than 1 event for the same individual).
+Lastly, the EVENTS table is loaded, and merged with the event codes. If the persons had an event before the start of the study, they are removed from the dataset. If a person has more than one event, the second event is removed. 
 
 #### Analyis {-#anal}
 
-\[
-\text{Incidence Rates overall} = \frac{Total \ number \ of \ events}{Total \ person-years}
-\]
 
-\[
-  \text{Incidence rates by year} = \frac{total \  number \ of \ events \ for \ each \ year} { person-years \ for \ each \ year} 
-\]
+For the analysis, incidence rates per 1000 person years for the study population are created per event (i.e. Anaphylactic Shock Narrow, Anaphylactic shock broad, and gbs). The formula for the incidence rates can be found below:
 
 
 \[
-  \text{Incidence rates by year by age bands} = \frac{Total \ number \ of \ events for \ each \ year \  per \  age \ band}{person-years \ for \ each \ year \  per \ age \ band}
+\text{Incidence Rates overall} = \frac{Total \ number \ of \ events}{Total \ person-years} * 1000 
 \]
+
+Afterwards, the incidence rates are stratified by year and age-bands. The formulas for these can be found below: 
+\[
+  \text{Incidence rates by year} = \frac{total \  number \ of \ events \ for \ each \ year} { person-years \ for \ each \ year} * 1000
+\]
+
+\[
+  \text{Incidence rates by year by age bands} = \frac{Total \ number \ of \ events for \ each \ year \  per \  age \ band}{person-years \ for \ each \ year \  per \ age \ band} * 1000
+\]
+
+To assess the technical validation, confidence intervals are used. Exact Poisson confidence limits for the estimated rate are found as the Poisson means, for distributions with the observed number of events and probabilities relevant to the chosen confidence level, divided by time at risk. The relationship between the Poisson and chi-square distributions is employed here (Ulm, 1990):
+
+$$Y_l = \frac{\chi^2_{2Y , a/2}}{2}$$
+$$Y_u=\frac{\chi^2_2(Y+1), 1-a/2}{2}$$
+
+where Y is the observed number of events, $Y_l$ and $Y_u$ are lower and upper confidence limits for Y respectively, $\chi^2_{v,a}$ is the chi-square quantile for upper tail probability on ν degrees of freedom.
 
 
 
