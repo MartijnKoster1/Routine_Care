@@ -1128,7 +1128,8 @@ ggplot(df_total, aes(x = IR_1000_PY, y = y_order, size=Person_Years)) +
        x = "Incidence Rate per 1000 Person-Years",
        y = "Diagnosis and Age Band",
        subtitle = "Data from 2017 to 2020")+
-  scale_x_continuous(limits = c(0, 150), breaks = seq(0, 160, by = 20))
+  scale_x_continuous(limits = c(0, 150), breaks = seq(0, 160, by = 20)) +
+  scale_size_continuous(limits=c(0,2500), breaks = seq(0,2500, by=500))
 ```
 
 #### 2017 {-#2017}
@@ -1150,7 +1151,8 @@ ggplot(df_2017_P, aes(x = IR_1000_PY, y = y_order, size=Person_Years)) +
        x = "Incidence Rate per 1000 Person-Years",
        y = "Diagnosis and Age Band",
        subtitle = "Data from 2017") +
-  scale_x_continuous(limits = c(0, 150), breaks = seq(0, 160, by = 20))
+  scale_x_continuous(limits = c(0, 150), breaks = seq(0, 160, by = 20)) +
+  scale_size_continuous(limits=c(0,2500), breaks = seq(0,2500, by=500))
 ```
 
 
@@ -1172,7 +1174,8 @@ ggplot(df_2018_P, aes(x = IR_1000_PY, y = y_order, size = Person_Years)) +
        x = "Incidence Rate per 1000 Person-Years",
        y = "Diagnosis and Age Band",
        subtitle = "Data from 2018") +
-  scale_x_continuous(limits = c(0, 150), breaks = seq(0, 160, by = 20))
+  scale_x_continuous(limits = c(0, 150), breaks = seq(0, 160, by = 20)) +
+  scale_size_continuous(limits=c(0,2500), breaks = seq(0,2500, by=500))
 ```
 
  
@@ -1194,7 +1197,8 @@ ggplot(df_2019_P, aes(x = IR_1000_PY, y = y_order, size=Person_Years)) +
        x = "Incidence Rate per 1000 Person-Years",
        y = "Diagnosis and Age Band",
        subtitle = "Data from 2019")+
-  scale_x_continuous(limits = c(0, 150), breaks = seq(0, 160, by = 20))
+  scale_x_continuous(limits = c(0, 150), breaks = seq(0, 160, by = 20)) +
+  scale_size_continuous(limits=c(0,2500), breaks = seq(0,2500, by=500))
 ```
 
 #### 2020 {-#2020}
@@ -1215,7 +1219,8 @@ ggplot(df_2020_P, aes(x = IR_1000_PY, y = y_order, size=Person_Years)) +
        x = "Incidence Rate per 1000 Person-Years",
        y = "Diagnosis and Age Band",
        subtitle = "Data from 2020")+
-  scale_x_continuous(limits = c(0, 150), breaks = seq(0, 160, by = 20))
+  scale_x_continuous(limits = c(0, 150), breaks = seq(0, 160, by = 20)) + 
+  scale_size_continuous(limits=c(0,2500), breaks = seq(0,2500, by=500))
 ```
 
 
