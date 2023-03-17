@@ -1149,7 +1149,7 @@ ggplot(df_2017_P, aes(x = IR_1000_PY, y = y_order, size=Person_Years)) +
 
 #### 2018 {-#2018}
 
-```{r i, fig.cap= 'Forest Plot data from 2018'}
+```{r i, fig.cap= 'Forest plots data from 2018'}
 
 df_2018_P <- df %>%  
   filter(Year=='2018')
@@ -1172,7 +1172,7 @@ ggplot(df_2018_P, aes(x = IR_1000_PY, y = y_order, size = Person_Years)) +
  
 #### 2019 {-#2019}
 
-```{r o, fig.cap= 'Forest Plot data from 2019'}
+```{r o, fig.cap= 'Forest plots data from 2019'}
 
 df_2019_P <- df %>%  
   filter(Year=='2019')
@@ -1194,7 +1194,7 @@ ggplot(df_2019_P, aes(x = IR_1000_PY, y = y_order, size=Person_Years)) +
 
 #### 2020 {-#2020}
 
-```{r 999, fig.cap= 'Forest plot data from 2020'}
+```{r 999, fig.cap= 'Forest plots data from 2020'}
 
 df_2020_P <- df %>%  
   filter(Year=='2020')
