@@ -117,7 +117,7 @@ data <- left_join(dfp1, persons, by = "person_id") # merge the OBSERVATION_PERIO
 
 
 
-```{r codes, results='asis', fig.cap = 'A table'}
+```{r codes, results='asis', fig.cap = 'A table', out.width='75%'}
 anaphyl <- codelist %>% 
   filter(`Coding system`== c('ICD9', 'ICD10/CM'))
 
@@ -141,31 +141,38 @@ datatable(codes,
           colnames=c('Diagnosis', 'Event Code', 'Vocabulary'),
           extensions='Buttons',
           options = list(dom = 'Bfrtip', buttons = c('copy', 'csv', 'excel', 'pdf', 'print')
-          ))## Deze op later moment nog wat mooier maken 
-
+          ))
 ```
 
 
 
 #### Analyis {-#anal}
 
-For the analysis, incidence rates are created per event (i.e. Anaphylactic Shock Narrow, Anaphylactic shock broad, and gbs). 
-
-\[
-\text{Incidence Rates overall} = \frac{Total \ number \ of \ events}{Total \ person-years}
-\]
-
-\[
-  \text{Incidence rates by year} = \frac{total \  number \ of \ events \ for \ each \ year} { person-years \ for \ each \ year} 
-\]
+For the analysis, incidence rates per 1000 person years for the study population are created per event (i.e. Anaphylactic Shock Narrow, Anaphylactic shock broad, and gbs). The formula for the incidence rates can be found below:
 
 
 \[
-  \text{Incidence rates by year by age bands} = \frac{Total \ number \ of \ events for \ each \ year \  per \  age \ band}{person-years \ for \ each \ year \  per \ age \ band}
+\text{Incidence Rates overall} = \frac{Total \ number \ of \ events}{Total \ person-years} * 1000 
 \]
 
+Afterwards, the incidence rates are stratified by year and age-bands. The formulas for these can be found below: 
+\[
+  \text{Incidence rates by year} = \frac{total \  number \ of \ events \ for \ each \ year} { person-years \ for \ each \ year} * 1000
+\]
+
+\[
+  \text{Incidence rates by year by age bands} = \frac{Total \ number \ of \ events for \ each \ year \  per \  age \ band}{person-years \ for \ each \ year \  per \ age \ band} * 1000
+\]
+
+To assess the technical validation, confidence intervals are used. Exact Poisson confidence limits for the estimated rate are found as the Poisson means, for distributions with the observed number of events and probabilities relevant to the chosen confidence level, divided by time at risk. The relationship between the Poisson and chi-square distributions is employed here (Ulm, 1990):
+
+$$Y_l = \frac{\chi^2_{2Y , a/2}}{2}$$
+$$Y_u=\frac{\chi^2_2(Y+1), 1-a/2}{2}$$
+
+where Y is the observed number of events, $Y_l$ and $Y_u$ are lower and upper confidence limits for Y respectively, $\chi^2_{v,a}$ is the chi-square quantile for upper tail probability on ν degrees of freedom.
 
 
+<!-- Ulm K (1990). A simple method to calculate the confidence interval of a standardized mortality ratio. American Journal of Epidemiology 131: 373 - 375 -->
 
 
 ### Results {-#res}
@@ -222,7 +229,7 @@ IR_95_CI <- function(events, py, N){
 }
 ```
 
-<!-- Ulm K (1990). A simple method to calculate the confidence interval of a standardized mortality ratio. American Journal of Epidemiology 131: 373 - 375 -->
+
 
 
 
