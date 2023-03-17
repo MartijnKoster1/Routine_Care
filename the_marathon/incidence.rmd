@@ -1216,7 +1216,7 @@ ggplot(df_2020_P, aes(x = IR_1000_PY, y = y_order, size=Person_Years)) +
 
 ## Lessons learned {-#less}
 
-We have learned to take data from various tables, and structure it to a dataset which can be analysed. In addition, we have learned that a lot of data is needed to make inference about incidence rates. That is, when data needs to be stratified, the confidence will get lower when there are not enough person years. Hence, Common Data Models are used, to improve the data quality. 
+We have learned to take data from various tables, and structure it to a dataset which can be analysed. In addition, we have learned that a lot of data is needed to make inference about incidence rates. That is, when data needs to be stratified. We discovered that the distribution of the data becomes skewed when stratified in different age bands. In this case the incidence over a 1000 person years confidence interval will get wider or become insignificant. More data from different sources could help in creating a better distributed stratification. This can be accomplished by using data from a Common Data Model. The data could also have some bias. All of the data is collected using health registries and (routine) care data. This means that every person in the dataset, has had contact with an health institution. Thus, perfectly healthy people with no events will not be included in the dataset. 
 
 # Annexes  {-.tabset}
 
