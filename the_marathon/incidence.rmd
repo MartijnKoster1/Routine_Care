@@ -1088,7 +1088,7 @@ Big_table <- data.table(Diagnosis = all_diag,
                         IR_1000PY_95H = IR_1000PY_95H)
 ```
 
-The forest plot figures (see Figure \@ref(fig:t)), show the incidence rates. A total of `r TNE_anaphN + TNE_anaphP + TNE_gbs` events occurred. Of these events `r TNE_anaphN` were anaphylaxis narrow, `r TNE_anaphP` were anaphylaxis possible and `r TNE_gbs` were GBS. When stratified in to age bands, the person years become lower and there is low confidence. Especially in the high and low age bands. Most events occurred in the first three years. In these years each type of event status had around 15 to 20 occurred events.  The last year of the study has almost no events and an insignificant incidence rate confidence interval.
+The forest plot figures (see Figure \@ref(fig:t)), show the incidence rates. A total of `r TNE_anaphN + TNE_anaphP + TNE_gbs` events occurred. Of these events `r TNE_anaphN` were anaphylaxis narrow, `r TNE_anaphP` were anaphylaxis possible and `r TNE_gbs` were GBS. When stratified in to age bands, the person years become lower and there is low confidence. Especially in the high and low age bands. Most events occurred in the first three years. In these years each type of event status had around 15 to 20 occurred events. The last year of the study has almost no events and an insignificant incidence rate confidence interval.
 
 
 ### Forest Plot Figures {-.tabset} 
