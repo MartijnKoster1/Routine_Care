@@ -171,6 +171,8 @@ c. Make sure to remove repeated events(more than 1 event for the same individual
 
 ### Results {-#res}
 
+
+
 ### Lessons learned {-#less}
 Annex 1: quality check findings day 6
 
