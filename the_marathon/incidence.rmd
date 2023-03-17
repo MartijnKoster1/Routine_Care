@@ -175,20 +175,6 @@ where Y is the observed number of events, $Y_l$ and $Y_u$ are lower and upper co
 
 
 ### Results {-#res}
-
-
-
-
-
-### Lessons learned {-#less}
-Annex 1: quality check findings day 6
-
-
-
-
-
-
-
 ```{r}
 data <- left_join(dfp1, persons, by = "person_id") # merge the OBSERVATION_PERIODS and PERSONS table (keep only individuals who are in OBSERVATIONS_PERIODS table)
 ```
@@ -1105,9 +1091,9 @@ Big_table <- data.table(Diagnosis = all_diag,
 ```
 
 
-### Forest Plots {-.tabset} 
+#### Forest Plots {-.tabset} 
 
-#### Total  {-#tot}
+##### Total  {-#tot}
 
 
 ```{r}
@@ -1135,7 +1121,7 @@ ggplot(df_total, aes(x = IR_1000_PY, y = y_order, size=Person_Years)) +
   scale_size_continuous(limits=c(0,2500), breaks = seq(0,2500, by=500))
 ```
 
-#### 2017 {-#2017}
+##### 2017 {-#2017}
 
 
 ```{r}
@@ -1159,7 +1145,7 @@ ggplot(df_2017_P, aes(x = IR_1000_PY, y = y_order, size=Person_Years)) +
 ```
 
 
-#### 2018 {-#2018}
+##### 2018 {-#2018}
 
 ```{r}
 
@@ -1182,7 +1168,7 @@ ggplot(df_2018_P, aes(x = IR_1000_PY, y = y_order, size = Person_Years)) +
 ```
 
  
-#### 2019 {-#2019}
+##### 2019 {-#2019}
 
 ```{r}
 
@@ -1204,7 +1190,7 @@ ggplot(df_2019_P, aes(x = IR_1000_PY, y = y_order, size=Person_Years)) +
   scale_size_continuous(limits=c(0,2500), breaks = seq(0,2500, by=500))
 ```
 
-#### 2020 {-#2020}
+##### 2020 {-#2020}
 
 ```{r}
 
@@ -1225,6 +1211,18 @@ ggplot(df_2020_P, aes(x = IR_1000_PY, y = y_order, size=Person_Years)) +
   scale_x_continuous(limits = c(0, 150), breaks = seq(0, 160, by = 20)) + 
   scale_size_continuous(limits=c(0,2500), breaks = seq(0,2500, by=500))
 ```
+
+
+
+### Lessons learned {-#less}
+Annex 1: quality check findings day 6
+
+
+
+
+
+
+
 
 ## Annex 1 Results Table {-#Tables}
 
