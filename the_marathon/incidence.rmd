@@ -112,15 +112,17 @@ c. Make sure to remove repeated events(more than 1 event for the same individual
 
 #### Analyis {-#anal}
 
-$$\text{Incidence Rates overall} = \frac{ {\textit{total number of events}} }{ \textit{total person-years} }
-$$
+\[
+\text{Incidence Rates overall} = \frac{Total \ number \ of \ events}{Total \ person-years}
+\]
 
-$$\text{Incidence rates by year} = \frac{ {\textit{total number of events for each year}} }{ \textit{person-years for each year} }
-$$
+\[
+  \text{Incidence rates by year} = \frac{total \  number \ of \ events \ for \ each \ year} { person-years \ for \ each \ year} 
+\]
 
 
 \[
-  text{Incidence rates by year by age bands} = \frac{Total \ number \ of \ events for \ each \ year \  per \  age \ band}{person-years \ for \ each \ year \  per \ age \ band}
+  \text{Incidence rates by year by age bands} = \frac{Total \ number \ of \ events for \ each \ year \  per \  age \ band}{person-years \ for \ each \ year \  per \ age \ band}
 \]
 
 
