@@ -6,7 +6,7 @@ output:
   bookdown::html_document2:
     toc: true
     highlight: tango
-    theme: journal
+    theme: paper
     code_download: true
    
 ---
