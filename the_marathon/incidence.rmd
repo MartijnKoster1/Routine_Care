@@ -1219,9 +1219,10 @@ ggplot(df_2020_P, aes(x = IR_1000_PY, y = y_order)) +
 ```
 
 
-## Day 6 {-#day6}
+## Annex Day 6 {-#day6}
 
-
-
+```{r fig.align='center', out.width='100%',out.height= 5000,results='asis'}
+knitr::include_graphics("day6.pdf")
+```
 
 
