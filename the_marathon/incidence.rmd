@@ -5,7 +5,6 @@ date: "`r Sys.Date()`"
 output:
   bookdown::html_document2:
     toc: true
-    number_section: true
     highlight: tango
     theme: journal
     code_download: true
