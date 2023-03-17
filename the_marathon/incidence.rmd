@@ -28,7 +28,9 @@ library(DT)
 library(epiR)
 ```
 
-# Assignment 2  {-#ass2}
+# Assignment {-.tabset}
+
+## Paper {-#pap}
 
 ```{r}
 
@@ -1215,6 +1217,10 @@ ggplot(df_2020_P, aes(x = IR_1000_PY, y = y_order)) +
        subtitle = "Data from 2020")+
   scale_x_continuous(limits = c(0, 150), breaks = seq(0, 160, by = 20))
 ```
+
+
+## Day 6 {-#day6}
+
 
 
 
