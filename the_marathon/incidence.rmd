@@ -1,6 +1,6 @@
 ---
 title: "Assignment Day 8"
-author: "Martijn Koster, Jurrian van de Kraats, Tim Poorthuis"
+author: "Martijn Koster, Jurrian van de Kraats 5961688, Tim Poorthuis"
 date: "`r Sys.Date()`"
 output:
   bookdown::html_document2:
