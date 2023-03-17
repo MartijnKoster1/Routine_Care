@@ -100,9 +100,6 @@ After doing this, the PERSONS table was loaded. In this table, an age variable i
 
 The next step in the date preparation, was merging the OBSERVATION_PERIODS and PERSON table. We only kept the individuals who are in the OBSERVATION_PERIODS table. 
 
-
-When the aforementioned tables are merged, Concept sets were created. These sets were created from diagnostic codes from the codesheet. All diagnostic codes and vocabulary of the events used to make incidence rates can be found in Table \@ref(fig:codes)
-
 When the aforementioned tables are merged, Concept sets were created. These sets were created from diagnostic codes from the codesheet. All diagnostic codes and vocabulary of the events we will make incidence rates of can be found in Table \@ref(fig:codes).
 
 
@@ -172,6 +169,10 @@ where Y is the observed number of events, $Y_l$ and $Y_u$ are lower and upper co
 
 
 ## Results {-#res}
+
+
+
+
 ```{r}
 data <- left_join(dfp1, persons, by = "person_id") # merge the OBSERVATION_PERIODS and PERSONS table (keep only individuals who are in OBSERVATIONS_PERIODS table)
 ```
@@ -1212,6 +1213,8 @@ ggplot(df_2020_P, aes(x = IR_1000_PY, y = y_order, size=Person_Years)) +
 
 
 ## Lessons learned {-#less}
+
+We have learned to take data from various tables, and structure it to a dataset which can be analysed. In addition, we have learned that a lot of data is needed to make inference about incidence rates. That is, when data needs to be stratified, the confidence will get lower when there are not enough person years. Hence, Common Data Models are used, to improve the data quality. 
 
 
 # Annexes  {-.tabset}
