@@ -109,6 +109,39 @@ When the aforementioned tables are merged, Concept sets were created. These sets
 When the aforementioned tables are merged, Concept sets were created. These sets were created from diagnostic codes from the codesheet. All diagnostic codes and vocabulary of the events we will make incidence rates of can be found in Table \@ref(fig:codes).
 
 
+
+
+```{r codes, results='asis', fig.cap = 'A table'}
+anaphyl <- codelist %>% 
+  filter(`Coding system`== c('ICD9', 'ICD10/CM'))
+
+gbs <- codelist2 %>% 
+  filter(`Coding system`== c('ICD9', 'ICD10/CM'))
+
+codes <- data.table(Diagnosis = paste0('anaphyl_',anaphyl$Algorithm,sep = ""), 
+                event_code = anaphyl$Code, 
+                Vocabulary = anaphyl$`Coding system`)
+
+gbstemp <- data.table(Diagnosis = paste0('gbs_',gbs$Algorithm,sep = ""), 
+                event_code = gbs$Code, 
+                Vocabulary = gbs$`Coding system`)
+
+codes <- rbind(codes, gbstemp)
+
+datatable(codes, 
+          caption='Diagnostic codes retrieved from the CodeList_20210128 ANAPHYL and GBS sheets ',
+          class='compact', 
+          rownames=F, 
+          colnames=c('Diagnosis', 'Event Code', 'Vocabulary'),
+          extensions='Buttons',
+          options = list(dom = 'Bfrtip'
+                         , buttons = c('copy', 'csv', 'excel', 'pdf', 'print')
+          ))## Deze op later moment nog wat mooier maken 
+
+```
+
+
+
 Lastly, the EVENTS table is loaded, and merged with the event codes. Tell something about what we did and why
 
 a. Merge with the above data set.
@@ -151,35 +184,6 @@ Annex 1: quality check findings day 6
 data <- left_join(dfp1, persons, by = "person_id") # merge the OBSERVATION_PERIODS and PERSONS table (keep only individuals who are in OBSERVATIONS_PERIODS table)
 ```
 
-
-
-```{r codes, results='asis', fig.cap = 'A table'}
-anaphyl <- codelist %>% 
-  filter(`Coding system`== c('ICD9', 'ICD10/CM'))
-
-gbs <- codelist2 %>% 
-  filter(`Coding system`== c('ICD9', 'ICD10/CM'))
-
-codes <- data.table(Diagnosis = paste0('anaphyl_',anaphyl$Algorithm,sep = ""), 
-                event_code = anaphyl$Code, 
-                Vocabulary = anaphyl$`Coding system`)
-
-gbstemp <- data.table(Diagnosis = paste0('gbs_',gbs$Algorithm,sep = ""), 
-                event_code = gbs$Code, 
-                Vocabulary = gbs$`Coding system`)
-
-codes <- rbind(codes, gbstemp)
-
-datatable(codes, 
-          caption='Diagnostic codes retrieved from the .. Codesheet ',
-          class='cell-border stripe', 
-          rownames=F, 
-          colnames=c('Diagnosis', 'Event Code', 'Vocabulary'),
-          extensions='Buttons',
-          options = list(dom = 'Bfrtip', buttons = c('copy', 'csv', 'excel', 'pdf', 'print')
-          ))## Deze op later moment nog wat mooier maken 
-
-```
 
 
 
@@ -1091,17 +1095,6 @@ Big_table <- data.table(Diagnosis = all_diag,
                         IR_1000PY_95H = IR_1000PY_95H)
 ```
 
-```{r tab2, results = 'hold'}
-datatable(Big_table, 
-          caption='Incidence Rates with 95% CI',
-          class='cell-border stripe', 
-          rownames=F, 
-          colnames=c('Diagnosis', 'Age Bands', 'Year', 'Amount of Events', 
-                     'Person Years', 'IR 1000 Person Years', 'IR 1000 Person Years  95% CI Lower', 'IR 1000 Person Years 95% CI Higher'),
-          extensions='Buttons',
-          options = list(dom = 'Bfrtip', buttons = c('copy', 'csv', 'excel', 'pdf', 'print')
-          ))
-```
 
 ### Forest Plots {-.tabset} 
 
@@ -1224,12 +1217,28 @@ ggplot(df_2020_P, aes(x = IR_1000_PY, y = y_order, size=Person_Years)) +
   scale_size_continuous(limits=c(0,2500), breaks = seq(0,2500, by=500))
 ```
 
+## Annex 1 Results Table {-#Tables}
 
-## Annex 1 Day 6 {-#day6}
+```{r tab2, results = 'hold'}
+datatable(Big_table, 
+          caption='Incidence Rates with 95% CI',
+          class='cell-border stripe', 
+          rownames=F, 
+          colnames=c('Diagnosis', 'Age Bands', 'Year', 'Amount of Events', 
+                     'Person Years', 'IR 1000 Person Years', 'IR 1000 Person Years  95% CI Lower', 'IR 1000 Person Years 95% CI Higher'),
+          extensions='Buttons',
+          options = list(dom = 'Bfrtip', buttons = c('copy', 'csv', 'excel', 'pdf', 'print')
+          ))
+```
+
+
+
+
+## Annex 2 Day 6 {-#day6}
 
 ```{r fig.align='center', out.width='100%',out.height= 5000,results='asis'}
 knitr::include_graphics("day6.pdf")
 ```
 
 
-## Annex 2 Tables {-#Tables}
+
